@@ -1,0 +1,52 @@
+version: '3.3'
+
+services:
+  my-backend:
+    platform: linux/x86_64
+    image: asia.gcr.io/mainproject-349212/team:1.7
+    build:
+      context: .
+      dockerfile: Dockerfile
+    # environment:
+    #   - TZ=Asia/Seoul
+    # volumes:
+    #   - ./src:/myfolder/src
+    #   - ./elk/logstash/logstash.conf:/usr/share/logstash/pipeline/logstash.conf
+    ports:
+      - 3000:3000
+
+  # my-database:
+  #   platform: linux/x86_64
+  #   image: mysql:latest
+  #   environment:
+  #     MYSQL_DATABASE: 'mainproject'
+  #     MYSQL_ROOT_PASSWORD: 'root'
+  #   ports:
+  #     - 3306:3306
+
+  # my-redis:
+  #   image: redis:latest
+  #   ports:
+  #     - 6379:6379
+
+  # elasticsearch:
+  #   image: elasticsearch:7.17.0
+  #   environment:
+  #     discovery.type: single-node
+  #   ports:
+  #     - 9200:9200
+
+  # logstash:
+  #   image: logstash:7.17.0
+  #   volumes:
+  #     - ./elk/logstash/logstash.conf:/usr/share/logstash/pipeline/logstash.conf
+  #     - ./elk/logstash/mysql-connector-java-8.0.28.jar:/usr/share/logstash/mysql-connector-java-8.0.28.jar
+  #     - ./elk/logstash/post_template.json:/usr/share/logstash/post_template.json
+
+  # kibana:
+  #   image: kibana:7.17.0
+  #   environment:
+  #     ELASTICSEARCH_UTL: http://elasticsearch:9200
+  #     ELASTICSEARCH_HOSTS: http://elasticsearch:9200
+  #   ports:
+  #     - 5601:5601
