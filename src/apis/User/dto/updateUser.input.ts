@@ -4,6 +4,6 @@ import { CreateUserInput } from './createUser.input';
 @InputType()
 export class UpdateUserInput extends PickType(
   CreateUserInput,
-  ['password', 'user_phone', 'address'],
+  ['userPassword', 'userPhone', 'userAddress'],
   InputType,
 ) {}

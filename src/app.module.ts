@@ -4,7 +4,7 @@ import { GraphQLModule } from '@nestjs/graphql';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { RedisClientOptions } from 'redis';
 import { Connection } from 'typeorm';
-import { UserModule } from './apis/User/user.module';
+import { UserModule } from './apis/user/user.module';
 import * as redisStore from 'cache-manager-redis-store';
 import { AuthModule } from './apis/auth/auth.module';
 import { ConfigModule } from '@nestjs/config';

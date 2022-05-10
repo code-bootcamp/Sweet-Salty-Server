@@ -13,43 +13,47 @@ import {
 export class User {
   @PrimaryGeneratedColumn('uuid')
   @Field(() => String)
-  user_id: string;
+  userId: string;
 
   @Column({ default: 0 })
   @Field(() => Boolean)
-  state: boolean;
+  userState: boolean;
 
   @Column({ unique: true })
   @Field(() => String)
-  user_email: string;
+  userEmail: string;
 
   @Column()
-  password: string;
+  userPassword: string;
 
   @Column({ nullable: true })
   @Field(() => String)
-  user_name: string;
+  userName: string;
 
   @Column({ nullable: true })
   @Field(() => String)
-  user_nickname: string;
+  userNickname: string;
 
   @Column({ nullable: true })
   @Field(() => String)
-  user_phone: string;
+  userPhone: string;
+
+  @Column({ nullable: true })
+  @Field(() => String)
+  userAddress: string;
 
   @Column({ default: 0 })
   @Field(() => Int)
-  point: number;
+  userPoint: number;
 
   @CreateDateColumn()
   @Field(() => Date)
-  user_createAt: Date;
+  userCreateAt: Date;
 
   @UpdateDateColumn()
   @Field(() => Date)
-  user_updateAt: Date;
+  userUpdateAt: Date;
 
   @DeleteDateColumn()
-  user_deleteAt: Date;
+  userDeleteAt: Date;
 }

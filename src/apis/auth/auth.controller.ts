@@ -3,13 +3,13 @@ import { Controller, Get, Req, Res, UseGuards } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 
 import { Request, Response } from 'express';
-import { User } from '../User/entities/user.entity';
+import { User } from '../user/entities/user.entity';
 
-import { UserService } from '../User/user.service';
+import { UserService } from '../user/user.service';
 import { AuthService } from './auth.service';
 
 interface IOAuthUser {
-  user: Pick<User, 'user_email' | 'user_phone' | 'user_nickname'>;
+  user: Pick<User, 'userEmail' | 'userPhone' | 'userNickname'>;
 }
 
 @Controller('/')
