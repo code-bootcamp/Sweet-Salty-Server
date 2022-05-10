@@ -2,9 +2,11 @@ import { UseGuards } from '@nestjs/common';
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { GqlAuthAccessGuard } from 'src/commons/auth/gql-auth.guard';
 import { CurrentUser } from 'src/commons/auth/gql-user-param';
+
 import { CreateUserInput } from './dto/createUser.input';
 import { UpdateUserInput } from './dto/updateUser.input';
 import { User } from './entities/user.entity';
+
 import { UserService } from './user.service';
 
 @Resolver()
@@ -23,9 +25,9 @@ export class UserResolver {
   @Query(() => User)
   fetchUser(
     //
-    @Args('user_email') user_email: string,
+    @Args('userEmail') userEmail: string,
   ) {
-    return this.userService.findOne({ user_email });
+    return this.userService.findOne({ userEmail });
   }
   @Query(() => [User])
   fetchUsers() {
@@ -42,7 +44,7 @@ export class UserResolver {
     @Args('updateUserInput') updateUserInput: UpdateUserInput,
   ) {
     return await this.userService.update({
-      user_email: currentUser.user_email,
+      userEmail: currentUser.userEmail,
       updateUserInput,
     }); // <- 이거 지워도 댐 로그인 안한 상태로 정보 바꾼다는거는 비번찾기만 가능
   }
@@ -50,10 +52,10 @@ export class UserResolver {
   //
   @Mutation(() => User)
   async updatePassword(
-    @Args('user_email') user_email: string,
+    @Args('userEmail') userEmail: string,
     @Args('password') password: string,
   ) {
-    return await this.userService.ChangePW({ user_email, password });
+    return await this.userService.ChangePW({ userEmail, password });
   }
   //
   //
@@ -67,16 +69,16 @@ export class UserResolver {
   //
   @Mutation(() => Boolean)
   deleteUser(
-    @Args('user_email') user_email: string, //
+    @Args('userEmail') userEmail: string, //
   ) {
-    return this.userService.delete({ user_email });
+    return this.userService.delete({ userEmail });
   }
   //
   //
   @Mutation(() => Boolean)
   restoreUser(
-    @Args('user_email') user_email: string, //
+    @Args('userEmail') userEmail: string, //
   ) {
-    return this.userService.restore({ user_email });
+    return this.userService.restore({ userEmail });
   }
 }

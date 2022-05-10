@@ -6,9 +6,10 @@ import { JwtModule } from '@nestjs/jwt';
 
 import { JwtRefreshStrategy } from 'src/commons/auth/jwt-refresh.strategy';
 
-import { User } from '../User/entities/user.entity';
+import { User } from '../user/entities/user.entity';
 import { ConfigService } from '@nestjs/config';
 import { JwtAccessStrategy } from 'src/commons/auth/jwt-access.strategy';
+import { HttpModule } from '@nestjs/axios';
 
 @Module({
   imports: [
@@ -16,6 +17,10 @@ import { JwtAccessStrategy } from 'src/commons/auth/jwt-access.strategy';
     JwtModule.register({}),
     ConfigService,
     TypeOrmModule.forFeature([User]),
+    HttpModule.register({
+      timeout: 5000,
+      maxRedirects: 5,
+    }),
   ],
   controllers: [],
   providers: [
