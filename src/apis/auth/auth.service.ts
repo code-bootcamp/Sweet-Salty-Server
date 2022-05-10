@@ -28,6 +28,7 @@ export class AuthService {
     );
 
     const obj = {};
+    console.log('이거 찾는사람');
     obj['accessToken'] = Access;
 
     return obj;
