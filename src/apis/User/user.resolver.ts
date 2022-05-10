@@ -27,6 +27,7 @@ export class UserResolver {
     //
     @Args('userEmail') userEmail: string,
   ) {
+    console.log("aaa")
     return this.userService.findOne({ userEmail });
   }
   @Query(() => [User])

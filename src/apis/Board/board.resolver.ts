@@ -10,6 +10,8 @@ export class BoardResolver {
 
   @Query(() => [Board])
   fetchBoards() {
+
+    console.log("aaa")
     return this.boardService.findAll();
   }
 
