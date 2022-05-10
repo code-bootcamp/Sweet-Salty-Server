@@ -19,9 +19,19 @@ A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date
 """
 scalar DateTime
 
+type Board {
+  boardId: String!
+  boardTitle: String!
+  boardContents: String!
+  boardWriter: String!
+  boardHit: Int!
+}
+
 type Query {
   fetchUser(user_email: String!): User!
   fetchUsers: [User!]!
+  fetchBoards: [Board!]!
+  fetchBoard(boardId: String!): Board!
 }
 
 type Mutation {
@@ -33,6 +43,9 @@ type Mutation {
   updatePassword(user_email: String!, password: String!): User!
   deleteUser(user_email: String!): Boolean!
   restoreUser(user_email: String!): Boolean!
+  createBoard(createBoardInput: CreateBoardInput!): Board!
+  updateBoard(boardId: String!, updateBoardInput: UpdateBoardInput!): Board!
+  deleteBoard(boardId: String!): Boolean!
 }
 
 input CreateUserInput {
@@ -48,4 +61,16 @@ input UpdateUserInput {
   password: String!
   user_phone: String!
   address: String!
+}
+
+input CreateBoardInput {
+  boardTitle: String!
+  boardContents: String!
+  boardWriter: String!
+}
+
+input UpdateBoardInput {
+  boardTitle: String
+  boardContents: String
+  boardWriter: String
 }
