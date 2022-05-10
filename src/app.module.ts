@@ -10,11 +10,13 @@ import { AuthModule } from './apis/auth/auth.module';
 import { ConfigModule } from '@nestjs/config';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
+import { BoardModule } from './apis/Board/board.module';
 
 @Module({
   imports: [
     AuthModule,
     UserModule,
+    BoardModule,
     ConfigModule.forRoot({
       isGlobal: true,
     }),
