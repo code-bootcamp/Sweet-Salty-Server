@@ -9,6 +9,15 @@ import {
 } from 'typeorm';
 
 @ObjectType()
+export class fewUser {
+  @Field(() => String)
+  userEmail: string;
+
+  @Field(() => Date)
+  userCreateAt: Date;
+}
+
+@ObjectType()
 @Entity()
 export class User {
   @PrimaryGeneratedColumn('uuid')

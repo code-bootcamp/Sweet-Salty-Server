@@ -54,6 +54,17 @@ export class UserService {
   //
   //
   // Read Api Read Api Read Api Read Api Read Api Read Api Read Api Read Api Read Api Read Api Read Api  //
+  async fewFind({ phone }) {
+    const userData = await this.UserRepository.findOne({
+      where: { userPhone: phone },
+    });
+    const fewData = {};
+    fewData['userEmail'] = userData.userEmail;
+    fewData['userCreateAt'] = userData.userCreateAt;
+
+    return fewData;
+  }
+
   async findOne({ userEmail }) {
     return await this.UserRepository.findOne({ where: { userEmail } }); // 마이페이지 읽어올때 사용할거임 조건 댓글같은거 보려면 조건 더 달아야함
   }

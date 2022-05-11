@@ -1,4 +1,4 @@
-import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
+import { Args, Int, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { BoardService } from './board.service';
 import { CreateBoardInput } from './dto/createBoard.input';
 import { UpdateBoardInput } from './dto/updateBoard.input';
@@ -9,9 +9,10 @@ export class BoardResolver {
   constructor(private readonly boardService: BoardService) {}
 
   @Query(() => [Board])
-  fetchBoards() {
-
-    console.log("aaa")
+  fetchBoards(
+    //
+    @Args('search') search: string,
+  ) {
     return this.boardService.findAll();
   }
 

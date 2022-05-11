@@ -5,7 +5,7 @@ import { CurrentUser } from 'src/commons/auth/gql-user-param';
 
 import { CreateUserInput } from './dto/createUser.input';
 import { UpdateUserInput } from './dto/updateUser.input';
-import { User } from './entities/user.entity';
+import { fewUser, User } from './entities/user.entity';
 
 import { UserService } from './user.service';
 
@@ -27,12 +27,19 @@ export class UserResolver {
     //
     @Args('userEmail') userEmail: string,
   ) {
-    console.log("aaa")
     return this.userService.findOne({ userEmail });
   }
   @Query(() => [User])
   fetchUsers() {
     return this.userService.findAll();
+  }
+
+  @Query(() => fewUser)
+  findUser(
+    //
+    @Args('phone') phone: string,
+  ) {
+    return this.userService.fewFind({ phone });
   }
   //
   //

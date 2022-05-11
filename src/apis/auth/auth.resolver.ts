@@ -3,7 +3,7 @@ import {
   UnprocessableEntityException,
   UseGuards,
 } from '@nestjs/common';
-import { Args, Context, Mutation, Resolver } from '@nestjs/graphql';
+import { Args, Context, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { Cache } from 'cache-manager';
 import { CACHE_MANAGER, Inject } from '@nestjs/common';
 import { getConnection } from 'typeorm';
