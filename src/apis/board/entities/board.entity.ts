@@ -27,6 +27,14 @@ export class Board {
 
   @Column({ nullable: true })
   @Field(() => String)
+  boardSugar: string;
+
+  @Column({ nullable: true })
+  @Field(() => String)
+  boardSalt: string;
+
+  @Column({ nullable: true })
+  @Field(() => String)
   boardWriter: string;
 
   @Column({ default: 0 })
@@ -34,9 +42,11 @@ export class Board {
   boardHit: number;
 
   @CreateDateColumn()
+  @Field(() => Date)
   CreateAt: Date;
 
   @UpdateDateColumn()
+  @Field(() => Date)
   UpdateAt: Date;
 
   @ManyToOne(() => User)
