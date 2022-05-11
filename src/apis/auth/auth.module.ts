@@ -15,7 +15,6 @@ import { HttpModule } from '@nestjs/axios';
   imports: [
     //
     JwtModule.register({}),
-    ConfigService,
     TypeOrmModule.forFeature([User]),
     HttpModule.register({
       timeout: 5000,

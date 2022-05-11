@@ -6,8 +6,14 @@ export class CreateBoardInput {
   boardTitle: string;
 
   @Field(() => String)
+  boardSugar: string;
+
+  @Field(() => String)
+  boardSalt: string;
+
+  @Field(() => String)
   boardContents: string;
 
   @Field(() => String)
-  boardWriter: string;
+  boardTags: string;
 }

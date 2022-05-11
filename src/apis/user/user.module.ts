@@ -11,7 +11,6 @@ import { UserService } from './user.service';
   imports: [TypeOrmModule.forFeature([User])],
   providers: [
     //
-
     UserResolver,
     UserService,
     JwtAccessStrategy,

@@ -11,6 +11,8 @@ import { ConfigModule } from '@nestjs/config';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { BoardModule } from './apis/board/board.module';
+import { IamportModule } from './apis/iamport/iamport.module';
+import { ImageUploadModule } from './apis/imageUpload/imageUpload.module';
 import { CommentModule } from './apis/comment/comment.module';
 import { CommentLikeModule } from './apis/commentLike/commentLike.module';
 
@@ -18,6 +20,8 @@ import { CommentLikeModule } from './apis/commentLike/commentLike.module';
   imports: [
     AuthModule,
     BoardModule,
+    IamportModule,
+    ImageUploadModule,
     UserModule,
     CommentModule,
     CommentLikeModule,
@@ -28,6 +32,10 @@ import { CommentLikeModule } from './apis/commentLike/commentLike.module';
       driver: ApolloDriver,
       autoSchemaFile: 'src/commons/graphql/schema.gql',
       context: ({ req, res }) => ({ req, res }),
+      cors: {
+        Credential: true,
+        origin: ['http://localhost:3000'],
+      },
     }),
     TypeOrmModule.forRoot({
       type: 'mysql',

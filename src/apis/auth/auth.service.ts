@@ -4,7 +4,6 @@ import { JwtService } from '@nestjs/jwt';
 import { HttpService } from '@nestjs/axios';
 import { Cache } from 'cache-manager';
 import { CACHE_MANAGER, Inject } from '@nestjs/common';
-import { Token } from './entities/auth.entity';
 
 @Injectable()
 export class AuthService {
@@ -26,6 +25,7 @@ export class AuthService {
         expiresIn: '30m',
       },
     );
+    console.log(Access);
 
     const obj = {};
     obj['accessToken'] = Access;
@@ -37,8 +37,12 @@ export class AuthService {
       { userEmail: user.userEmail },
       { secret: this.config.get('REFRESH'), expiresIn: '2w' },
     );
-    // 개발 환경
-    res.setHeader('Set-Cookie', `refreshToken=${refreshToken}`);
+    console.log(refreshToken);
+
+    res.setHeader(
+      'Set-Cookie',
+      `refreshToken=${refreshToken}; path=/; domain=project08.site; Secure; httpOnly; SameSite=None;`,
+    );
   }
 
   social_login({ user, res }) {
