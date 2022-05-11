@@ -1,55 +1,54 @@
-import { ObjectType, Field, Int } from '@nestjs/graphql';
+import { Field, Int, ObjectType } from '@nestjs/graphql';
+import { User } from 'src/apis/user/entities/user.entity';
+
 import {
   Column,
   CreateDateColumn,
-  DeleteDateColumn,
   Entity,
+  ManyToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
 
-@ObjectType()
 @Entity()
-export class User {
-  @PrimaryGeneratedColumn('uuid')
+@ObjectType()
+export class Board {
+  @PrimaryGeneratedColumn('increment')
   @Field(() => String)
-  user_id: string;
-
-  @Column({ default: 0 })
-  @Field(() => Boolean)
-  state: boolean;
-
-  @Column({ unique: true })
-  @Field(() => String)
-  user_email: string;
+  boardId: string;
 
   @Column()
-  password: string;
+  @Field(() => String)
+  boardTitle: string;
+
+  @Column()
+  @Field(() => String)
+  boardContents: string;
 
   @Column({ nullable: true })
   @Field(() => String)
-  user_name: string;
+  boardSugar: string;
 
   @Column({ nullable: true })
   @Field(() => String)
-  user_nickname: string;
+  boardSalt: string;
 
   @Column({ nullable: true })
   @Field(() => String)
-  user_phone: string;
+  boardWriter: string;
 
   @Column({ default: 0 })
   @Field(() => Int)
-  point: number;
+  boardHit: number;
 
   @CreateDateColumn()
   @Field(() => Date)
-  user_createAt: Date;
+  CreateAt: Date;
 
   @UpdateDateColumn()
   @Field(() => Date)
-  user_updateAt: Date;
+  UpdateAt: Date;
 
-  @DeleteDateColumn()
-  user_deleteAt: Date;
+  @ManyToOne(() => User)
+  user: User;
 }

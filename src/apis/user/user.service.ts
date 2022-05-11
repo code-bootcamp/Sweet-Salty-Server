@@ -14,12 +14,15 @@ export class UserService {
   async create({ createUserInput }) {
     const overlap = await this.UserRepository.findOne({
       where: {
-        user_email: createUserInput.user_email,
+        userEmail: createUserInput.userEmail,
       },
     });
     if (overlap)
       throw new ConflictException('동일한 이메일로 생성된 계정이 존재합니다.');
-    createUserInput.password = await bcrypt.hash(createUserInput.password, 10);
+    createUserInput.userPassword = await bcrypt.hash(
+      createUserInput.userPassword,
+      10,
+    );
     const result = await this.UserRepository.save({
       ...createUserInput,
     });
@@ -30,13 +33,13 @@ export class UserService {
   //
   async socialCreate({ user }) {
     const social_user = await this.UserRepository.findOne({
-      where: { user_email: user.user_email },
+      where: { userEmail: user.userEmail },
     });
 
     if (!social_user) {
       const result = await this.UserRepository.save({
         ...user,
-        password: await bcrypt.hash(
+        userPassword: await bcrypt.hash(
           String(Math.floor(Math.random() * 1000000)).padStart(6, '0'),
           10,
         ),
@@ -44,15 +47,26 @@ export class UserService {
       return result;
     } else {
       return await this.UserRepository.findOne({
-        where: { user_email: user.user_email },
+        where: { userEmail: user.userEmail },
       });
     }
   }
   //
   //
   // Read Api Read Api Read Api Read Api Read Api Read Api Read Api Read Api Read Api Read Api Read Api  //
-  async findOne({ user_email }) {
-    return await this.UserRepository.findOne({ where: { user_email } }); // 마이페이지 읽어올때 사용할거임 조건 댓글같은거 보려면 조건 더 달아야함
+  async fewFind({ phone }) {
+    const userData = await this.UserRepository.findOne({
+      where: { userPhone: phone },
+    });
+    const fewData = {};
+    fewData['userEmail'] = userData.userEmail;
+    fewData['userCreateAt'] = userData.userCreateAt;
+
+    return fewData;
+  }
+
+  async findOne({ userEmail }) {
+    return await this.UserRepository.findOne({ where: { userEmail } }); // 마이페이지 읽어올때 사용할거임 조건 댓글같은거 보려면 조건 더 달아야함
   }
   //
   //
@@ -67,8 +81,8 @@ export class UserService {
   //
   //
   // Update Api Update Api  Update Api  Update Api  Update Api  Update Api  Update Api  Update Api  Update Api  //
-  async update({ user_email, updateUserInput }) {
-    const user = await this.UserRepository.findOne({ where: { user_email } });
+  async update({ userEmail, updateUserInput }) {
+    const user = await this.UserRepository.findOne({ where: { userEmail } });
     const updateData = {
       ...user,
       ...updateUserInput,
@@ -77,25 +91,25 @@ export class UserService {
   }
   //
   //
-  async ChangePW({ password, user_email }) {
+  async ChangePW({ password, userEmail }) {
     // 인증 절차가 조금 더 필요할 것 같음. 이메일 하나만 받으면 안댐 핸폰 인증 추가 예정
     const PWLoseUser = await this.UserRepository.findOne({
-      where: { user_email },
+      where: { userEmail },
     });
     if (PWLoseUser) {
       const NewPW = {
         ...PWLoseUser,
-        password: await bcrypt.hash(password, 10),
+        userPassword: await bcrypt.hash(password, 10),
       };
       return await this.UserRepository.save(NewPW);
     }
   }
   //
   //
-  async loginUpdate({ user_email, password }) {
+  async loginUpdate({ userEmail, userPassword }) {
     // 마이페이지에 연동될 예정이라 이것도 여러가지 바꿀 수 있게 해야함
-    const user = await this.UserRepository.findOne({ where: { user_email } });
-    user.password = await bcrypt.hash(password, 10);
+    const user = await this.UserRepository.findOne({ where: { userEmail } });
+    user.userPassword = await bcrypt.hash(userPassword, 10);
     const newUserData = {
       ...user,
     };
@@ -103,9 +117,9 @@ export class UserService {
   }
   //
   //
-  async SocialUpdate({ user_email, updateSocilaInput }) {
+  async SocialUpdate({ userEmail, updateSocilaInput }) {
     // 마이페이지에 연동될 예정이라 이것도 여러가지 바꿀 수 있게 해야함
-    const user = await this.UserRepository.findOne({ where: { user_email } });
+    const user = await this.UserRepository.findOne({ where: { userEmail } });
     const newUser = {
       ...user,
       ...updateSocilaInput,
@@ -119,14 +133,14 @@ export class UserService {
   //
   //
   // Delete Api Delete Api Delete Api Delete Api Delete Api Delete Api Delete Api Delete Api Delete Api Delete Api //
-  async delete({ user_email }) {
-    const result = await this.UserRepository.softDelete({ user_email }); // 이것도 바껴야함
+  async delete({ userEmail }) {
+    const result = await this.UserRepository.softDelete({ userEmail }); // 이것도 바껴야함
     return result.affected ? true : false;
   }
   //
   //
-  async restore({ user_email }) {
-    const result = await this.UserRepository.restore({ user_email }); // 다양한 조건으로 삭제 가능
+  async restore({ userEmail }) {
+    const result = await this.UserRepository.restore({ userEmail }); // 다양한 조건으로 삭제 가능
     return result.affected ? true : false;
   }
 }

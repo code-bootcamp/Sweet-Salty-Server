@@ -10,7 +10,9 @@ import { UserService } from './user.service';
 @Module({
   imports: [TypeOrmModule.forFeature([User])],
   providers: [
-    UserResolver, //
+    //
+
+    UserResolver,
     UserService,
     JwtAccessStrategy,
     JwtRefreshStrategy,

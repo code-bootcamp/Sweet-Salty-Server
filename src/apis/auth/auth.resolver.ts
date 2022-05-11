@@ -3,21 +3,20 @@ import {
   UnprocessableEntityException,
   UseGuards,
 } from '@nestjs/common';
-import { Args, Context, Mutation, Resolver } from '@nestjs/graphql';
+import { Args, Context, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { Cache } from 'cache-manager';
 import { CACHE_MANAGER, Inject } from '@nestjs/common';
 import { getConnection } from 'typeorm';
 import { AuthService } from './auth.service';
-import { User } from '../User/entities/user.entity';
-import {
-  GqlAuthAccessGuard,
-  GqlAuthRefreshGuard,
-} from 'src/commons/auth/gql-auth.guard';
+
+import { GqlAuthRefreshGuard } from 'src/commons/auth/gql-auth.guard';
 import { CurrentUser, ICurrentUser } from 'src/commons/auth/gql-user-param';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
 import * as jwt from 'jsonwebtoken';
+import { User } from '../user/entities/user.entity';
+import { Token } from './entities/auth.entity';
 
 @Resolver()
 export class AuthResolver {
@@ -28,17 +27,18 @@ export class AuthResolver {
     private readonly config: ConfigService,
     private readonly jwtService: JwtService,
   ) {}
-  @Mutation(() => String)
+
+  @Mutation(() => Token)
   async login(
-    @Args('user_email') user_email: string, //
-    @Args('password') password: string,
+    @Args('userEmail') userEmail: string, //
+    @Args('userPassword') userPassword: string,
     @Context() context: any,
   ) {
     const user = await getConnection()
       .createQueryBuilder()
       .select('user')
       .from(User, 'user')
-      .where({ user_email })
+      .where({ userEmail })
       .getOne();
 
     if (!user)
@@ -46,7 +46,7 @@ export class AuthResolver {
         '아이디 혹은 비밀번호가 다릅니다.',
       );
 
-    const isAuth = await bcrypt.compare(password, user.password);
+    const isAuth = await bcrypt.compare(userPassword, user.userPassword);
 
     if (!isAuth)
       throw new UnprocessableEntityException(
@@ -54,11 +54,13 @@ export class AuthResolver {
       );
 
     this.authService.setRefreshToken({ user, res: context.res });
-    return this.authService.getAccessToken({ user });
+    //return this.authService.getAccessToken({ user });
+
+    return await this.authService.getAccessToken({ user });
   }
   // 만료된 액세스 토큰 리프레시 토큰으로 재발급하기
   @UseGuards(GqlAuthRefreshGuard)
-  @Mutation(() => String)
+  @Mutation(() => Token)
   async restoreAccessToken(
     //
     @CurrentUser() currentUser: ICurrentUser,
@@ -98,5 +100,21 @@ export class AuthResolver {
     } catch {
       throw new UnauthorizedException();
     }
+  }
+
+  @Mutation(() => String)
+  async signInGetToken(
+    //
+    @Args('phone') phone: string,
+  ) {
+    return this.authService.sendTokenToPhone({ phone });
+  }
+
+  @Mutation(() => Boolean)
+  async signInCheckToken(
+    @Args('phone') phone: string,
+    @Args('token') token: string,
+  ) {
+    return this.authService.checkToken({ phone, token });
   }
 }

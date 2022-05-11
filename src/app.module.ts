@@ -4,17 +4,19 @@ import { GraphQLModule } from '@nestjs/graphql';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { RedisClientOptions } from 'redis';
 import { Connection } from 'typeorm';
-import { UserModule } from './apis/User/user.module';
+import { UserModule } from './apis/user/user.module';
 import * as redisStore from 'cache-manager-redis-store';
 import { AuthModule } from './apis/auth/auth.module';
 import { ConfigModule } from '@nestjs/config';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
+import { BoardModule } from './apis/board/board.module';
 
 @Module({
   imports: [
     AuthModule,
     UserModule,
+    BoardModule,
     ConfigModule.forRoot({
       isGlobal: true,
     }),
@@ -25,11 +27,11 @@ import { AppService } from './app.service';
     }),
     TypeOrmModule.forRoot({
       type: 'mysql',
-      host: 'my-database',
+      host: '10.16.96.3',
       port: 3306,
       username: 'root',
       password: 'root',
-      database: 'mainproject',
+      database: 'team_data',
       entities: [__dirname + '/apis/**/*.entity.*'],
       synchronize: true,
       logging: true,
@@ -38,7 +40,7 @@ import { AppService } from './app.service';
     }),
     CacheModule.register<RedisClientOptions>({
       store: redisStore,
-      url: 'redis://my-redis:6379',
+      url: 'redis://XkjocNA3@10.140.0.4:6379',
       isGlobal: true,
     }),
   ],
