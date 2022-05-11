@@ -11,12 +11,16 @@ import { ConfigModule } from '@nestjs/config';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { BoardModule } from './apis/board/board.module';
+import { IamportModule } from './apis/iamport/iamport.module';
+import { ImageUploadModule } from './apis/imageUpload/imageUpload.module';
 
 @Module({
   imports: [
     AuthModule,
     UserModule,
     BoardModule,
+    IamportModule,
+    ImageUploadModule,
     ConfigModule.forRoot({
       isGlobal: true,
     }),
@@ -24,6 +28,10 @@ import { BoardModule } from './apis/board/board.module';
       driver: ApolloDriver,
       autoSchemaFile: 'src/commons/graphql/schema.gql',
       context: ({ req, res }) => ({ req, res }),
+      cors: {
+        Credential: true,
+        origin: ['http://localhost:3000'],
+      },
     }),
     TypeOrmModule.forRoot({
       type: 'mysql',

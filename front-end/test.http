@@ -1,0 +1,25 @@
+POST https://api.iamport.kr/users/getToken
+Content-Type: application/json
+
+{
+   "imp_key": "6404604046350897",
+   "imp_secret": "HOcGDueyE77diZ1ZTEq2cJ4qs8Jnolf5asMNW1mA8uOquPqnuQqHzv81DRp2dF8n7Ub3WyE42tvxiVUN"
+}
+
+###
+
+POST https://project08.site/graphql
+Content-Type: application/json
+X-REQUEST-TYPE: GraphQL
+
+  mutation login($userEmail: String!, $userPassword: String!) {
+    login(userEmail: $userEmail, userPassword: $userPassword) {
+      accessToken
+    }
+  }
+
+  {
+      "userEmail" : "yukina1418@gmail.com",
+      "userPassword" : "1414"
+  }
+

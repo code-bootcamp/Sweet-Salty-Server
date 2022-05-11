@@ -21,10 +21,6 @@ export class Board {
   @Field(() => String)
   boardTitle: string;
 
-  @Column()
-  @Field(() => String)
-  boardContents: string;
-
   @Column({ nullable: true })
   @Field(() => String)
   boardSugar: string;
@@ -32,6 +28,14 @@ export class Board {
   @Column({ nullable: true })
   @Field(() => String)
   boardSalt: string;
+
+  @Column()
+  @Field(() => String)
+  boardContents: string;
+
+  @Column()
+  @Field(() => String)
+  boardTags: string;
 
   @Column({ nullable: true })
   @Field(() => String)
