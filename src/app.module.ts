@@ -13,14 +13,18 @@ import { AppService } from './app.service';
 import { BoardModule } from './apis/board/board.module';
 import { IamportModule } from './apis/iamport/iamport.module';
 import { ImageUploadModule } from './apis/imageUpload/imageUpload.module';
+import { CommentModule } from './apis/comment/comment.module';
+import { CommentLikeModule } from './apis/commentLike/commentLike.module';
 
 @Module({
   imports: [
     AuthModule,
-    UserModule,
     BoardModule,
     IamportModule,
     ImageUploadModule,
+    UserModule,
+    CommentModule,
+    CommentLikeModule,
     ConfigModule.forRoot({
       isGlobal: true,
     }),
@@ -35,17 +39,23 @@ import { ImageUploadModule } from './apis/imageUpload/imageUpload.module';
     }),
     TypeOrmModule.forRoot({
       type: 'mysql',
-      host: '10.16.96.3',
+      host: 'my-database',
       port: 3306,
       username: 'root',
       password: 'root',
-      database: 'team_data',
+      database: 'mainproject',
       entities: [__dirname + '/apis/**/*.entity.*'],
       synchronize: true,
       logging: true,
       retryAttempts: 30,
       retryDelay: 5000,
     }),
+    CacheModule.register<RedisClientOptions>({
+      store: redisStore,
+      url: 'redis://my-redis:6379',
+      isGlobal: true,
+    }),
+
     CacheModule.register<RedisClientOptions>({
       store: redisStore,
       url: 'redis://XkjocNA3@10.140.0.4:6379',
