@@ -33,8 +33,9 @@ export class JwtAccessStrategy extends PassportStrategy(Strategy, 'access') {
 
     const user = await this.userRepository
       .createQueryBuilder()
-      .where({ user_email: payload.user_email })
+      .where({ userEmail: payload.userEmail })
       .getOne();
+    console.log(user);
 
     return {
       userEmail: payload.userEmail,
