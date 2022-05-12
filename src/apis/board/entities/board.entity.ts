@@ -43,7 +43,7 @@ export class Board {
 
   @Column({ default: 0 })
   @Field(() => Int)
-  boardHit: number;
+  boardLikeCount: number;
 
   @CreateDateColumn()
   @Field(() => Date)
