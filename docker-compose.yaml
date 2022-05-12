@@ -15,7 +15,7 @@ services:
     platform: linux/x86_64
     image: mysql:latest
     environment:
-      MYSQL_DATABASE: 'mainproject'
+      MYSQL_DATABASE: 'team_project'
       MYSQL_ROOT_PASSWORD: 'root'
     ports:
       - 3306:3306
@@ -25,19 +25,19 @@ services:
     ports:
       - 6379:6379
 
-  # elasticsearch:
-  #   image: elasticsearch:7.17.0
-  #   environment:
-  #     discovery.type: single-node
-  #   ports:
-  #     - 9200:9200
+  elasticsearch:
+    image: elasticsearch:7.17.0
+    environment:
+      discovery.type: single-node
+    ports:
+      - 9200:9200
 
-  # logstash:
-  #   image: logstash:7.17.0
-  #   volumes:
-  #     - ./elk/logstash/logstash.conf:/usr/share/logstash/pipeline/logstash.conf
-  #     - ./elk/logstash/mysql-connector-java-8.0.28.jar:/usr/share/logstash/mysql-connector-java-8.0.28.jar
-  #     - ./elk/logstash/post_template.json:/usr/share/logstash/post_template.json
+  logstash:
+    image: logstash:7.17.0
+    volumes:
+      - ./elk/logstash/logstash.conf:/usr/share/logstash/pipeline/logstash.conf
+      - ./elk/logstash/mysql-connector-java-8.0.28.jar:/usr/share/logstash/mysql-connector-java-8.0.28.jar
+    #   - ./elk/logstash/borad_template.json:/usr/share/logstash/board_template.json
 
   # kibana:
   #   image: kibana:7.17.0

@@ -58,7 +58,7 @@ export class UserService {
     });
     const fewData = {};
     fewData['userEmail'] = userData.userEmail;
-    fewData['userCreateAt'] = userData.userCreateAt;
+    fewData['createAt'] = userData.createAt;
 
     return fewData;
   }
@@ -77,6 +77,13 @@ export class UserService {
     return await this.UserRepository.find({});
   }
   //
+  async findLoggedIn({ currentUser }) {
+    return await this.UserRepository.findOne({
+      where: {
+        userId: currentUser.userId,
+      },
+    });
+  }
   //
   async finDeleteAll() {
     return await this.UserRepository.find({ withDeleted: true });

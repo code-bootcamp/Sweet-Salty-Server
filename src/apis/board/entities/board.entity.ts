@@ -1,10 +1,13 @@
 import { Field, Int, ObjectType } from '@nestjs/graphql';
+import { BoardTag } from 'src/apis/boardTag/entities/boardTag.entity';
 import { User } from 'src/apis/user/entities/user.entity';
 
 import {
   Column,
   CreateDateColumn,
   Entity,
+  JoinTable,
+  ManyToMany,
   ManyToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
@@ -33,10 +36,6 @@ export class Board {
   @Field(() => String)
   boardContents: string;
 
-  @Column()
-  @Field(() => String)
-  boardTags: string;
-
   @Column({ nullable: true })
   @Field(() => String)
   boardWriter: string;
@@ -47,12 +46,17 @@ export class Board {
 
   @CreateDateColumn()
   @Field(() => Date)
-  CreateAt: Date;
+  createAt: Date;
 
   @UpdateDateColumn()
   @Field(() => Date)
-  UpdateAt: Date;
+  updateAt: Date;
 
   @ManyToOne(() => User)
   user: User;
+
+  @JoinTable()
+  @ManyToMany(() => BoardTag, (boardTags) => boardTags.boards)
+  @Field(() => [BoardTag])
+  boardTags: BoardTag[];
 }
