@@ -5,6 +5,7 @@ import { ImageUpload } from './entities/imageUpload.entity';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { ConfigService } from '@nestjs/config';
+import { v4 as uuidv4 } from 'uuid';
 
 interface IFile {
   files: FileUpload[];
@@ -28,12 +29,16 @@ export class ImageUploadService {
 
     const results = await Promise.all(
       waitedFiles.map((el) => {
+        const uuid = uuidv4();
+        const extension = el.filename.substring(el.filename.lastIndexOf('.'));
+        console.log(uuid);
+        console.log(extension);
         return new Promise((resolve, reject) => {
           el.createReadStream()
-            .pipe(storage.file(el.filename).createWriteStream())
+            .pipe(storage.file(uuid + extension).createWriteStream())
             .on('finish', () =>
               resolve(
-                `https://storage.googleapis.com/${process.env.STORAGE_BUCKET}/${el.filename}`,
+                `https://storage.googleapis.com/${process.env.STORAGE_BUCKET}/${uuid}${extension}`,
               ),
             )
             .on('error', () => reject());

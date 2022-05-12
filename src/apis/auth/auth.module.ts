@@ -7,9 +7,11 @@ import { JwtModule } from '@nestjs/jwt';
 import { JwtRefreshStrategy } from 'src/commons/auth/jwt-refresh.strategy';
 
 import { User } from '../user/entities/user.entity';
-import { ConfigService } from '@nestjs/config';
 import { JwtAccessStrategy } from 'src/commons/auth/jwt-access.strategy';
 import { HttpModule } from '@nestjs/axios';
+import { JwtGoogleStrategy } from 'src/commons/auth/jwt-social-google.strategy';
+import { AuthController } from './auth.controller';
+import { UserService } from '../user/user.service';
 
 @Module({
   imports: [
@@ -21,7 +23,7 @@ import { HttpModule } from '@nestjs/axios';
       maxRedirects: 5,
     }),
   ],
-  controllers: [],
+  controllers: [AuthController],
   providers: [
     //
 
@@ -29,6 +31,8 @@ import { HttpModule } from '@nestjs/axios';
     JwtAccessStrategy,
     AuthResolver,
     AuthService,
+    JwtGoogleStrategy,
+    UserService,
   ],
 })
 export class AuthModule {}

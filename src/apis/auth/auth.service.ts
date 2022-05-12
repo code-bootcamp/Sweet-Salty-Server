@@ -47,9 +47,7 @@ export class AuthService {
 
   social_login({ user, res }) {
     this.setRefreshToken({ user, res });
-    res.redirect(
-      'http://localhost:5500/main-project/frontend/login/index.html',
-    );
+    res.redirect('https://www.naver.com');
   }
 
   async sendTokenToPhone({ phone }) {
