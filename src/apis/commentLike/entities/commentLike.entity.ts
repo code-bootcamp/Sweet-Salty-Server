@@ -11,10 +11,6 @@ export class CommentLike {
   @Field(() => String)
   commentLikeCountId: string;
 
-  @Column({ default: 0 })
-  @Field(() => Int)
-  commentLikeCount: number;
-
   @ManyToOne(() => Board)
   board: Board;
 

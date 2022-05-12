@@ -23,6 +23,10 @@ export class Comment {
   @Field(() => String)
   commentContents: string;
 
+  @Column({ default: 0 })
+  @Field(() => Int)
+  commentLikeCount: number;
+
   @CreateDateColumn()
   createAt: Date;
 
