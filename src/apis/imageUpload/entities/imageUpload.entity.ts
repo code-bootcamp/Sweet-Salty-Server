@@ -1,8 +1,10 @@
 import { Field, ObjectType } from '@nestjs/graphql';
+import { Board } from 'src/apis/board/entities/board.entity';
 import {
   Column,
   CreateDateColumn,
   Entity,
+  ManyToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 
@@ -15,16 +17,12 @@ export class ImageUpload {
 
   @Column()
   @Field(() => String)
-  bucketName: string;
-
-  @Column()
-  @Field(() => String)
   url: string;
 
   @CreateDateColumn()
   @Field(() => Date)
   createAt: Date;
 
-  // @ManyToOne(() => Post)
-  // post: Post;
+  @ManyToOne(() => Board)
+  board: Board;
 }

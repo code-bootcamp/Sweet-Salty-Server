@@ -55,12 +55,6 @@ import { CommentLikeModule } from './apis/commentLike/commentLike.module';
       url: 'redis://my-redis:6379',
       isGlobal: true,
     }),
-
-    CacheModule.register<RedisClientOptions>({
-      store: redisStore,
-      url: 'redis://XkjocNA3@10.140.0.4:6379',
-      isGlobal: true,
-    }),
   ],
   controllers: [AppController],
   providers: [AppService],
