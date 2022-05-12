@@ -46,9 +46,7 @@ export class UserService {
       });
       return result;
     } else {
-      return await this.UserRepository.findOne({
-        where: { userEmail: user.userEmail },
-      });
+      throw new ConflictException('동일한 이메일로 생성된 계정이 존재합니다.');
     }
   }
   //
@@ -69,6 +67,11 @@ export class UserService {
     return await this.UserRepository.findOne({ where: { userEmail } }); // 마이페이지 읽어올때 사용할거임 조건 댓글같은거 보려면 조건 더 달아야함
   }
   //
+  async findCheck({ userEmail, userSignUpSite }) {
+    return await this.UserRepository.findOne({
+      where: { userEmail, userSignUpSite },
+    });
+  }
   //
   async findAll() {
     return await this.UserRepository.find({});

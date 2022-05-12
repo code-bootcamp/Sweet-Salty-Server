@@ -55,6 +55,10 @@ export class User {
   @Field(() => Int)
   userPoint: number;
 
+  @Column({ default: '단짠맛집' })
+  @Field(() => String)
+  userSignUpSite: string;
+
   @CreateDateColumn()
   @Field(() => Date)
   userCreateAt: Date;
