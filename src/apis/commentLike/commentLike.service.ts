@@ -1,8 +1,8 @@
-import { Injectable } from '@nestjs/common';
+import { ConflictException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { getConnection, Repository } from 'typeorm';
-import { User } from '../user/entities/user.entity';
 import { CommentLike } from './entities/commentLike.entity';
+import { Comment } from '../comment/entities/comment.entity';
 
 @Injectable()
 export class commentLikeService {
@@ -22,21 +22,22 @@ export class commentLikeService {
         board: boardId,
       })
       .getOne();
-    if (!check) {
-      await this.commentLikeRepository.save({
-        user: currentUser.userId, //
-        comment: commentId,
-        board: boardId,
-      });
 
-      await getConnection()
-        .createQueryBuilder()
-        .update(CommentLike)
-        .set({ commentLikeCount: () => `commentLikeCount+1` })
-        .where({ comment: commentId })
-        .execute();
-    }
+    if (check) throw new ConflictException('이미 좋아요를 누르셨습니다.');
 
-    return '이미 좋아요를 누르셨습니다.';
+    await this.commentLikeRepository.save({
+      user: currentUser.userId, //
+      comment: commentId,
+      board: boardId,
+    });
+
+    await getConnection()
+      .createQueryBuilder()
+      .update(Comment)
+      .set({ commentLikeCount: () => `commentLikeCount+1` })
+      .where({ commentId })
+      .execute();
+
+    return '좋아요';
   }
 }
