@@ -1,0 +1,62 @@
+{
+  "template": "board-*",
+  "index_patterns": ["*"],
+  "order": "1",
+  "settings": {
+    "refresh_interval": "5s",
+
+    "analysis": {
+      "analyzer": {
+        "my_ngram_analyzer": {
+          "filter": ["my_stopwords"],
+          "tokenizer": "my_ngram_tokenizer"
+        }
+      },
+      "filter": {
+        "my_stopwords": {
+          "type": "stop",
+          "stopwords": ["은", "는", "이", "가"]
+        }
+      },
+      "tokenizer": {
+        "my_ngram_tokenizer": {
+          "type": "nGram",
+          "min_gram": "1",
+          "max_gram": "10"
+        }
+      }
+    },
+    "max_ngram_diff": "20"
+  },
+  "mappings": {
+    "properties": {
+      "title": {
+        "type": "text",
+        "tokenizer": "standard",
+        "filter": ["my_stopwords"],
+        "fields": {
+          "keyword": { "type": "keyword" }
+        }
+      },
+      "contents": {
+        "type": "text",
+        "analyzer": "my_ngram_analyzer",
+        "fields": {
+          "keyword": { "type": "keyword" }
+        }
+      },
+      "writer": {
+        "type": "text",
+        "analyzer": "my_ngram_analyzer",
+        "fields": {
+          "keyword": { "type": "keyword" }
+        }
+      },
+      "tag": { "type": "text" },
+      "name": { "type": "text" },
+      "hit": { "type": "long" },
+      "like_count": { "type": "short" },
+      "post_id": { "type": "keyword" }
+    }
+  }
+}

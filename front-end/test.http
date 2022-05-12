@@ -23,3 +23,19 @@ X-REQUEST-TYPE: GraphQL
       "userPassword" : "1414"
   }
 
+###
+
+POST http://localhost:3000/graphql
+Content-Type: application/json
+X-REQUEST-TYPE: GraphQL
+
+  mutation login($userEmail: String!, $userPassword: String!) {
+    login(userEmail: $userEmail, userPassword: $userPassword) {
+      accessToken
+    }
+  }
+
+  {
+      "userEmail" : "yukina1418@gmail.com",
+      "userPassword" : "1414"
+  }

@@ -47,10 +47,21 @@ export class AuthController {
     @Req() req: Request & IOAuthUser, //
     @Res() res: Response,
   ) {
-    // 계정이 이미 생성된 상태인지 확인
-    const social_user = await this.userService.socialCreate({ user: req.user });
-    // 로그인
-    this.authService.social_login({ user: social_user, res });
+    const user = await this.userService.findCheck({
+      userEmail: req.user.userEmail,
+      userSignUpSite: req.user.userSignUpSite,
+    });
+
+    if (user) {
+      this.authService.social_login({ user, res });
+    } else {
+      const newUser = await this.userService.socialCreate({ user: req.user });
+      this.authService.social_login({ user: newUser, res });
+    }
+    // // 계정이 이미 생성된 상태인지 확인
+    // const social_user = await this.userService.socialCreate({ user: req.user });
+    // // 로그인
+    // this.authService.social_login({ user: social_user, res });
   }
 
   @Get('/login/naver')

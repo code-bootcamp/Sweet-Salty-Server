@@ -45,7 +45,7 @@ import { PointTransactionModule } from './apis/pointTransaction/pointTransaction
       port: 3306,
       username: 'root',
       password: 'root',
-      database: 'mainproject',
+      database: 'team_project',
       entities: [__dirname + '/apis/**/*.entity.*'],
       synchronize: true,
       logging: true,

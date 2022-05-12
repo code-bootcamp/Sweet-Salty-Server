@@ -56,17 +56,16 @@ export class User {
   userPoint: number;
 
   @Column({ default: '단짠맛집' })
-  @Field(() => String)
   userSignUpSite: string;
 
   @CreateDateColumn()
   @Field(() => Date)
-  userCreateAt: Date;
+  createAt: Date;
 
   @UpdateDateColumn()
   @Field(() => Date)
-  userUpdateAt: Date;
+  updateAt: Date;
 
   @DeleteDateColumn()
-  userDeleteAt: Date;
+  deleteAt: Date;
 }

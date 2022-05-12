@@ -13,7 +13,4 @@ export class CreateBoardInput {
 
   @Field(() => String)
   boardContents: string;
-
-  @Field(() => String)
-  boardTags: string;
 }
