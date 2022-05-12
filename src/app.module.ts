@@ -15,11 +15,13 @@ import { IamportModule } from './apis/iamport/iamport.module';
 import { ImageUploadModule } from './apis/imageUpload/imageUpload.module';
 import { CommentModule } from './apis/comment/comment.module';
 import { CommentLikeModule } from './apis/commentLike/commentLike.module';
+import { BoardLikeModule } from './apis/boardLike/boardLike.module';
 
 @Module({
   imports: [
     AuthModule,
     BoardModule,
+    BoardLikeModule,
     IamportModule,
     ImageUploadModule,
     UserModule,
