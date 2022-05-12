@@ -12,6 +12,7 @@ import { HttpModule } from '@nestjs/axios';
 import { JwtGoogleStrategy } from 'src/commons/auth/jwt-social-google.strategy';
 import { AuthController } from './auth.controller';
 import { UserService } from '../user/user.service';
+import { JwtKakaoStrategy } from 'src/commons/auth/jwt-social-kakao.strategy';
 
 @Module({
   imports: [
@@ -32,6 +33,7 @@ import { UserService } from '../user/user.service';
     AuthResolver,
     AuthService,
     JwtGoogleStrategy,
+    JwtKakaoStrategy,
     UserService,
   ],
 })

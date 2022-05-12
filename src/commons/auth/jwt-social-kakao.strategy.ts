@@ -1,18 +1,13 @@
 import { Injectable } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
 import { Strategy, Profile } from 'passport-kakao';
-import * as dotenv from 'dotenv';
-dotenv.config();
-//
-//
-const CLIENTID = process.env.KAKAO_CLIENTID;
-const CLIENTSECRET = process.env.KAKAO_CLIENTSECRET;
+
 @Injectable()
 export class JwtKakaoStrategy extends PassportStrategy(Strategy, 'kakao') {
   constructor() {
     super({
-      clientID: CLIENTID,
-      clientSecret: CLIENTSECRET,
+      clientID: 'b1bd10c832ab66f90ff918ac10306969',
+      clientSecret: '1OT08WRuVJm6T8nGqraLU9GxxkKlhH4y',
       callbackURL: 'http://localhost:3000/login/kakao',
     });
   }
@@ -24,9 +19,9 @@ export class JwtKakaoStrategy extends PassportStrategy(Strategy, 'kakao') {
   ) {
     console.log(profile);
     return {
-      user_email: profile._json.kakao_account.email,
-      user_nickname: profile.username,
-      social_site: profile.provider,
+      userEmail: profile._json.kakao_account.email,
+      userNickname: profile.username,
+      userSignUpSite: profile.provider,
     };
   }
 }

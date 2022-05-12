@@ -32,14 +32,13 @@ export class AuthService {
 
     return obj;
   }
-  setRefreshToken({ user, res }) {
+  async setRefreshToken({ user, res }) {
     const refreshToken = this.jwtService.sign(
       { userEmail: user.userEmail },
       { secret: this.config.get('REFRESH'), expiresIn: '2w' },
     );
-    console.log(refreshToken);
 
-    res.setHeader(
+    await res.setHeader(
       'Set-Cookie',
       `refreshToken=${refreshToken}; path=/; domain=project08.site; Secure; httpOnly; SameSite=None;`,
     );
@@ -47,7 +46,7 @@ export class AuthService {
 
   social_login({ user, res }) {
     this.setRefreshToken({ user, res });
-    res.redirect('https://www.naver.com');
+    res.redirect('http://127.0.0.1:5500/front-end/login/index.html');
   }
 
   async sendTokenToPhone({ phone }) {

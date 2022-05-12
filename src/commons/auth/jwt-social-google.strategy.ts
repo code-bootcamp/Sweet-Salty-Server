@@ -11,20 +11,21 @@ export class JwtGoogleStrategy extends PassportStrategy(Strategy, 'google') {
       clientID: process.env.GOOGLE_CLIENT_ID,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET,
       callbackURL: 'http://localhost:3000/login/google',
-      scope: ['email', 'profile'],
+      scope: ['email', 'profile', 'phone'],
     });
   }
 
   async validate(
-    accessToken: string, //
+    //
+
+    accessToken: string,
     refreshToken: string,
     profile: Profile,
   ) {
-    console.log(profile);
     return {
       userEmail: profile.emails[0].value,
-      // user_nickname: profile.name.familyName + profile.name.givenName,
-      // social_site: profile.provider,
+      userNickname: profile.name.familyName + profile.name.givenName,
+      userSignUpSite: profile.provider,
     };
   }
 }
