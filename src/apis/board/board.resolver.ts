@@ -33,8 +33,13 @@ export class BoardResolver {
   }
 
   @Mutation(() => Board)
-  createBoard(@Args('createBoardInput') createBoardInput: CreateBoardInput) {
-    return this.boardService.create({ createBoardInput }); // 받아온 name 넘기기 service로
+  createBoard(
+    //
+
+    @Args('createBoardInput') createBoardInput: CreateBoardInput,
+    @Args('createBoardTagsInput') createBoardTagsInput: CreateBoardTagsInput,
+  ) {
+    return this.boardService.create({ createBoardInput, createBoardTagsInput }); // 받아온 name 넘기기 service로
   }
 
   @UseGuards(GqlAuthAccessGuard)

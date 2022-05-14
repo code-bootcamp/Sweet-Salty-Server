@@ -1,6 +1,7 @@
 import { Field, ObjectType } from '@nestjs/graphql';
 import { Board } from 'src/apis/board/entities/board.entity';
-import { Column, Entity, ManyToMany, PrimaryGeneratedColumn } from 'typeorm';
+import { BoardSide } from 'src/apis/boardSide/entities/boardSide.entity';
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 
 @ObjectType()
 @Entity()
@@ -9,19 +10,18 @@ export class BoardTag {
   @Field(() => String)
   boardTagId: string;
 
-  @Column({ default: '없음' })
+  @Column({ select: true, nullable: true })
   @Field(() => String, { nullable: true })
   boardTagMenu: string;
 
-  @Column({ default: '없음' })
+  @Column({ select: true, nullable: true })
   @Field(() => String, { nullable: true })
   boardTagRegion: string;
 
-  @Column({ default: '없음' })
+  @Column({ select: true, nullable: true })
   @Field(() => String, { nullable: true })
   boardTagTogether: string;
 
-  @ManyToMany(() => Board, (boards) => boards.boardTags)
-  @Field(() => [Board])
-  boards: Board[];
+  @OneToMany((type) => BoardSide, (BoardSide) => BoardSide.boardTags)
+  boardSides: BoardSide[];
 }

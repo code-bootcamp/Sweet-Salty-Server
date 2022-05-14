@@ -1,5 +1,9 @@
 import { ObjectType, Field, Int } from '@nestjs/graphql';
 import {
+  BOARD_AGE_GROUP_ENUM,
+  BOARD_GENDER_ENUM,
+} from 'src/apis/board/entities/board.entity';
+import {
   Column,
   CreateDateColumn,
   DeleteDateColumn,
@@ -25,7 +29,7 @@ export class User {
   userId: string;
 
   @Column({ default: 0 })
-  @Field(() => Boolean)
+  // @Field(() => Boolean)
   userState: boolean;
 
   @Column({ unique: true })
@@ -39,7 +43,7 @@ export class User {
   @Field(() => String)
   userName: string;
 
-  @Column({ nullable: true })
+  @Column({ nullable: true, unique: true })
   @Field(() => String)
   userNickname: string;
 
@@ -54,6 +58,14 @@ export class User {
   @Column({ default: 0 })
   @Field(() => Int)
   userPoint: number;
+
+  @Column({ type: 'enum', enum: BOARD_AGE_GROUP_ENUM })
+  @Field(() => BOARD_AGE_GROUP_ENUM)
+  ageGroup: string;
+
+  @Column({ type: 'enum', enum: BOARD_GENDER_ENUM })
+  @Field(() => BOARD_GENDER_ENUM)
+  gender: string;
 
   @Column({ default: '단짠맛집' })
   userSignUpSite: string;
