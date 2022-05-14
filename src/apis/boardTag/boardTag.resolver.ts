@@ -14,6 +14,7 @@ export class BoardTagResolver {
   async createTag(
     @Args('createBoardTagsInput') createBoardTagsInput: CreateBoardTagsInput,
   ) {
+    console.log(33);
     return this.boardTagService.create({ createBoardTagsInput });
   }
 }
