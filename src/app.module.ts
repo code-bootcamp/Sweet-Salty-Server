@@ -16,10 +16,10 @@ import { CommentModule } from './apis/comment/comment.module';
 import { CommentLikeModule } from './apis/commentLike/commentLike.module';
 import { BoardLikeModule } from './apis/boardLike/boardLike.module';
 import { PointTransactionModule } from './apis/pointTransaction/pointTransaction.module';
+import { ChatGateway } from './chat.gateway';
 
 @Module({
   imports: [
-    AuthModule,
     BoardModule,
     BoardLikeModule,
     ImageUploadModule,
@@ -59,7 +59,7 @@ import { PointTransactionModule } from './apis/pointTransaction/pointTransaction
     }),
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [AppService, ChatGateway],
 })
 export class AppModule {
   constructor(private readonly connection: Connection) {}

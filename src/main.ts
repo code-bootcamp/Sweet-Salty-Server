@@ -11,7 +11,6 @@ import { rateLimit } from 'express-rate-limit';
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
   app.useStaticAssets(join(__dirname, '..', 'static'));
-
   // 파일 업로드 라이브러리
   app.use(graphqlUploadExpress());
 
@@ -47,6 +46,6 @@ async function bootstrap() {
     credentials: true,
   });
 
-  await app.listen(3000);
+  await app.listen(3002);
 }
 bootstrap();
