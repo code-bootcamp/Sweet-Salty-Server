@@ -1,8 +1,9 @@
 import { ConflictException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { getConnection, Repository } from 'typeorm';
 import * as bcrypt from 'bcrypt';
 import { User } from './entities/user.entity';
+import { Message } from '../message/entitis/message.entity';
 
 @Injectable()
 export class UserService {
@@ -26,6 +27,17 @@ export class UserService {
     const result = await this.UserRepository.save({
       ...createUserInput,
     });
+
+    // await getConnection()
+    //   .createQueryBuilder()
+    //   .insert()
+    //   .into(Message)
+    //   .values([
+    //     {
+    //       user: result.userId,
+    //     },
+    //   ])
+    //   .execute();
 
     return result;
   }

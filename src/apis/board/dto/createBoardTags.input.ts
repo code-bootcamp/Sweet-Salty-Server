@@ -2,12 +2,14 @@ import { Field, InputType } from '@nestjs/graphql';
 
 @InputType()
 export class CreateBoardTagsInput {
-  @Field(() => [String], { nullable: 'itemsAndList' })
+  @Field(() => [String])
   boardTagMenu: string[];
 
-  @Field(() => [String], { nullable: 'itemsAndList' })
+  @Field(() => [String])
   boardTagRegion: string[];
 
-  @Field(() => [String], { nullable: 'itemsAndList' })
+  @Field(() => [String])
   boardTagTogether: string[];
 }
+
+//{ nullable: 'itemsAndList' }

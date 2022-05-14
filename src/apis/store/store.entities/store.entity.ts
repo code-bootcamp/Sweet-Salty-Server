@@ -1,9 +1,10 @@
 import { Field, ObjectType } from '@nestjs/graphql';
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { Board } from 'src/apis/board/entities/board.entity';
+import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 
 @ObjectType()
 @Entity()
-export class store {
+export class Store {
   @PrimaryGeneratedColumn('uuid')
   @Field(() => String)
   storeId: string;
@@ -19,4 +20,7 @@ export class store {
   @Column()
   @Field(() => String)
   storeAddressInfo: string;
+
+  @ManyToOne((type) => Board, (Board) => Board.stores)
+  boards: Board[];
 }

@@ -17,6 +17,6 @@ export class CreateUserInput {
   @Field(() => String)
   userNickname: string;
 
-  @Field(() => String)
+  @Field(() => String, { nullable: true })
   userAddress: string;
 }

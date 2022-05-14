@@ -16,14 +16,18 @@ import { CommentModule } from './apis/comment/comment.module';
 import { CommentLikeModule } from './apis/commentLike/commentLike.module';
 import { BoardLikeModule } from './apis/boardLike/boardLike.module';
 import { PointTransactionModule } from './apis/pointTransaction/pointTransaction.module';
+import { BoardTagModule } from './apis/boardTag/boardTag.module';
+import { MessageModule } from './apis/message/message.module';
 
 @Module({
   imports: [
     AuthModule,
     BoardModule,
     BoardLikeModule,
+    BoardTagModule,
     ImageUploadModule,
     UserModule,
+    MessageModule,
     CommentModule,
     CommentLikeModule,
     PointTransactionModule,
