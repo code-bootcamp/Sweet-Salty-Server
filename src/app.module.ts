@@ -18,10 +18,11 @@ import { BoardLikeModule } from './apis/boardLike/boardLike.module';
 import { PointTransactionModule } from './apis/pointTransaction/pointTransaction.module';
 import { BoardTagModule } from './apis/boardTag/boardTag.module';
 import { MessageModule } from './apis/message/message.module';
+import { ChatGateway } from './chat.gateway';
+
 
 @Module({
   imports: [
-    AuthModule,
     BoardModule,
     BoardLikeModule,
     BoardTagModule,
@@ -63,7 +64,7 @@ import { MessageModule } from './apis/message/message.module';
     }),
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [AppService, ChatGateway],
 })
 export class AppModule {
   constructor(private readonly connection: Connection) {}
