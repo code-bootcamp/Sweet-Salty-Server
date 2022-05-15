@@ -1,5 +1,6 @@
 import { Field, Int, ObjectType, registerEnumType } from '@nestjs/graphql';
 import { BoardSide } from 'src/apis/boardSide/entities/boardSide.entity';
+import { BoardTag } from 'src/apis/boardTag/entities/boardTag.entity';
 import { Store } from 'src/apis/store/store.entities/store.entity';
 import { User } from 'src/apis/user/entities/user.entity';
 
@@ -7,6 +8,7 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  JoinColumn,
   ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
@@ -94,12 +96,11 @@ export class Board {
   user: User;
 
   @OneToMany((type) => Store, (Store) => Store.boards)
-  @Field(() => [Store])
-  stores: Store[];
+  @Field(() => Store)
+  stores: Store;
 
-  @OneToMany((type) => BoardSide, (BoardSide) => BoardSide.boards, {
-    eager: true,
-  })
+  @OneToMany((type) => BoardSide, (BoardSide) => BoardSide.boards)
+  @JoinColumn({ name: 'boardSideId', referencedColumnName: 'boardSideId' })
   @Field(() => [BoardSide])
   boardSides: BoardSide[];
 }

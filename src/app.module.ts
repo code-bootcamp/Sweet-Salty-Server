@@ -17,12 +17,15 @@ import { CommentLikeModule } from './apis/commentLike/commentLike.module';
 import { BoardLikeModule } from './apis/boardLike/boardLike.module';
 import { PointTransactionModule } from './apis/pointTransaction/pointTransaction.module';
 import { BoardTagModule } from './apis/boardTag/boardTag.module';
-import { MessageModule } from './apis/message/message.module';
-import { ChatGateway } from './chat.gateway';
 
+import { ChatGateway } from './chat.gateway';
+import { MessageModule } from './apis/message/message.module';
+import { AdminModule } from './apis/admin/admin.module';
 
 @Module({
   imports: [
+    AdminModule,
+    AuthModule,
     BoardModule,
     BoardLikeModule,
     BoardTagModule,
@@ -97,7 +100,7 @@ export class AppModule {
 //   port: 3306,
 //   username: 'root',
 //   password: 'root',
-//   database: 'mainproject',
+//   database: 'team_project',
 //   entities: [__dirname + '/apis/**/*.entity.*'],
 //   synchronize: true,
 //   logging: true,

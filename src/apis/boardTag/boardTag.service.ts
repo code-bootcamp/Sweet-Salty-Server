@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { of } from 'rxjs';
-import { Repository } from 'typeorm';
+import { getConnection, Repository } from 'typeorm';
 import { BoardTag } from './entities/boardTag.entity';
 
 @Injectable()
@@ -12,44 +11,48 @@ export class BoardTagService {
   ) {}
 
   async create({ createBoardTagsInput }) {
-    const { boardTagMenu, boardTagRegion, boardTagTogether } =
-      createBoardTagsInput;
+    const { boardTagMenu, boardTagRegion, boardTagMood } = createBoardTagsInput;
 
     await Promise.all([
-      boardTagMenu.map(async (el: string) => {
+      boardTagMenu.map(async (el) => {
         const menu = el.substring(1);
-        const checkMenu = await this.boardTagRepository.findOne({
-          boardTagMenu: menu,
-        });
-        if (!checkMenu) {
-          await this.boardTagRepository.save({
-            boardTagMenu: menu,
-          });
-        }
-      }),
 
-      boardTagRegion.map(async (el: string) => {
+        await getConnection()
+          .createQueryBuilder()
+          .insert()
+          .into(BoardTag)
+          .values({
+            boardTagName: menu,
+            boardTagRefCode: 'MENU',
+          })
+          .execute();
+      }),
+      boardTagRegion.map(async (el) => {
         const region = el.substring(1);
-        const checkRegion = await this.boardTagRepository.findOne({
-          boardTagRegion: region,
-        });
-        if (!checkRegion) {
-          await this.boardTagRepository.save({
-            boardTagRegion: region,
-          });
-        }
+
+        await getConnection()
+          .createQueryBuilder()
+          .insert()
+          .into(BoardTag)
+          .values({
+            boardTagName: region,
+            boardTagRefCode: 'REGION',
+          })
+          .execute();
       }),
 
-      boardTagTogether.map(async (el: string) => {
-        const together = el.substring(1);
-        const checkTogether = await this.boardTagRepository.findOne({
-          boardTagTogether: together,
-        });
-        if (!checkTogether) {
-          await this.boardTagRepository.save({
-            boardTagTogether: together,
-          });
-        }
+      boardTagMood.map(async (el) => {
+        const mood = el.substring(1);
+
+        await getConnection()
+          .createQueryBuilder()
+          .insert()
+          .into(BoardTag)
+          .values({
+            boardTagName: mood,
+            boardTagRefCode: 'MOOD',
+          })
+          .execute();
       }),
     ]);
 

@@ -73,3 +73,28 @@
 //     id: 'bbe4d4a4-c391-49a2-9715-5fef068dfb06',
 //   })
 //  .getOne();
+
+// boardTagMenu.map(async (el) => {
+//     const menu = el.substring(1);
+//     const menuData = await this.boardTagRepository.findOne({
+//       boardTagMenu: menu,
+//     });
+//     await getConnection()
+//       .createQueryBuilder()
+//       .insert()
+//       .into(BoardSide)
+//       .values({
+//         boards: board.boardId,
+//         boardTags: menuData,
+//       })
+//       .execute();
+//   })
+// const rr = await getConnection()
+//   .createQueryBuilder()
+//   .select('board')
+//   .from(Board, 'board')
+//   .relation('boardSides')
+//   .of('Board')
+//   .loadMany();
+
+// console.log(rr);

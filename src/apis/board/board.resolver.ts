@@ -1,5 +1,5 @@
 import { UseGuards } from '@nestjs/common';
-import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
+import { Args, Int, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { GqlAuthAccessGuard } from 'src/commons/auth/gql-auth.guard';
 import { CurrentUser, ICurrentUser } from 'src/commons/auth/gql-user-param';
 import { BoardService } from './board.service';
@@ -30,6 +30,31 @@ export class BoardResolver {
     @Args('boardTagsInput') boardTagsInput: CreateBoardTagsInput,
   ) {
     return this.boardService.findTest({ boardTagsInput });
+  }
+
+  @Query(() => [Board])
+  fetchGenderBoards(
+    @Args('gender') gender: string,
+    @Args({ name: 'page', type: () => Int }) page: number,
+  ) {
+    return this.boardService.findGender({ gender, page });
+  }
+
+  @Query(() => [Board])
+  fetchAgeGroupBoards(
+    @Args('ageGroup') ageGroup: string,
+    @Args({ name: 'page', type: () => Int }) page: number,
+  ) {
+    return this.boardService.findAgeGroup({ ageGroup, page });
+  }
+
+  @Query(() => [Board])
+  fetchAgeGroupWithGenderBoards(
+    @Args('gender') gender: string,
+    @Args('ageGroup') ageGroup: string,
+    @Args({ name: 'page', type: () => Int }) page: number,
+  ) {
+    return this.boardService.findGenderWithAgeGroup({ gender, ageGroup, page });
   }
 
   @Mutation(() => Board)

@@ -4551,6 +4551,11 @@ jest@^27.2.5:
     import-local "^3.0.2"
     jest-cli "^27.5.1"
 
+js-joda@^1.11.0:
+  version "1.11.0"
+  resolved "https://registry.yarnpkg.com/js-joda/-/js-joda-1.11.0.tgz#e0e424b049cf7a9db3ed7729a6ca1f7d96b2486e"
+  integrity sha512-/HJpRhwP2fPyuSsCaZuoVJuaSIt8tUXykV4wOMRXrFk7RP9h9VWaFdS9YHKdMepxb/3TdXpL6IhfC9L0sqYVBw==
+
 js-tokens@^4.0.0:
   version "4.0.0"
   resolved "https://registry.yarnpkg.com/js-tokens/-/js-tokens-4.0.0.tgz#19203fb59991df98e3a287050d4647cdeaf32499"
@@ -6551,6 +6556,11 @@ typedarray@^0.0.6:
   version "0.0.6"
   resolved "https://registry.yarnpkg.com/typedarray/-/typedarray-0.0.6.tgz#867ac74e3864187b1d3d47d996a78ec5c8830777"
   integrity sha1-hnrHTjhkGHsdPUfZlqeOxciDB3c=
+
+typeorm-naming-strategies@^4.1.0:
+  version "4.1.0"
+  resolved "https://registry.yarnpkg.com/typeorm-naming-strategies/-/typeorm-naming-strategies-4.1.0.tgz#1ec6eb296c8d7b69bb06764d5b9083ff80e814a9"
+  integrity sha512-vPekJXzZOTZrdDvTl1YoM+w+sUIfQHG4kZTpbFYoTsufyv9NIBRe4Q+PdzhEAFA2std3D9LZHEb1EjE9zhRpiQ==
 
 typeorm@0.2:
   version "0.2.45"

@@ -13,4 +13,7 @@ export class CreateBoardInput {
 
   @Field(() => String)
   boardContents: string;
+
+  @Field(() => String, { nullable: true })
+  store: string;
 }
