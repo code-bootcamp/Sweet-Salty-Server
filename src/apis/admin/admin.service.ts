@@ -104,7 +104,7 @@ export class AdminService {
       .where({ topCategoryName: 'COMMUNITY' })
       .getOne();
 
-    const CommunityBoard = ['REVIEW', 'REQUEST', 'TASTINGREVITEW'];
+    const CommunityBoard = ['REVIEW', 'REQUEST', 'VISITED', 'TASTER'];
 
     const NoticeBoard = ['All', 'NOTICE', 'EVENT', 'PROMOTION', 'TASTING'];
 

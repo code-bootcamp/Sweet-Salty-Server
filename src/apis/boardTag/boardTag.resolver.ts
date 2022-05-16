@@ -1,5 +1,5 @@
 import { Args, Mutation, Resolver } from '@nestjs/graphql';
-import { CreateBoardTagsInput } from '../board/dto/createBoardTags.input';
+import { BoardTagsInput } from '../board/dto/createBoardTags.input';
 import { BoardTagService } from './boardTag.service';
 
 @Resolver()
@@ -11,7 +11,7 @@ export class BoardTagResolver {
 
   @Mutation(() => String)
   async createTag(
-    @Args('createBoardTagsInput') createBoardTagsInput: CreateBoardTagsInput,
+    @Args('createBoardTagsInput') createBoardTagsInput: BoardTagsInput,
   ) {
     return this.boardTagService.create({ createBoardTagsInput });
   }

@@ -49,11 +49,11 @@ import { AdminModule } from './apis/admin/admin.module';
     }),
     TypeOrmModule.forRoot({
       type: 'mysql',
-      host: 'my-database',
+      host: '10.16.96.3',
       port: 3306,
       username: 'root',
       password: 'root',
-      database: 'team_project',
+      database: 'team_data',
       entities: [__dirname + '/apis/**/*.entity.*'],
       synchronize: true,
       logging: true,
@@ -62,7 +62,7 @@ import { AdminModule } from './apis/admin/admin.module';
     }),
     CacheModule.register<RedisClientOptions>({
       store: redisStore,
-      url: 'redis://my-redis:6379',
+      url: 'redis://XkjocNA3@10.140.0.4:6379',
       isGlobal: true,
     }),
   ],

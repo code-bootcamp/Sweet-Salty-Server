@@ -1,7 +1,7 @@
 import { Field, InputType } from '@nestjs/graphql';
 
 @InputType()
-export class CreateBoardTagsInput {
+export class BoardTagsInput {
   @Field(() => [String], { nullable: true })
   boardTagMenu: string[];
 

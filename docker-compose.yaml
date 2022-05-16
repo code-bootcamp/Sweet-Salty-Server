@@ -37,7 +37,7 @@ services:
     volumes:
       - ./elk/logstash/logstash.conf:/usr/share/logstash/pipeline/logstash.conf
       - ./elk/logstash/mysql-connector-java-8.0.28.jar:/usr/share/logstash/mysql-connector-java-8.0.28.jar
-  #   - ./elk/logstash/borad_template.json:/usr/share/logstash/board_template.json
+      - ./elk/logstash/borad.json:/usr/share/logstash/board.json
 
   # kibana:
   #   image: kibana:7.17.0

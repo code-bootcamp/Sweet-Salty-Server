@@ -1,5 +1,5 @@
 import { Args, Mutation, Resolver } from '@nestjs/graphql';
-import { CreateBoardTagsInput } from '../board/dto/createBoardTags.input';
+import { BoardTagsInput } from '../board/dto/createBoardTags.input';
 import { AdminService } from './admin.service';
 
 @Resolver()
@@ -11,7 +11,8 @@ export class AdminResolver {
 
   @Mutation(() => String)
   createTag(
-    @Args('createBoardTagInput') createBoardTagsInput: CreateBoardTagsInput,
+    //
+    @Args('createBoardTagInput') createBoardTagsInput: BoardTagsInput,
   ) {
     return this.adminService.createTag({ createBoardTagsInput });
   }

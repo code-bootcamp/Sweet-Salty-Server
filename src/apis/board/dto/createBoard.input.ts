@@ -5,10 +5,10 @@ export class CreateBoardInput {
   @Field(() => String)
   boardTitle: string;
 
-  @Field(() => String)
+  @Field(() => String, { nullable: true })
   boardSugar: string;
 
-  @Field(() => String)
+  @Field(() => String, { nullable: true })
   boardSalt: string;
 
   @Field(() => String)

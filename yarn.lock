@@ -838,7 +838,7 @@
     tslib "2.3.1"
     uuid "8.3.2"
 
-"@nestjs/elasticsearch@8.1.0":
+"@nestjs/elasticsearch@^8.1.0":
   version "8.1.0"
   resolved "https://registry.yarnpkg.com/@nestjs/elasticsearch/-/elasticsearch-8.1.0.tgz#ff22ac5534fa4cb9d92261ff979df60afdc108b4"
   integrity sha512-Ub5p5/D006017SCbygSbStvJ3yt8xYiT5jN/Rbt42d8bkQcr5xhY0iaPfFHPFA1s2Bc6QlVBKbguo++mIhFenQ==
@@ -3723,6 +3723,11 @@ graphql-tag@2.12.6, graphql-tag@^2.11.0:
   integrity sha512-FdSNcu2QQcWnM2VNvSCCDCVS5PpPqpzgFT8+GXzqJuoDd0CBncxCY278u4mhRO7tMgo2JjgJA5aZ+nWSQ/Z+xg==
   dependencies:
     tslib "^2.1.0"
+
+graphql-type-json@^0.3.2:
+  version "0.3.2"
+  resolved "https://registry.yarnpkg.com/graphql-type-json/-/graphql-type-json-0.3.2.tgz#f53a851dbfe07bd1c8157d24150064baab41e115"
+  integrity sha512-J+vjof74oMlCWXSvt0DOf2APEdZOCdubEvGDUAlqH//VBYcOYsGgRW7Xzorr44LvkjiuvecWc8fChxuZZbChtg==
 
 graphql-upload@^13.0.0:
   version "13.0.0"

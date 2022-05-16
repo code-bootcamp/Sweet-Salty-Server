@@ -1,6 +1,11 @@
-import { Field, Int, ObjectType, registerEnumType } from '@nestjs/graphql';
+import {
+  Field,
+  InputType,
+  Int,
+  ObjectType,
+  registerEnumType,
+} from '@nestjs/graphql';
 import { BoardSide } from 'src/apis/boardSide/entities/boardSide.entity';
-import { BoardTag } from 'src/apis/boardTag/entities/boardTag.entity';
 import { Store } from 'src/apis/store/store.entities/store.entity';
 import { User } from 'src/apis/user/entities/user.entity';
 
@@ -41,12 +46,18 @@ registerEnumType(BOARD_AGE_GROUP_ENUM, {
 
 export abstract class Content {}
 
+@InputType()
+export class Tags {
+  @Field(() => [String])
+  names: string[];
+}
+
 @Entity()
 @ObjectType()
 export class Board {
   @PrimaryGeneratedColumn('increment')
-  @Field(() => String)
-  boardId: string;
+  @Field(() => Int)
+  boardId: number;
 
   @Column()
   @Field(() => String)
