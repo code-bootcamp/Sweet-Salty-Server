@@ -29,7 +29,7 @@ export class User {
   userId: string;
 
   @Column({ default: 0 })
-  // @Field(() => Boolean)
+  @Field(() => Boolean)
   userState: boolean;
 
   @Column({ unique: true })
@@ -46,6 +46,10 @@ export class User {
   @Column({ nullable: true, unique: true })
   @Field(() => String)
   userNickname: string;
+
+  @Column({ nullable: true })
+  @Field(() => String)
+  userImage: string;
 
   @Column({ nullable: true })
   @Field(() => String)

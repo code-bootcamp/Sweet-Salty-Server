@@ -17,12 +17,15 @@ import { CommentLikeModule } from './apis/commentLike/commentLike.module';
 import { BoardLikeModule } from './apis/boardLike/boardLike.module';
 import { PointTransactionModule } from './apis/pointTransaction/pointTransaction.module';
 import { BoardTagModule } from './apis/boardTag/boardTag.module';
-import { MessageModule } from './apis/message/message.module';
-import { ChatGateway } from './chat.gateway';
 
+import { ChatGateway } from './chat.gateway';
+import { MessageModule } from './apis/message/message.module';
+import { AdminModule } from './apis/admin/admin.module';
 
 @Module({
   imports: [
+    AdminModule,
+    AuthModule,
     BoardModule,
     BoardLikeModule,
     BoardTagModule,
@@ -46,11 +49,11 @@ import { ChatGateway } from './chat.gateway';
     }),
     TypeOrmModule.forRoot({
       type: 'mysql',
-      host: 'my-database',
+      host: '10.16.96.3',
       port: 3306,
       username: 'root',
       password: 'root',
-      database: 'team_project',
+      database: 'team_data',
       entities: [__dirname + '/apis/**/*.entity.*'],
       synchronize: true,
       logging: true,
@@ -59,7 +62,7 @@ import { ChatGateway } from './chat.gateway';
     }),
     CacheModule.register<RedisClientOptions>({
       store: redisStore,
-      url: 'redis://my-redis:6379',
+      url: 'redis://XkjocNA3@10.140.0.4:6379',
       isGlobal: true,
     }),
   ],
@@ -97,7 +100,7 @@ export class AppModule {
 //   port: 3306,
 //   username: 'root',
 //   password: 'root',
-//   database: 'mainproject',
+//   database: 'team_project',
 //   entities: [__dirname + '/apis/**/*.entity.*'],
 //   synchronize: true,
 //   logging: true,

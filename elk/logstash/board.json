@@ -1,5 +1,5 @@
 {
-  "template": "board-*",
+  "template": "board",
   "index_patterns": ["*"],
   "order": "1",
   "settings": {
@@ -10,12 +10,6 @@
         "my_ngram_analyzer": {
           "filter": ["my_stopwords"],
           "tokenizer": "my_ngram_tokenizer"
-        }
-      },
-      "filter": {
-        "my_stopwords": {
-          "type": "stop",
-          "stopwords": ["은", "는", "이", "가"]
         }
       },
       "tokenizer": {
@@ -30,33 +24,44 @@
   },
   "mappings": {
     "properties": {
-      "title": {
+      "boardtitle": {
         "type": "text",
-        "tokenizer": "standard",
-        "filter": ["my_stopwords"],
         "fields": {
           "keyword": { "type": "keyword" }
         }
       },
-      "contents": {
+      "boardsugar": {
         "type": "text",
-        "analyzer": "my_ngram_analyzer",
         "fields": {
           "keyword": { "type": "keyword" }
         }
       },
-      "writer": {
+      "boardsalt": {
         "type": "text",
-        "analyzer": "my_ngram_analyzer",
         "fields": {
           "keyword": { "type": "keyword" }
         }
       },
-      "tag": { "type": "text" },
-      "name": { "type": "text" },
-      "hit": { "type": "long" },
-      "like_count": { "type": "short" },
-      "post_id": { "type": "keyword" }
+      "boardcontents": {
+        "type": "text",
+        "fields": {
+          "keyword": { "type": "keyword" }
+        }
+      },
+      "boardwriter": {
+        "type": "text",
+        "fields": {
+          "keyword": { "type": "keyword" }
+        }
+      },
+      "agegroup": { "type": "keyword" },
+      "gender": { "type": "keyword" },
+      "createat": { "type": "date" },
+      "boardlikecount": { "type": "short" },
+      "boardhit": { "type": "long" },
+      "mood": { "type": "text" },
+      "menu": { "type": "text" },
+      "region": { "type": "text" }
     }
   }
 }

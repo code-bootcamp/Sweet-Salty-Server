@@ -1,16 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { async } from 'rxjs';
 
-import {
-  createQueryBuilder,
-  getConnection,
-  getRepository,
-  Repository,
-} from 'typeorm';
+import { getConnection, Repository } from 'typeorm';
 import { BoardSide } from '../boardSide/entities/boardSide.entity';
 import { BoardTag } from '../boardTag/entities/boardTag.entity';
-import { User } from '../user/entities/user.entity';
 import { Board } from './entities/board.entity';
 
 @Injectable()
@@ -20,8 +13,6 @@ export class BoardService {
     private readonly boardRepository: Repository<Board>,
     @InjectRepository(BoardTag)
     private readonly boardTagRepository: Repository<BoardTag>,
-    @InjectRepository(BoardSide)
-    private readonly boardSideRepository: Repository<BoardSide>,
   ) {}
 
   async findAll() {
@@ -32,162 +23,137 @@ export class BoardService {
     return await this.boardRepository.findOne({ boardId });
   }
 
-  async findTest({ boardTagsInput }) {
-    console.log(boardTagsInput);
+  async findGender({ gender, page }) {
+    return await this.boardRepository.find({
+      where: { gender },
+      skip: (page - 1) * 10,
+      take: 10,
+      order: { createAt: 'DESC' },
+    });
+  }
 
-    const check = await getConnection()
+  async findAgeGroup({ ageGroup, page }) {
+    return await this.boardRepository.find({
+      where: {
+        ageGroup,
+      },
+      skip: (page - 1) * 10,
+      take: 10,
+      order: { createAt: 'DESC' },
+    });
+  }
+
+  async findGenderWithAgeGroup({ gender, ageGroup, page }) {
+    return await this.boardRepository.find({
+      where: {
+        gender,
+        ageGroup,
+      },
+      skip: (page - 1) * 10,
+      take: 10,
+      order: { createAt: 'DESC' },
+    });
+  }
+
+  async findTest({ boardTagsInput }) {
+    const { boardTagMenu, boardTagRegion, boardTagTogether } = boardTagsInput;
+
+    const q = await getConnection()
       .createQueryBuilder()
       .select('board')
       .from(Board, 'board')
-      .leftJoinAndSelect('board.boardTags', 'boardTag')
-      .where({ boardTags: '362' })
+      .leftJoinAndSelect('board.boardSides', 'boardSide')
+      .leftJoinAndSelect('boardSide.boardTags', 'boardTag')
+      .where('boardTag.boardTagName = :boardTagName1', {
+        boardTagName1: '닭고기',
+      })
+      .orWhere('boardTag.boardTagName = :boardTagName2', {
+        boardTagName2: '피자',
+      })
       .getMany();
 
-    // const data = await this.boardRepository.findOne({
-    //   where: { boardTags: 'bc794061-5d3f-4e57-aa53-65664862844c' },
-    //   relations: ['boardTags'],
-    // });
+    console.log(q);
 
-    console.log(check);
-
-    const arr = [];
-
-    // for (const array of check) {
-    //   //  const overlap = array.boardTags.some((el) => el.boardTagMenu === '치킨');
-    //   //const data = array.boardTags.filter((el) => !null);
-    //   const daaa = array.boardTags.map((el) => console.log(el));
-    // }
-
-    return; //arr;
+    return;
   }
 
-  async create({ createBoardInput, createBoardTagsInput }) {
-    const { boardTagMenu, boardTagRegion, boardTagTogether } =
-      createBoardTagsInput;
+  async create({ createBoardInput, boardTagsInput }) {
+    const { boardTagMenu, boardTagRegion, boardTagMood } = boardTagsInput;
 
     const board = await this.boardRepository.save({
       ...createBoardInput,
     });
-    //   boardTagMenu.map((el) => console.log(el));
 
-    boardTagMenu.reduce(async (acc, cur: string) => {
-      const menu = cur.substring(1);
-      const menuId = await this.boardTagRepository.findOne({
-        boardTagMenu: menu,
-      });
-      await this.boardSideRepository.save({
-        boards: board.boardId,
-        boardTags: { boardTagId: menuId.boardTagId },
-      });
-    }, '');
+    await Promise.all([
+      boardTagMenu.reduce(async (acc, cur) => {
+        const menu = cur.substring(1);
+        const menuData = await this.boardTagRepository.findOne({
+          boardTagName: menu,
+        });
+        await getConnection()
+          .createQueryBuilder()
+          .insert()
+          .into(BoardSide)
+          .values({
+            boards: board.boardId,
+            boardTags: menuData,
+            tagName: menuData.boardTagName,
+          })
+          .execute();
+      }, ''),
 
-    boardTagRegion.reduce(async (acc, cur: string) => {
-      const region = cur.substring(1);
-      const regionId = await this.boardTagRepository.findOne({
-        boardTagRegion: region,
-      });
-      await this.boardSideRepository.save({
-        boards: board.boardId,
-        boardTags: { boardTagId: regionId.boardTagId },
-      });
-    }, '');
+      boardTagRegion.reduce(async (acc, cur) => {
+        const region = cur.substring(1);
+        const regionData = await this.boardTagRepository.findOne({
+          boardTagName: region,
+        });
+        await getConnection()
+          .createQueryBuilder()
+          .insert()
+          .into(BoardSide)
+          .values({
+            boards: board.boardId,
+            boardTags: regionData,
+            tagName: regionData.boardTagName,
+          })
+          .execute();
+      }, ''),
+      boardTagMood.reduce(async (acc, cur) => {
+        const mood = cur.substring(1);
+        const moodData = await this.boardTagRepository.findOne({
+          boardTagName: mood,
+        });
+        await getConnection()
+          .createQueryBuilder()
+          .insert()
+          .into(BoardSide)
+          .values({
+            boards: board.boardId,
+            boardTags: moodData,
+            tagName: moodData.boardTagName,
+          })
+          .execute();
+      }, ''),
+    ]);
 
-    boardTagTogether.reduce(async (acc, cur: string) => {
-      const together = cur.substring(1);
-      const togetherId = await this.boardTagRepository.findOne({
-        boardTagTogether: together,
-      });
-      await this.boardSideRepository.save({
-        boards: board.boardId,
-        boardTags: { boardTagId: togetherId.boardTagId },
-      });
-    }, '');
-
-    // const qqqq = await getConnection()
-    //   .createQueryBuilder()
-    //   .select('boardSide')
-    //   .from(BoardSide, 'boardSide')
-    //   .innerJoinAndSelect('boardSide.boards', 'boards')
-    //   .innerJoinAndSelect('boardSide.boardTags', 'boardTags')
-    //   .where({ boards: board.boardId })
-    //   .getMany();
-
-    const ee = await getConnection()
+    const tag = await getConnection()
       .createQueryBuilder()
       .select('boardSide')
       .from(BoardSide, 'boardSide')
-      .where({ boards: '40' })
-      .leftJoinAndSelect('boardSide.boardTags', 'boardTags')
+      .innerJoinAndSelect('boardSide.boardTags', 'boardTag')
+      .where({ boards: board.boardId })
       .getMany();
-    console.log(ee);
 
-    const aaa = await this.boardRepository.save({
-      ...createBoardInput,
-      boardSides: ee,
+    return await this.boardRepository.save({
+      ...board,
+      boardSides: tag,
     });
-
-    return aaa;
-
-    // const qqq = await this.boardRepository.findOne(
-    //   { boardId: board.boardId },
-    //   {
-    //     relations: ['boardSides'],
-    //   },
-    // );
-
-    // console.log(qqq);
   }
 
-  async loginCreate({ currentUser, createBoardInput, createBoardTagsInput }) {
-    const { boardTagMenu, boardTagRegion, boardTagTogether } =
-      createBoardTagsInput;
+  async loginCreate({ currentUser, createBoardInput, boardTagsInput }) {
+    const { boardTagMenu, boardTagRegion, boardTagTogether } = boardTagsInput;
 
     const boardTags = [];
-
-    if (boardTagMenu) {
-      boardTagMenu.reduce(async (acc: string, cur: string) => {
-        const menu = cur.substring(1);
-        const menuData = await this.boardTagRepository.findOne({
-          boardTagMenu: menu,
-        });
-        boardTags.push(menuData);
-      }, '');
-    }
-
-    if (boardTagRegion) {
-      boardTagRegion.reduce(async (acc: string, cur: string) => {
-        const region = cur.substring(1);
-        const regionData = await this.boardTagRepository.findOne({
-          boardTagRegion: region,
-        });
-        boardTags.push(regionData);
-      }, '');
-    }
-
-    if (boardTagTogether) {
-      boardTagTogether.reduce(async (acc: string, cur: string) => {
-        const together = cur.substring(1);
-        const togetherData = await this.boardTagRepository.findOne({
-          boardTagTogether: together,
-        });
-        boardTags.push(togetherData);
-      }, '');
-    }
-    const user = await getConnection()
-      .createQueryBuilder()
-      .select('user')
-      .from(User, 'user')
-      .where({ userId: currentUser.userId })
-      .getOne();
-
-    const result = await this.boardRepository.save({
-      ...createBoardInput,
-      boardWriter: user.userNickname,
-      user: currentUser.userId,
-      boardTags,
-    });
-
-    return result;
   }
 
   async update({ boardId, updateBoardInput }) {
