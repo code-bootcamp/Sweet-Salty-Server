@@ -7,7 +7,7 @@ services:
       dockerfile: Dockerfile
     volumes:
       - ./src:/myfolder/src
-    #   - ./elk/logstash/logstash.conf:/usr/share/logstash/pipeline/logstash.conf
+    # \  - ./elk/logstash/logstash.conf:/usr/share/logstash/pipeline/logstash.conf
     ports:
       - 3000:3000
 
@@ -34,10 +34,12 @@ services:
 
   logstash:
     image: logstash:7.17.0
+    depends_on:
+      - elasticsearch
     volumes:
       - ./elk/logstash/logstash.conf:/usr/share/logstash/pipeline/logstash.conf
       - ./elk/logstash/mysql-connector-java-8.0.28.jar:/usr/share/logstash/mysql-connector-java-8.0.28.jar
-      - ./elk/logstash/borad.json:/usr/share/logstash/board.json
+      - ./elk/logstash/board_template.json:/usr/share/logstash/templates/board_template.json
 
   # kibana:
   #   image: kibana:7.17.0

@@ -6,53 +6,40 @@ import { TopCategory } from '../topCategory/entities/topCategory.entity';
 
 @Injectable()
 export class AdminService {
-  async createTag({ createBoardTagsInput }) {
-    const { boardTagMenu, boardTagRegion, boardTagMood } = createBoardTagsInput;
+  async createTag({ createTagInput }) {
+    const { boardTagName, boardTagRefName } = createTagInput;
 
-    await Promise.all([
-      boardTagMenu.map(async (el) => {
-        const menu = el.substring(1);
+    boardTagName.reduce(async (acc, cur) => {
+      const data = await getConnection()
+        .createQueryBuilder()
+        .select('boardTag')
+        .from(BoardTag, 'boardTag')
+        .where({ boardTagName: cur })
+        .getOne();
 
+      if (data === undefined) {
         await getConnection()
           .createQueryBuilder()
           .insert()
           .into(BoardTag)
           .values({
-            boardTagName: menu,
-            boardTagRefCode: 'MENU',
+            boardTagName: cur,
+            boardTagRefName,
           })
           .execute();
-      }),
-      boardTagRegion.map(async (el) => {
-        const region = el.substring(1);
+      }
+    }, '');
 
-        await getConnection()
-          .createQueryBuilder()
-          .insert()
-          .into(BoardTag)
-          .values({
-            boardTagName: region,
-            boardTagRefCode: 'REGION',
-          })
-          .execute();
-      }),
+    return '반영되었습니다.';
+  }
 
-      boardTagMood.map(async (el) => {
-        const mood = el.substring(1);
-
-        await getConnection()
-          .createQueryBuilder()
-          .insert()
-          .into(BoardTag)
-          .values({
-            boardTagName: mood,
-            boardTagRefCode: 'MOOD',
-          })
-          .execute();
-      }),
-    ]);
-
-    return '반영되었습니다. 디비보시등가';
+  async findTags({ refName }) {
+    return await getConnection()
+      .createQueryBuilder()
+      .select('boardTag')
+      .from(BoardTag, 'boardTag')
+      .where({ boardTagRefName: refName })
+      .getMany();
   }
 
   async createTopCategory() {

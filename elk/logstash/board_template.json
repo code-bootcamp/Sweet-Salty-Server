@@ -1,26 +1,9 @@
 {
-  "template": "board",
+  "template": "board-*",
   "index_patterns": ["*"],
   "order": "1",
   "settings": {
-    "refresh_interval": "5s",
-
-    "analysis": {
-      "analyzer": {
-        "my_ngram_analyzer": {
-          "filter": ["my_stopwords"],
-          "tokenizer": "my_ngram_tokenizer"
-        }
-      },
-      "tokenizer": {
-        "my_ngram_tokenizer": {
-          "type": "nGram",
-          "min_gram": "1",
-          "max_gram": "10"
-        }
-      }
-    },
-    "max_ngram_diff": "20"
+    "refresh_interval": "5s"
   },
   "mappings": {
     "properties": {
@@ -59,9 +42,7 @@
       "createat": { "type": "date" },
       "boardlikecount": { "type": "short" },
       "boardhit": { "type": "long" },
-      "mood": { "type": "text" },
-      "menu": { "type": "text" },
-      "region": { "type": "text" }
+      "tags": { "type": "text" }
     }
   }
 }

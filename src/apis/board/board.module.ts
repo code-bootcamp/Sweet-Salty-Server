@@ -11,7 +11,7 @@ import { Board } from './entities/board.entity';
   imports: [
     TypeOrmModule.forFeature([Board, BoardTag, BoardSide]),
     ElasticsearchModule.register({
-      node: 'http://147.47.209.114:9200',
+      node: 'http://elasticsearch:9200',
     }),
   ],
   providers: [
