@@ -39,8 +39,8 @@ export class BoardResolver {
     } else {
       const data = await this.elasticsearchService.search({
         index: 'board',
-        size: 100,
-        sort: ['boardId'],
+        size: 10000,
+        sort: 'sortData',
         _source: [
           'boardtitle',
           'boardwriter',

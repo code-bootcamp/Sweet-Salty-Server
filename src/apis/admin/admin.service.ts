@@ -39,6 +39,7 @@ export class AdminService {
       .select('boardTag')
       .from(BoardTag, 'boardTag')
       .where({ boardTagRefName: refName })
+      .orderBy('boardTagName', 'ASC')
       .getMany();
   }
 
@@ -48,6 +49,8 @@ export class AdminService {
       .select()
       .from(TopCategory, 'topCategory')
       .getMany();
+
+    console.log(checkData);
 
     if (checkData) throw new ConflictException('이미 생성되었습니다.');
 

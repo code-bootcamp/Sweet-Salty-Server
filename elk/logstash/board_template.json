@@ -1,6 +1,6 @@
 {
   "template": "board-*",
-  "index_patterns": ["*"],
+  "index_patterns": ["board"],
   "order": "1",
   "settings": {
     "refresh_interval": "5s"
@@ -42,7 +42,13 @@
       "createat": { "type": "date" },
       "boardlikecount": { "type": "short" },
       "boardhit": { "type": "long" },
-      "tags": { "type": "text" }
+      "tags": {
+        "type": "text",
+        "fields": {
+          "keyword": { "type": "keyword" }
+        }
+      },
+      "sortData": { "type": "short" }
     }
   }
 }

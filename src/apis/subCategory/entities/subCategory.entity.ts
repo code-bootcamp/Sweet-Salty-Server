@@ -1,10 +1,12 @@
 import { Field, ObjectType } from '@nestjs/graphql';
+import { Notice } from 'src/apis/notice/entities/notice.entity';
 import { TopCategory } from 'src/apis/topCategory/entities/topCategory.entity';
 import {
   Column,
   Entity,
   JoinColumn,
   ManyToOne,
+  OneToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 
@@ -25,4 +27,7 @@ export class SubCategory {
     referencedColumnName: 'topCategoryId',
   })
   topCategories: TopCategory;
+
+  @OneToOne((type) => Notice, (Notice) => Notice.subCategory)
+  notices: Notice[];
 }

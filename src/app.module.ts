@@ -19,6 +19,7 @@ import { PointTransactionModule } from './apis/pointTransaction/pointTransaction
 import { ChatGateway } from './chat.gateway';
 import { MessageModule } from './apis/message/message.module';
 import { AdminModule } from './apis/admin/admin.module';
+import { noticeModule } from './apis/notice/notice.module';
 
 @Module({
   imports: [
@@ -28,6 +29,7 @@ import { AdminModule } from './apis/admin/admin.module';
     BoardLikeModule,
     ImageUploadModule,
     UserModule,
+    noticeModule,
     MessageModule,
     CommentModule,
     CommentLikeModule,
