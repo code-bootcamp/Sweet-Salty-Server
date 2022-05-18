@@ -19,7 +19,7 @@ services:
   #   platform: linux/x86_64
   #   image: mysql:latest
   #   environment:
-  #     MYSQL_DATABASE: 'mainproject'
+  #     MYSQL_DATABASE: 'teamproject'
   #     MYSQL_ROOT_PASSWORD: 'root'
   #   ports:
   #     - 3306:3306
