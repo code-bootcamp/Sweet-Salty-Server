@@ -23,6 +23,7 @@ import { ShopModule } from './apis/shop/shop.module';
 import { ChatGateway } from './chat.gateway';
 import { MessageModule } from './apis/message/message.module';
 import { AdminModule } from './apis/admin/admin.module';
+import { noticeModule } from './apis/notice/notice.module';
 
 @Module({
   imports: [
@@ -30,9 +31,9 @@ import { AdminModule } from './apis/admin/admin.module';
     AuthModule,
     BoardModule,
     BoardLikeModule,
-    BoardTagModule,
     ImageUploadModule,
     UserModule,
+    noticeModule,
     MessageModule,
     CommentModule,
     CommentLikeModule,
@@ -52,11 +53,11 @@ import { AdminModule } from './apis/admin/admin.module';
     }),
     TypeOrmModule.forRoot({
       type: 'mysql',
-      host: '10.16.96.3',
+      host: 'my-database',
       port: 3306,
       username: 'root',
       password: 'root',
-      database: 'team_data',
+      database: 'team_project',
       entities: [__dirname + '/apis/**/*.entity.*'],
       synchronize: true,
       logging: true,
@@ -65,7 +66,7 @@ import { AdminModule } from './apis/admin/admin.module';
     }),
     CacheModule.register<RedisClientOptions>({
       store: redisStore,
-      url: 'redis://XkjocNA3@10.140.0.4:6379',
+      url: 'redis://my-redis:6379',
       isGlobal: true,
     }),
   ],

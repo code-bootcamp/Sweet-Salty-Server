@@ -6,8 +6,8 @@ import { GraphQLJSONObject } from 'graphql-type-json';
 import { GqlAuthAccessGuard } from 'src/commons/auth/gql-auth.guard';
 import { CurrentUser, ICurrentUser } from 'src/commons/auth/gql-user-param';
 import { BoardService } from './board.service';
+import { BoardTagsInput } from './dto/boardTags.input';
 import { CreateBoardInput } from './dto/createBoard.input';
-import { BoardTagsInput } from './dto/createBoardTags.input';
 import { UpdateBoardInput } from './dto/updateBoard.input';
 import { Board, Tags } from './entities/board.entity';
 
@@ -39,8 +39,8 @@ export class BoardResolver {
     } else {
       const data = await this.elasticsearchService.search({
         index: 'board',
-        size: 100,
-        sort: 'createat',
+        size: 10000,
+        sort: 'sortData',
         _source: [
           'boardtitle',
           'boardwriter',
@@ -58,17 +58,9 @@ export class BoardResolver {
         },
       });
 
-      await this.cacheManager.set(tagsData, data, { ttl: 30 });
+      await this.cacheManager.set(tagsData, data, { ttl: 2 });
       return data;
     }
-  }
-
-  @Query(() => [Board])
-  fetchBoards(
-    //
-    @Args('search') search: string,
-  ) {
-    return this.boardService.findAll();
   }
 
   @Query(() => Board)
@@ -114,7 +106,7 @@ export class BoardResolver {
     //
 
     @Args('createBoardInput') createBoardInput: CreateBoardInput,
-    @Args('createBoardTagsInput') boardTagsInput: BoardTagsInput,
+    @Args('boardTagsInput') boardTagsInput: BoardTagsInput,
   ) {
     return this.boardService.create({ createBoardInput, boardTagsInput }); // 받아온 name 넘기기 service로
   }

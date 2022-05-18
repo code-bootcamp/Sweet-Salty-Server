@@ -31,8 +31,6 @@ export class ImageUploadService {
       waitedFiles.map((el) => {
         const uuid = uuidv4();
         const extension = el.filename.substring(el.filename.lastIndexOf('.'));
-        console.log(uuid);
-        console.log(extension);
         return new Promise((resolve, reject) => {
           el.createReadStream()
             .pipe(storage.file(uuid + extension).createWriteStream())
