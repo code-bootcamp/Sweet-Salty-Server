@@ -19,7 +19,7 @@ import { PointTransactionModule } from './apis/pointTransaction/pointTransaction
 import { BoardTagModule } from './apis/boardTag/boardTag.module';
 import { MessageModule } from './apis/message/message.module';
 import { ChatGateway } from './chat.gateway';
-
+import { ShopModule } from './apis/shop/shop.module';
 
 @Module({
   imports: [
@@ -31,6 +31,7 @@ import { ChatGateway } from './chat.gateway';
     MessageModule,
     CommentModule,
     CommentLikeModule,
+    ShopModule,
     PointTransactionModule,
     ConfigModule.forRoot({
       isGlobal: true,
@@ -107,5 +108,25 @@ export class AppModule {
 // CacheModule.register<RedisClientOptions>({
 //   store: redisStore,
 //   url: 'redis://my-redis:6379',
+//   isGlobal: true,
+// }),
+
+// 2번째 배포
+// TypeOrmModule.forRoot({
+//   type: 'mysql',
+//   host: '10.32.96.4',
+//   port: 3306,
+//   username: 'root',
+//   password: 'root',
+//   database: 'teamproject',
+//   entities: [__dirname + '/apis/**/*.entity.*'],
+//   synchronize: true,
+//   logging: true,
+//   retryAttempts: 30,
+//   retryDelay: 5000,
+// }),
+// CacheModule.register<RedisClientOptions>({
+//   store: redisStore,
+//   url: 'redis://voG6BgVH@10.140.0.2:6379',
 //   isGlobal: true,
 // }),
