@@ -21,6 +21,10 @@ export class Store {
   @Field(() => String)
   storeAddressInfo: string;
 
+  @Column()
+  @Field(() => String)
+  storeUrl: string;
+
   @ManyToOne((type) => Board, (Board) => Board.stores)
   boards: Board[];
 }
