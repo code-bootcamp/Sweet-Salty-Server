@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { Connection, Repository } from 'typeorm';
 import { IamPortService } from '../iamport/iamport.service';
+import { PaymentHistory } from '../paymentHistory/entities/paymentHistory.entity';
 import { User } from '../user/entities/user.entity';
 import {
   PointTransaction,
@@ -20,6 +21,9 @@ export class PointTransactionService {
 
     private readonly iamportService: IamPortService,
     private readonly connection: Connection,
+
+    @InjectRepository(PaymentHistory)
+    private readonly paymentHistoryRepository: Repository<PaymentHistory>,
   ) {}
 
   async create({ currentUser, impUid, amount }) {
@@ -66,7 +70,7 @@ export class PointTransactionService {
           amount,
           status: POINT_TRANSACTION_STATUS_ENUM.PAYMENT,
           checksum: amount,
-          userid: currentUser.userId,
+          userId: currentUser.userId,
         },
       );
       console.log(currentUser);
@@ -83,6 +87,13 @@ export class PointTransactionService {
         { userEmail: currentUser.userEmail },
         { userPoint: user.userPoint + amount },
       );
+
+      await queryRunner.manager.save(PaymentHistory, {
+        userId: currentUser.userId,
+        agoPaymentAmount: user.userPoint,
+        afterPaymentAmount: user.userPoint + amount,
+        paymentAmount: amount,
+      });
 
       await queryRunner.commitTransaction();
 
@@ -167,7 +178,7 @@ export class PointTransactionService {
           amount: -Payment_data.checksum,
           checksum: Payment_data.checksum - Payment_data.checksum,
           status: POINT_TRANSACTION_STATUS_ENUM.CANCEL,
-          user: { userId: currentUser.userId },
+          userId: { userId: currentUser.userId },
         });
       } else {
         // 부분 환불
@@ -184,7 +195,7 @@ export class PointTransactionService {
           amount: -amount,
           checksum: Payment_data.checksum - amount,
           status: POINT_TRANSACTION_STATUS_ENUM.CANCEL,
-          user: { userId: currentUser.userId },
+          userId: { userId: currentUser.userId },
         });
 
         await queryRunner.manager.update(
@@ -193,6 +204,13 @@ export class PointTransactionService {
           { userPoint: userdata.userPoint - amount },
         );
       }
+
+      await queryRunner.manager.save(PaymentHistory, {
+        userId: currentUser.userId,
+        agoPaymentAmount: userdata.userPoint,
+        afterPaymentAmount: userdata.userPoint - Payment_data.checksum,
+        paymentAmount: Payment_data.checksum,
+      });
 
       await queryRunner.commitTransaction();
     } catch (error) {

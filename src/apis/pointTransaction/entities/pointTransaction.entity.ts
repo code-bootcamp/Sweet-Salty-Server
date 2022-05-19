@@ -41,7 +41,7 @@ export class PointTransaction {
 
   @ManyToOne(() => User)
   @Field(() => User)
-  user: User;
+  userId: User;
 
   @CreateDateColumn()
   @Field(() => Date)

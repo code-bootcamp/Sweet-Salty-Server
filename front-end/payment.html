@@ -28,7 +28,7 @@
           {
             headers: {
               authorization:
-                'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyRW1haWwiOiJhYWFhYWFhYWFhQGEuY29tIiwiaWF0IjoxNjUyMzU1Njk4LCJleHAiOjE2NTIzNTc0OTh9.yV84HZF0hbXECOxnntf8NrSOSNwRvHVvFMRM-CelLfo',
+                'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyRW1haWwiOiJhQGEuY29tIiwiaWF0IjoxNjUyOTQ5Nzc5LCJleHAiOjE2NTI5NTE1Nzl9.qW2fwUscFbCclkwfVhU7u54WEQj5ayICDozRjBCKeo4',
             },
           },
         );
@@ -43,7 +43,7 @@
           {
             pg: 'html5_inicis',
             pay_method: 'card',
-            name: '노르웨이 회전 의자',
+            name: pick,
             amount: myAmount,
             buyer_email: 'gildong@gmail.com',
             buyer_name: '홍길동',
@@ -61,13 +61,13 @@
                             createPointTransaction(impUid: "${rsp.imp_uid}",amount:${rsp.paid_amount}){
                               id
                             }
-                          } 
+                          }
                         `,
                 },
                 {
                   headers: {
                     Authorization:
-                      'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyRW1haWwiOiJhYWFhYWFhYWFhQGEuY29tIiwiaWF0IjoxNjUyMzU1Njk4LCJleHAiOjE2NTIzNTc0OTh9.yV84HZF0hbXECOxnntf8NrSOSNwRvHVvFMRM-CelLfo',
+                      'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyRW1haWwiOiJhQGEuY29tIiwiaWF0IjoxNjUyOTQ5Nzc5LCJleHAiOjE2NTI5NTE1Nzl9.qW2fwUscFbCclkwfVhU7u54WEQj5ayICDozRjBCKeo4',
                   },
                 },
               );

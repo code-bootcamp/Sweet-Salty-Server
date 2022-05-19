@@ -28,7 +28,7 @@ export class User {
   @Field(() => String)
   userId: string;
 
-  @Column({ default: 0 })
+  @Column({ default: false })
   @Field(() => Boolean)
   userState: boolean;
 

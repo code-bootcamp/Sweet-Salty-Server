@@ -1,18 +1,23 @@
-import { Injectable } from '@nestjs/common';
+import { ConflictException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Connection, getConnection, Repository } from 'typeorm';
+import { PaymentShopHistory } from '../paymentShopHistory/entities/paymentShopHistory.entity';
+import { User } from '../user/entities/user.entity';
 import { Shop } from './entities/shop.entity';
 @Injectable()
 export class ShopService {
   constructor(
     @InjectRepository(Shop)
     private readonly shopRepository: Repository<Shop>,
-  ) {}
 
-  //   async findAll() {
-  //     const shops = await this.shopRepository.find({});
-  //     return shops;
-  //   }
+    @InjectRepository(User)
+    private readonly UserRepository: Repository<User>,
+
+    @InjectRepository(PaymentShopHistory)
+    private readonly PaymentHistoryRepository: Repository<PaymentShopHistory>,
+
+    private readonly connection: Connection,
+  ) {}
 
   async findOne({ shopId }) {
     const shop = await this.shopRepository.findOne({
@@ -21,36 +26,101 @@ export class ShopService {
     return shop;
   }
 
-  async create({ createShopInput }) {
-    const shop = await this.shopRepository.save({
-      ...createShopInput,
+  async histroyFindOne({ currentUser }) {
+    return this.PaymentHistoryRepository.find({
+      userId: currentUser.userId,
     });
-
-    return shop;
   }
 
-  async update({ shopId, updateShopInput }) {
-    const shop = await this.shopRepository.findOne({
+  async create({ createShopInput, currentUser }) {
+    const adminCheck = await this.UserRepository.findOne({
+      where: { userId: currentUser.userId },
+    });
+
+    if (adminCheck.userState) {
+      const shopInfo = await this.shopRepository.save({
+        ...createShopInput,
+        user: adminCheck,
+      });
+
+      return shopInfo;
+    }
+
+    return new ConflictException('관리자로 등록 되어있지 않습니다.');
+  }
+
+  async update({ shopId, updateShopInput, currentUser }) {
+    const adminCheck = await this.UserRepository.findOne({
+      where: { userId: currentUser.userId },
+    });
+
+    const shopInfo = await this.shopRepository.findOne({
       where: { shopId },
     });
+    if (adminCheck.userState) {
+      if (shopInfo) {
+        const newShop = {
+          ...shopInfo,
+          ...updateShopInput,
+        };
+        return await this.shopRepository.save(newShop);
+      }
+    }
 
-    const newShop = {
-      ...shop,
-      ...updateShopInput,
-    };
-
-    return await this.shopRepository.save(newShop);
+    return new ConflictException('관리자로 등록 되어 있지 않습니다.');
   }
 
-  //   async delete({ productId }) {
-  //     const result = await this.productRepository.softDelete({
-  //       id: productId,
-  //     }); // 다양한 조건으로 삭제 가능!!
-  //     return result.affected ? true : false;
-  //   }
+  async paymentShop({ shopId, currentUser, stock }) {
+    const productName = await this.shopRepository.findOne({
+      shopId,
+    });
+    const userPoint = await this.UserRepository.findOne({
+      userId: currentUser.userId,
+    });
 
-  //   async restoreOne({ productId }) {
-  //     const result = await this.productRepository.restore({ id: productId });
-  //     return result.affected ? true : false;
-  //   }
+    const original = productName.shopOriginalPrice;
+    const discount = productName.shopDisCount / 100;
+    const discountPrice = original * (1 - discount);
+    const price = discountPrice * stock;
+
+    if (!stock) return new ConflictException('수량을 선택해주세요.');
+
+    if (productName.shopStock - stock < 0)
+      return new ConflictException('재고가 부족해 구매할 수 없습니다.');
+
+    if (userPoint.userPoint < price)
+      return new ConflictException('포인트가 부족해 구매할 수 없습니다.');
+
+    const queryRunner = await this.connection.createQueryRunner();
+    await queryRunner.connect();
+
+    await queryRunner.startTransaction('SERIALIZABLE');
+    try {
+      await getConnection()
+        .createQueryBuilder()
+        .update(User)
+        .set({ userPoint: () => `userPoint - ${price}` })
+        .where({ userId: currentUser.userId });
+
+      await getConnection()
+        .createQueryBuilder()
+        .update(Shop)
+        .set({ shopStock: () => `shopStock - ${stock}` })
+        .where({ shopId });
+
+      await this.PaymentHistoryRepository.save({
+        historyShopPrice: price,
+        historyShopProductName: productName.shopProductName,
+        historyShopSeller: productName.shopSeller,
+        historyShopStock: stock,
+        userId: currentUser.userId,
+      });
+
+      await queryRunner.commitTransaction();
+    } catch (error) {
+      await queryRunner.rollbackTransaction();
+    } finally {
+      await queryRunner.release();
+    }
+  }
 }
