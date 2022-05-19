@@ -3,6 +3,10 @@ import { ShopService } from './shop.service';
 import { Shop } from './entities/shop.entity';
 import { CreateShopInput } from './dto/createShop.input';
 import { updateShopInput } from './dto/updateShop.input';
+import { CurrentUser, ICurrentUser } from 'src/commons/auth/gql-user-param';
+import { GqlAuthAccessGuard } from 'src/commons/auth/gql-auth.guard';
+import { UseGuards } from '@nestjs/common';
+import { PaymentShopHistory } from '../paymentShopHistory/entities/paymentShopHistory.entity';
 
 @Resolver()
 export class ShopResolver {
@@ -10,38 +14,50 @@ export class ShopResolver {
     private readonly shopSerivece: ShopService, //
   ) {}
 
-  //   @Query(() => [Shop])
-  //   fetchShops() {
-  //     return this.shopSerivece.findAll();
-  //   }
-
   @Query(() => Shop)
   fetchShop(@Args('shopId') shopId: string) {
     return this.shopSerivece.findOne({ shopId });
   }
 
-  @Mutation(() => Shop)
-  createShop(@Args('createShopInput') createShopInput: CreateShopInput) {
-    return this.shopSerivece.create({ createShopInput });
+  @UseGuards(GqlAuthAccessGuard)
+  @Query(() => [PaymentShopHistory])
+  shopHistoryFindOne(
+    @CurrentUser() currentUser: ICurrentUser, //
+  ) {
+    return this.shopSerivece.histroyFindOne({ currentUser });
   }
 
+  @UseGuards(GqlAuthAccessGuard)
+  @Mutation(() => Shop)
+  createShop(
+    @Args('createShopInput') createShopInput: CreateShopInput, //
+    @CurrentUser() currentUser: ICurrentUser,
+  ) {
+    return this.shopSerivece.create({ createShopInput, currentUser });
+  }
+  @UseGuards(GqlAuthAccessGuard)
   @Mutation(() => Shop)
   async updateShop(
     @Args('shopId') shopId: string,
-
+    @CurrentUser() currentUser: ICurrentUser,
     @Args('updateShopInput') updateShopInput: updateShopInput,
   ) {
     // 수정하기
     return await this.shopSerivece.update({
       shopId,
       updateShopInput,
+      currentUser,
     });
   }
-
-  //   @Mutation(() => Boolean)
-  //   deleteProduct(@Args('productId') productId: string) {
-  //     return this.productService.delete({ productId });
-  //   }
+  @UseGuards(GqlAuthAccessGuard)
+  @Mutation(() => String)
+  payShop(
+    @Args(`stock`) stock: number,
+    @Args('shopId') shopId: string,
+    @CurrentUser() currentUser: ICurrentUser,
+  ) {
+    return this.shopSerivece.paymentShop({ shopId, currentUser, stock });
+  }
 
   //   @Mutation(() => Boolean)
   //   restoreOne(@Args('productId') productId: string) {

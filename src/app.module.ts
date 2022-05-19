@@ -16,6 +16,7 @@ import { CommentModule } from './apis/comment/comment.module';
 import { CommentLikeModule } from './apis/commentLike/commentLike.module';
 import { BoardLikeModule } from './apis/boardLike/boardLike.module';
 import { PointTransactionModule } from './apis/pointTransaction/pointTransaction.module';
+
 import { MessageModule } from './apis/message/message.module';
 import { ChatGateway } from './chat.gateway';
 import { ShopModule } from './apis/shop/shop.module';
