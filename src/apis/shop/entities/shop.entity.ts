@@ -1,5 +1,6 @@
-import { Field, Int, ObjectType } from '@nestjs/graphql';
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { Field, Float, Int, ObjectType } from '@nestjs/graphql';
+import { User } from 'src/apis/user/entities/user.entity';
+import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 
 @ObjectType()
 @Entity()
@@ -10,33 +11,37 @@ export class Shop {
 
   @Column()
   @Field(() => String)
-  productName: string;
+  shopProductName: string;
 
   @Column()
   @Field(() => String)
-  seller: string;
+  shopSeller: string;
 
   @Column()
   @Field(() => Int)
-  disCount: number;
+  shopDisCount: number;
 
   @Column()
-  @Field(() => Int)
-  disCountPrice: number;
+  @Field(() => Float)
+  shopDisCountPrice: number;
 
   @Column()
-  @Field(() => Int)
-  originalPrice: number;
+  @Field(() => Float)
+  shopOriginalPrice: number;
 
   @Column()
   @Field(() => String)
-  description: string;
+  shopDescription: string;
 
   @Column()
   @Field(() => Int)
-  stock: number;
+  shopStock: number;
 
   @Column()
   @Field(() => String)
   shopUrl: string;
+
+  @ManyToOne(() => User)
+  @Field(() => User)
+  user: User;
 }

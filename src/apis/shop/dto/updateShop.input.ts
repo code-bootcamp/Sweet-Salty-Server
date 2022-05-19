@@ -3,25 +3,25 @@ import { Field, InputType, Int } from '@nestjs/graphql';
 @InputType()
 export class updateShopInput {
   @Field(() => String, { nullable: true })
-  productName: string;
+  shopProductName: string;
 
   @Field(() => String, { nullable: true })
-  seller: string;
+  shopSeller: string;
 
   @Field(() => Int, { nullable: true })
-  disCount: number;
+  shopDisCount: number;
 
   @Field(() => Int, { nullable: true })
-  disCountPrice: number;
+  shopDisCountPrice: number;
 
   @Field(() => Int, { nullable: true })
-  originalPrice: number;
+  shopOriginalPrice: number;
 
   @Field(() => String, { nullable: true })
-  description: string;
+  shopDescription: string;
 
   @Field(() => Int, { nullable: true })
-  stock: number;
+  shopStock: number;
 
   @Field(() => String, { nullable: true })
   shopUrl: string;
