@@ -112,7 +112,7 @@ export class AuthResolver {
   }
 
   @Mutation(() => String)
-  async signInGetToken(
+  async signUpGetToken(
     //
     @Args('phone') phone: string,
   ) {
@@ -120,7 +120,7 @@ export class AuthResolver {
   }
 
   @Mutation(() => Boolean)
-  async signInCheckToken(
+  async signUpCheckToken(
     @Args('phone') phone: string,
     @Args('token') token: string,
   ) {

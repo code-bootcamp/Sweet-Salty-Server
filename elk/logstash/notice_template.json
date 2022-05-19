@@ -1,0 +1,11 @@
+{
+  "template": "notice-*",
+  "index_patterns": ["notice"],
+  "order": "1",
+  "settings": {
+    "refresh_interval": "5s"
+  },
+  "mappings": {
+    "properties": {}
+  }
+}

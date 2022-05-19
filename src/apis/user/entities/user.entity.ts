@@ -1,7 +1,7 @@
 import { ObjectType, Field, Int } from '@nestjs/graphql';
 import {
-  BOARD_AGE_GROUP_ENUM,
-  BOARD_GENDER_ENUM,
+  AGE_GROUP_ENUM,
+  GENDER_ENUM,
 } from 'src/apis/board/entities/board.entity';
 import {
   Column,
@@ -63,12 +63,12 @@ export class User {
   @Field(() => Int)
   userPoint: number;
 
-  @Column({ type: 'enum', enum: BOARD_AGE_GROUP_ENUM })
-  @Field(() => BOARD_AGE_GROUP_ENUM)
+  @Column({ type: 'enum', enum: AGE_GROUP_ENUM })
+  @Field(() => AGE_GROUP_ENUM)
   ageGroup: string;
 
-  @Column({ type: 'enum', enum: BOARD_GENDER_ENUM })
-  @Field(() => BOARD_GENDER_ENUM)
+  @Column({ type: 'enum', enum: GENDER_ENUM })
+  @Field(() => GENDER_ENUM)
   gender: string;
 
   @Column({ default: '단짠맛집' })

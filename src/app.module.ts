@@ -16,11 +16,12 @@ import { CommentModule } from './apis/comment/comment.module';
 import { CommentLikeModule } from './apis/commentLike/commentLike.module';
 import { BoardLikeModule } from './apis/boardLike/boardLike.module';
 import { PointTransactionModule } from './apis/pointTransaction/pointTransaction.module';
-import { ChatGateway } from './chat.gateway';
+
 import { MessageModule } from './apis/message/message.module';
-import { AdminModule } from './apis/admin/admin.module';
-import { noticeModule } from './apis/notice/notice.module';
+import { ChatGateway } from './chat.gateway';
 import { ShopModule } from './apis/shop/shop.module';
+import { AdminModule } from './apis/admin/admin.module';
+import { NoticeModule } from './apis/notice/notice.module';
 
 @Module({
   imports: [
@@ -30,7 +31,7 @@ import { ShopModule } from './apis/shop/shop.module';
     BoardLikeModule,
     ImageUploadModule,
     UserModule,
-    noticeModule,
+    NoticeModule,
     MessageModule,
     CommentModule,
     CommentLikeModule,

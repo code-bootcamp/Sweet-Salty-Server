@@ -4,7 +4,7 @@ import { AuthGuard } from '@nestjs/passport';
 
 import { Request, Response } from 'express';
 import { User } from '../user/entities/user.entity';
-
+import { RealIP } from 'nestjs-real-ip';
 import { UserService } from '../user/user.service';
 import { AuthService } from './auth.service';
 
@@ -33,8 +33,12 @@ export class AuthController {
       userSignUpSite: req.user.userSignUpSite,
     });
 
+    console.log(user);
+
     if (user) {
       this.authService.social_login({ user, res });
+
+      console.log(res);
     } else {
       const newUser = await this.userService.socialCreate({ user: req.user });
       this.authService.social_login({ user: newUser, res });
@@ -62,6 +66,11 @@ export class AuthController {
     // const social_user = await this.userService.socialCreate({ user: req.user });
     // // 로그인
     // this.authService.social_login({ user: social_user, res });
+  }
+
+  @Get('my-ip')
+  get(@RealIP() ip: string): string {
+    return ip;
   }
 
   @Get('/login/naver')

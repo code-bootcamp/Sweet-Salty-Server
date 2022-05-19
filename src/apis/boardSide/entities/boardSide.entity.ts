@@ -1,24 +1,14 @@
 import { Field, ObjectType } from '@nestjs/graphql';
 import { Board } from 'src/apis/board/entities/board.entity';
 import { BoardTag } from 'src/apis/boardTag/entities/boardTag.entity';
-import {
-  Column,
-  Entity,
-  JoinColumn,
-  ManyToOne,
-  PrimaryGeneratedColumn,
-} from 'typeorm';
+import { Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 
 @ObjectType()
 @Entity()
 export class BoardSide {
   @PrimaryGeneratedColumn('uuid')
   @Field(() => String)
-  boardSide: string;
-
-  @Column()
-  @Field(() => String)
-  tagName: string;
+  boardSideId: string;
 
   @ManyToOne((type) => BoardTag, (BoardTag) => BoardTag.boardSides)
   @JoinColumn({ name: 'boardTagId', referencedColumnName: 'boardTagId' })

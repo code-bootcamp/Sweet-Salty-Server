@@ -1,4 +1,5 @@
 import { Field, ObjectType } from '@nestjs/graphql';
+import { Board } from 'src/apis/board/entities/board.entity';
 import { Notice } from 'src/apis/notice/entities/notice.entity';
 import { TopCategory } from 'src/apis/topCategory/entities/topCategory.entity';
 import {
@@ -6,7 +7,7 @@ import {
   Entity,
   JoinColumn,
   ManyToOne,
-  OneToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 
@@ -28,6 +29,9 @@ export class SubCategory {
   })
   topCategories: TopCategory;
 
-  @OneToOne((type) => Notice, (Notice) => Notice.subCategory)
+  @OneToMany((type) => Notice, (Notice) => Notice.subCategory)
   notices: Notice[];
+
+  @OneToMany((type) => Board, (Board) => Board.subCategory)
+  boards: Board[];
 }

@@ -22,7 +22,7 @@ export class AuthService {
       { userEmail: user.userEmail },
       {
         secret: this.config.get('ACCESS'),
-        expiresIn: '30m',
+        expiresIn: '2w',
       },
     );
     console.log(Access);
@@ -40,13 +40,13 @@ export class AuthService {
 
     await res.setHeader(
       'Set-Cookie',
-      `refreshToken=${refreshToken}; path=/; domain=project08.site; Secure; httpOnly; SameSite=None;`,
+      `refreshToken=${refreshToken}; path=/; domain=localhost; Secure; httpOnly; SameSite=None;`,
     );
   }
 
   social_login({ user, res }) {
     this.setRefreshToken({ user, res });
-    res.redirect('http://127.0.0.1:5500/front-end/login/index.html');
+    res.redirect('http://localhost:5501/front-end/login/index.html');
   }
 
   async sendTokenToPhone({ phone }) {
