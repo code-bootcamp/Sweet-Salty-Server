@@ -39,3 +39,20 @@ X-REQUEST-TYPE: GraphQL
       "userEmail" : "yukina1418@gmail.com",
       "userPassword" : "1414"
   }
+
+
+###
+http://localhost:3000/my-ip
+
+###
+http://localhost:3000/graphql
+Content-Type: multipart/form-data
+X-REQUEST-TYPE: GraphQL
+
+
+mutation uploadFile($files: [Upload!]!) { 
+  uploadFile(files: $files) }
+
+{
+  "files" : ["https://storage.googleapis.com/image__data/1c99b718-187c-4993-b39c-3b165e796a9f.png"]
+}

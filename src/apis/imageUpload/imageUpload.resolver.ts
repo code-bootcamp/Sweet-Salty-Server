@@ -9,11 +9,11 @@ export class ImageUploadResolver {
     private readonly imageUploadService: ImageUploadService,
   ) {}
 
-  @Mutation(() => [String])
-  uploadFile(
-    @Args({ name: 'files', type: () => [GraphQLUpload] }) files: FileUpload[],
+  @Mutation(() => String)
+  async uploadFile(
+    @Args({ name: 'file', type: () => GraphQLUpload }) file: FileUpload,
   ) {
-    return this.imageUploadService.upload({ files });
+    return await this.imageUploadService.upload({ file });
   }
 
   // @Mutation(() => String)

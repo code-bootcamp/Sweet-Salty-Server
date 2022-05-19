@@ -2,6 +2,7 @@ import { Field, ObjectType } from '@nestjs/graphql';
 import {
   Column,
   CreateDateColumn,
+  DeleteDateColumn,
   Entity,
   PrimaryGeneratedColumn,
 } from 'typeorm';
@@ -26,4 +27,7 @@ export class MessageInfo {
 
   @CreateDateColumn()
   createAt: Date;
+
+  @DeleteDateColumn()
+  deleteAt: Date;
 }

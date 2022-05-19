@@ -3,6 +3,7 @@ import {
   EntitySubscriberInterface,
   Connection,
   UpdateEvent,
+  getConnection,
 } from 'typeorm';
 import { MessageInfo } from './messageInfo.entity';
 
@@ -21,8 +22,21 @@ export class MessageInfoSubscriber
   async afterUpdate(event: UpdateEvent<MessageInfo>) {
     const data = await event.connection
       .getRepository(MessageInfo)
-      .findOne({ where: { messageInfoId: event.entity.messageInfoId } });
+      .findOne(event.entity.id);
 
-    console.log(data);
+    if (data.deleteCheckData === 2) {
+      await getConnection()
+        .createQueryBuilder()
+        .softDelete()
+        .from(MessageInfo)
+        .where({ messageInfoId: data.messageInfoId })
+        .execute();
+    }
+
+    // event.connection
+    //   .getRepository(MessageInfo)
+    //   .findOne({ where: { messageInfoId: event.entity.messageInfoId } });
+
+    //console.log(data);
   }
 }

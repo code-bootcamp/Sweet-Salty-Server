@@ -7,14 +7,15 @@ import {
   Entity,
   ManyToOne,
   PrimaryGeneratedColumn,
+  UpdateDateColumn,
 } from 'typeorm';
 
 @ObjectType()
 @Entity()
 export class Notice {
-  @PrimaryGeneratedColumn('uuid')
+  @PrimaryGeneratedColumn('increment')
   @Field(() => Int)
-  noticeId: string;
+  noticeId: number;
 
   @Column()
   @Field(() => String)
@@ -32,11 +33,15 @@ export class Notice {
   noticeHit: number;
 
   @ManyToOne((type) => SubCategory, (SubCategory) => SubCategory.notices)
+  @Field(() => SubCategory)
   subCategory: SubCategory;
 
   @CreateDateColumn()
   @Field(() => Date)
   createAt: Date;
+
+  @UpdateDateColumn()
+  updateAt: Date;
 
   @DeleteDateColumn()
   deleteAt: Date;

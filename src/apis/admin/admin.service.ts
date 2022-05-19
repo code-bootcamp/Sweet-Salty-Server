@@ -16,6 +16,7 @@ export class AdminService {
         .from(BoardTag, 'boardTag')
         .where({ boardTagName: cur })
         .getOne();
+      console.log(data);
 
       if (data === undefined) {
         await getConnection()
@@ -50,9 +51,10 @@ export class AdminService {
       .from(TopCategory, 'topCategory')
       .getMany();
 
-    console.log(checkData);
+    console.log(checkData.length);
 
-    if (checkData) throw new ConflictException('이미 생성되었습니다.');
+    if (checkData.length !== 0)
+      throw new ConflictException('이미 생성되었습니다.');
 
     await getConnection()
       .createQueryBuilder()
@@ -78,7 +80,8 @@ export class AdminService {
       .from(SubCategory, 'subCategory')
       .getMany();
 
-    if (checkData) throw new ConflictException('이미 생성되었습니다.');
+    if (checkData.length !== 0)
+      throw new ConflictException('이미 생성되었습니다.');
 
     const Notice = await getConnection()
       .createQueryBuilder()
@@ -103,7 +106,7 @@ export class AdminService {
         .createQueryBuilder()
         .insert()
         .into(SubCategory)
-        .values({ subCategoryName: el, topCategories: Notice })
+        .values({ subCategoryName: el, topCategories: Community })
         .execute();
     });
 
@@ -112,7 +115,7 @@ export class AdminService {
         .createQueryBuilder()
         .insert()
         .into(SubCategory)
-        .values({ subCategoryName: el, topCategories: Community })
+        .values({ subCategoryName: el, topCategories: Notice })
         .execute();
     });
     console.log('aa');

@@ -3,9 +3,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { AuthResolver } from './auth.resolver';
 import { AuthService } from './auth.service';
 import { JwtModule } from '@nestjs/jwt';
-
 import { JwtRefreshStrategy } from 'src/commons/auth/jwt-refresh.strategy';
-
 import { User } from '../user/entities/user.entity';
 import { JwtAccessStrategy } from 'src/commons/auth/jwt-access.strategy';
 import { HttpModule } from '@nestjs/axios';

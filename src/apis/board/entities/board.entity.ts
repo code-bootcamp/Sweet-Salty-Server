@@ -1,17 +1,13 @@
-import {
-  Field,
-  InputType,
-  Int,
-  ObjectType,
-  registerEnumType,
-} from '@nestjs/graphql';
+import { Field, Int, ObjectType, registerEnumType } from '@nestjs/graphql';
 import { BoardSide } from 'src/apis/boardSide/entities/boardSide.entity';
 import { Store } from 'src/apis/store/store.entities/store.entity';
+import { SubCategory } from 'src/apis/subCategory/entities/subCategory.entity';
 import { User } from 'src/apis/user/entities/user.entity';
 
 import {
   Column,
   CreateDateColumn,
+  DeleteDateColumn,
   Entity,
   JoinColumn,
   ManyToOne,
@@ -20,37 +16,42 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 
-export enum BOARD_GENDER_ENUM {
-  MALE = 'MALE',
-  FEMALE = 'FEMALE',
-  PRIVATE = 'PRIVATE',
+export enum SUB_CATEGORY_NAME_ENUM {
+  REQUEST = 'REQUEST',
+  VISITED = 'VISITED',
+  REVIEW = 'REVIEW',
+  TASTER = 'TASTER',
 }
 
-export enum BOARD_AGE_GROUP_ENUM {
+export enum GENDER_ENUM {
+  PRIVATE = 'PRIVATE',
+  MALE = 'MALE',
+  FEMALE = 'FEMALE',
+}
+
+export enum AGE_GROUP_ENUM {
+  NONE = 'NONE',
   TEN = 'TEN',
   TWENTY = 'TWENTY',
   THIRTY = 'THIRTY',
   FORTY = 'FORTY',
   FIFTY = 'FIFTY',
   SIXTY = 'SIXTY',
-  NONE = 'NONE',
 }
 
-registerEnumType(BOARD_GENDER_ENUM, {
-  name: 'BOARD_GENDER_ENUM',
+registerEnumType(SUB_CATEGORY_NAME_ENUM, {
+  name: 'SUB_CATEGORY_NAME_ENUM',
 });
 
-registerEnumType(BOARD_AGE_GROUP_ENUM, {
-  name: 'BOARD_AGE_GROUP_ENUM',
+registerEnumType(GENDER_ENUM, {
+  name: 'GENDER_ENUM',
+});
+
+registerEnumType(AGE_GROUP_ENUM, {
+  name: 'AGE_GROUP_ENUM',
 });
 
 export abstract class Content {}
-
-@InputType()
-export class Tags {
-  @Field(() => [String])
-  names: string[];
-}
 
 @Entity()
 @ObjectType()
@@ -87,24 +88,20 @@ export class Board {
   @Field(() => Int)
   boardHit: number;
 
-  @Column({ type: 'enum', enum: BOARD_AGE_GROUP_ENUM })
-  @Field(() => BOARD_AGE_GROUP_ENUM)
+  @Column({ type: 'enum', enum: AGE_GROUP_ENUM })
+  @Field(() => AGE_GROUP_ENUM)
   ageGroup: string;
 
-  @Column({ type: 'enum', enum: BOARD_GENDER_ENUM })
-  @Field(() => BOARD_GENDER_ENUM)
+  @Column({ type: 'enum', enum: GENDER_ENUM })
+  @Field(() => GENDER_ENUM)
   gender: string;
-
-  @CreateDateColumn()
-  @Field(() => Date)
-  createAt: Date;
-
-  @UpdateDateColumn()
-  @Field(() => Date)
-  updateAt: Date;
 
   @ManyToOne(() => User)
   user: User;
+
+  @ManyToOne((type) => SubCategory, (SubCategory) => SubCategory.boards)
+  @Field(() => SubCategory)
+  subCategory: SubCategory;
 
   @OneToMany((type) => Store, (Store) => Store.boards)
   @Field(() => Store)
@@ -114,4 +111,15 @@ export class Board {
   @JoinColumn({ name: 'boardSideId', referencedColumnName: 'boardSideId' })
   @Field(() => [BoardSide])
   boardSides: BoardSide[];
+
+  @CreateDateColumn()
+  @Field(() => Date)
+  createAt: Date;
+
+  @UpdateDateColumn()
+  @Field(() => Date)
+  updateAt: Date;
+
+  @DeleteDateColumn()
+  deleteAt: Date;
 }

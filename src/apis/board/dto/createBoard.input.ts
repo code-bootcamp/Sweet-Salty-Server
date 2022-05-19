@@ -1,4 +1,5 @@
 import { Field, InputType } from '@nestjs/graphql';
+import { SUB_CATEGORY_NAME_ENUM } from '../entities/board.entity';
 
 @InputType()
 export class CreateBoardInput {
@@ -14,6 +15,6 @@ export class CreateBoardInput {
   @Field(() => String)
   boardContents: string;
 
-  @Field(() => String, { nullable: true })
-  store: string;
+  @Field(() => SUB_CATEGORY_NAME_ENUM)
+  subCategoryName: string;
 }

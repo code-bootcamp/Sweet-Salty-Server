@@ -7,12 +7,16 @@ import * as cookieParser from 'cookie-parser';
 import * as csurf from 'csurf';
 import Helmet from 'helmet';
 import { rateLimit } from 'express-rate-limit';
+import * as requestIp from 'request-ip';
+import { json } from 'express';
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
   app.useStaticAssets(join(__dirname, '..', 'static'));
+  app.use(json());
   // 파일 업로드 라이브러리
   app.use(graphqlUploadExpress());
+  app.use(requestIp.mw());
 
   /// 사이트 간 위조 요청 방지 라이브러리
   // app.use(csurf());
