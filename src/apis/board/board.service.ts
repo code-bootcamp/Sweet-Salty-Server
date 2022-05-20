@@ -9,7 +9,7 @@ import { SubCategory } from '../subCategory/entities/subCategory.entity';
 import { User } from '../user/entities/user.entity';
 import { Board } from './entities/board.entity';
 import { Image } from '../image/entites/image.entity';
-import { Place } from '../place/place.entities/place.entity';
+import { Place } from '../place/entities/place.entity';
 
 @Injectable()
 export class BoardService {

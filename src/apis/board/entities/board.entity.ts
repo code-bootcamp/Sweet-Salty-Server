@@ -1,7 +1,7 @@
 import { Field, Int, ObjectType, registerEnumType } from '@nestjs/graphql';
 import { BoardSide } from 'src/apis/boardSide/entities/boardSide.entity';
 import { Image } from 'src/apis/image/entites/image.entity';
-import { Place } from 'src/apis/place/place.entities/place.entity';
+import { Place } from 'src/apis/place/entities/place.entity';
 
 import { SubCategory } from 'src/apis/subCategory/entities/subCategory.entity';
 import { User } from 'src/apis/user/entities/user.entity';

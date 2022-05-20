@@ -31,7 +31,7 @@ import { Shop } from './apis/shop/entities/shop.entity';
 import { SubCategory } from './apis/subCategory/entities/subCategory.entity';
 import { TopCategory } from './apis/topCategory/entities/topCategory.entity';
 import * as bcrypt from 'bcrypt';
-import { Place } from './apis/place/place.entities/place.entity';
+import { Place } from './apis/place/entities/place.entity';
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
@@ -39,7 +39,7 @@ async function bootstrap() {
   app.useStaticAssets(join(__dirname, '..', 'static'));
   app.use(json());
   app.use(requestIp.mw());
-  // AdminBro.registerAdapter({ Database, Resource });
+  AdminBro.registerAdapter({ Database, Resource });
 
   // const adminBro = new AdminBro({
   //   resources: [
