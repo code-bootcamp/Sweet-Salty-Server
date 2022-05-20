@@ -27,10 +27,11 @@ import { MessageInfo } from './apis/messageInfo/entities/messageInfo.entity';
 import { PaymentHistory } from './apis/paymentHistory/entities/paymentHistory.entity';
 import { PaymentShopHistory } from './apis/paymentShopHistory/entities/paymentShopHistory.entity';
 import { Shop } from './apis/shop/entities/shop.entity';
-import { Store } from './apis/store/store.entities/store.entity';
+
 import { SubCategory } from './apis/subCategory/entities/subCategory.entity';
 import { TopCategory } from './apis/topCategory/entities/topCategory.entity';
 import * as bcrypt from 'bcrypt';
+import { Place } from './apis/place/place.entities/place.entity';
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
@@ -38,62 +39,62 @@ async function bootstrap() {
   app.useStaticAssets(join(__dirname, '..', 'static'));
   app.use(json());
   app.use(requestIp.mw());
-  AdminBro.registerAdapter({ Database, Resource });
+  // AdminBro.registerAdapter({ Database, Resource });
 
-  const adminBro = new AdminBro({
-    resources: [
-      Board,
-      BoardSide,
-      BoardTag,
-      Comment,
-      CommentLike,
-      Message,
-      MessageInfo,
-      Notice,
-      PaymentHistory,
-      PaymentShopHistory,
-      Shop,
-      Store,
-      SubCategory,
-      TopCategory,
-      User,
-    ],
-    rootPath: '/admin',
-  });
+  // const adminBro = new AdminBro({
+  //   resources: [
+  //     Board,
+  //     BoardSide,
+  //     BoardTag,
+  //     Comment,
+  //     CommentLike,
+  //     Message,
+  //     MessageInfo,
+  //     Notice,
+  //     PaymentHistory,
+  //     PaymentShopHistory,
+  //     Shop,
+  //     Place,
+  //     SubCategory,
+  //     TopCategory,
+  //     User,
+  //   ],
+  //   rootPath: '/adminhi485236fskr274gshkq2eoy9wqt43q',
+  // });
 
-  const router = AdminBroExpress.buildAuthenticatedRouter(
-    adminBro,
-    {
-      cookieName: 'adminBro',
-      cookiePassword: 'session Key',
-      authenticate: async (email, password) => {
-        const user = await getConnection()
-          .createQueryBuilder()
-          .select('user')
-          .from(User, 'user')
-          .where({ userEmail: email })
-          .getOne();
+  // const router = AdminBroExpress.buildAuthenticatedRouter(
+  //   adminBro,
+  //   {
+  //     cookieName: 'adminBro',
+  //     cookiePassword: 'session Key',
+  //     authenticate: async (email, password) => {
+  //       const user = await getConnection()
+  //         .createQueryBuilder()
+  //         .select('user')
+  //         .from(User, 'user')
+  //         .where({ userEmail: email })
+  //         .getOne();
 
-        if (!user || user.userState === false) {
-          return false;
-        } else {
-          const isAuth = await bcrypt.compare(password, user.userPassword);
-          if (isAuth) {
-            return user;
-          }
-        }
-      },
-    },
-    null,
-    {
-      // 추가
-      resave: false, // 추가
-      saveUninitialized: true, // 추가
-    },
-  );
+  //       if (!user || user.userState === false) {
+  //         return false;
+  //       } else {
+  //         const isAuth = await bcrypt.compare(password, user.userPassword);
+  //         if (isAuth) {
+  //           return user;
+  //         }
+  //       }
+  //     },
+  //   },
+  //   null,
+  //   {
+  //     // 추가
+  //     resave: false, // 추가
+  //     saveUninitialized: true, // 추가
+  //   },
+  // );
 
-  app.use(adminBro.options.rootPath, router);
-  // Nest.js AdminBro 연결
+  // app.use(adminBro.options.rootPath, router);
+  //Nest.js AdminBro 연결
 
   /// 사이트 간 위조 요청 방지 라이브러리
   // app.use(csurf());

@@ -106,7 +106,7 @@ export class AdminService {
         .createQueryBuilder()
         .insert()
         .into(SubCategory)
-        .values({ subCategoryName: el, topCategories: Community })
+        .values({ subCategoryName: el, topCategory: Community })
         .execute();
     });
 
@@ -115,7 +115,7 @@ export class AdminService {
         .createQueryBuilder()
         .insert()
         .into(SubCategory)
-        .values({ subCategoryName: el, topCategories: Notice })
+        .values({ subCategoryName: el, topCategory: Notice })
         .execute();
     });
 

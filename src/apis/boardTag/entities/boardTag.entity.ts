@@ -22,6 +22,7 @@ registerEnumType(REF_Name_ENUM, {
 @Entity()
 export class BoardTag extends BaseEntity {
   @PrimaryGeneratedColumn('uuid')
+  @Field(() => String)
   boardTagId: string;
 
   @Column({ unique: true })
@@ -33,5 +34,6 @@ export class BoardTag extends BaseEntity {
   boardTagRefName: string;
 
   @OneToMany((type) => BoardSide, (BoardSide) => BoardSide.boardTags)
-  boardSides: BoardSide[];
+  @Field(() => BoardSide)
+  boardSide: BoardSide[];
 }

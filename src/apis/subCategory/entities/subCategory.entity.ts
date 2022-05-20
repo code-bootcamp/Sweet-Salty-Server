@@ -24,11 +24,12 @@ export class SubCategory extends BaseEntity {
   subCategoryName: string;
 
   @ManyToOne((type) => TopCategory, (TopCategory) => TopCategory.subCategories)
+  @Field(() => TopCategory)
   @JoinColumn({
     name: 'TopCategoryId',
     referencedColumnName: 'topCategoryId',
   })
-  topCategories: TopCategory;
+  topCategory: TopCategory;
 
   @OneToMany((type) => Notice, (Notice) => Notice.subCategory)
   notices: Notice[];

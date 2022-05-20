@@ -1,6 +1,8 @@
 import { Field, Int, ObjectType, registerEnumType } from '@nestjs/graphql';
 import { BoardSide } from 'src/apis/boardSide/entities/boardSide.entity';
-import { Store } from 'src/apis/store/store.entities/store.entity';
+import { Image } from 'src/apis/image/entites/image.entity';
+import { Place } from 'src/apis/place/place.entities/place.entity';
+
 import { SubCategory } from 'src/apis/subCategory/entities/subCategory.entity';
 import { User } from 'src/apis/user/entities/user.entity';
 
@@ -104,14 +106,18 @@ export class Board extends BaseEntity {
   @Field(() => SubCategory)
   subCategory: SubCategory;
 
-  @OneToMany((type) => Store, (Store) => Store.boards)
-  @Field(() => Store)
-  stores: Store;
+  @ManyToOne((type) => Place, (Place) => Place.boards)
+  @Field(() => Place)
+  place: Place;
 
   @OneToMany((type) => BoardSide, (BoardSide) => BoardSide.boards)
   @JoinColumn({ name: 'boardSideId', referencedColumnName: 'boardSideId' })
   @Field(() => [BoardSide])
   boardSides: BoardSide[];
+
+  @OneToMany((type) => Image, (Image) => Image.board)
+  @Field(() => [Image])
+  images: Image;
 
   @CreateDateColumn()
   @Field(() => Date)

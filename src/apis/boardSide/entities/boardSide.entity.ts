@@ -16,7 +16,7 @@ export class BoardSide extends BaseEntity {
   @Field(() => String)
   boardSideId: string;
 
-  @ManyToOne((type) => BoardTag, (BoardTag) => BoardTag.boardSides)
+  @ManyToOne((type) => BoardTag, (BoardTag) => BoardTag.boardSide)
   @JoinColumn({ name: 'boardTagId', referencedColumnName: 'boardTagId' })
   @Field(() => BoardTag)
   boardTags: BoardTag;

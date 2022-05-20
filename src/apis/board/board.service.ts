@@ -1,9 +1,4 @@
-import {
-  ConflictException,
-  Injectable,
-  CACHE_MANAGER,
-  Inject,
-} from '@nestjs/common';
+import { Injectable, CACHE_MANAGER, Inject } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { getConnection, Repository } from 'typeorm';
 import { ElasticsearchService } from '@nestjs/elasticsearch';
@@ -13,6 +8,8 @@ import { BoardTag } from '../boardTag/entities/boardTag.entity';
 import { SubCategory } from '../subCategory/entities/subCategory.entity';
 import { User } from '../user/entities/user.entity';
 import { Board } from './entities/board.entity';
+import { Image } from '../image/entites/image.entity';
+import { Place } from '../place/place.entities/place.entity';
 
 @Injectable()
 export class BoardService {
@@ -49,7 +46,7 @@ export class BoardService {
       const data = await this.elasticsearchService.search({
         index: 'board',
         size: 10000,
-        sort: 'sortData',
+        sort: 'createat:desc',
         _source: [
           'boardtitle',
           'boardwriter',
@@ -88,7 +85,7 @@ export class BoardService {
     const isIp = await this.cacheManager.get(boardId);
 
     if (isIp === null) {
-      await this.cacheManager.set(boardId, ip, { ttl: 10 });
+      await this.cacheManager.set(boardId, ip, { ttl: 30 });
 
       await getConnection()
         .createQueryBuilder()
@@ -97,9 +94,31 @@ export class BoardService {
         .where({ boardId })
         .execute();
 
-      return await this.boardRepository.findOne({ boardId });
+      return await getConnection()
+        .createQueryBuilder()
+        .select('board')
+        .from(Board, 'board')
+        .leftJoinAndSelect('board.subCategory', 'subCategory')
+        .leftJoinAndSelect('subCategory.topCategory', 'topCategory')
+        .leftJoinAndSelect('board.boardSides', 'boardSide')
+        .leftJoinAndSelect('boardSide.boardTags', 'boardTag')
+        .leftJoinAndSelect('board.images', 'image')
+        .leftJoinAndSelect('board.place', 'place')
+        .where({ boardId })
+        .getOne();
     } else {
-      return await this.boardRepository.findOne({ boardId });
+      return await getConnection()
+        .createQueryBuilder()
+        .select('board')
+        .from(Board, 'board')
+        .leftJoinAndSelect('board.subCategory', 'subCategory')
+        .leftJoinAndSelect('subCategory.topCategory', 'topCategory')
+        .leftJoinAndSelect('board.boardSides', 'boardSide')
+        .leftJoinAndSelect('boardSide.boardTags', 'boardTag')
+        .leftJoinAndSelect('board.images', 'image')
+        .leftJoinAndSelect('board.place', 'place')
+        .where({ boardId })
+        .getOne();
     }
   }
 
@@ -174,7 +193,7 @@ export class BoardService {
 
   async create({ createBoardInput, boardTagsInput, currentUser }) {
     const { boardTagMenu, boardTagRegion, boardTagMood } = boardTagsInput;
-    const { subCategoryName, ...inputData } = createBoardInput;
+    const { subCategoryName, url, place, ...inputData } = createBoardInput;
 
     const userData = await getConnection()
       .createQueryBuilder()
@@ -248,20 +267,68 @@ export class BoardService {
           })
           .execute();
       }, ''),
+      url.reduce(async (acc, cur) => {
+        await getConnection()
+          .createQueryBuilder()
+          .insert()
+          .into(Image)
+          .values({
+            board: board.boardId,
+            url: cur,
+          })
+          .execute();
+      }, ''),
+      new Promise(async (resolve) => {
+        const PlaceData = await getConnection()
+          .createQueryBuilder()
+          .select('place')
+          .from(Place, 'place')
+          .where({ placeName: place.placeName })
+          .getOne();
+
+        if (PlaceData) {
+          await getConnection()
+            .createQueryBuilder()
+            .update(Board)
+            .set({ place: PlaceData })
+            .where({ boardId: board.boardId })
+            .execute();
+          resolve(PlaceData);
+        } else {
+          const newPlace = await getConnection()
+            .createQueryBuilder()
+            .insert()
+            .into(Place)
+            .values({
+              ...place,
+            })
+            .execute();
+
+          await getConnection()
+            .createQueryBuilder()
+            .update(Board)
+            .set({ place: newPlace.generatedMaps[0].PlaceId })
+            .where({ boardId: board.boardId })
+            .execute();
+          resolve(newPlace);
+        }
+      }),
     ]);
 
-    const tag = await getConnection()
-      .createQueryBuilder()
-      .select('boardSide')
-      .from(BoardSide, 'boardSide')
-      .innerJoinAndSelect('boardSide.boardTags', 'boardTag')
-      .where({ boards: board.boardId })
-      .getMany();
+    return board;
 
-    return await this.boardRepository.save({
-      ...board,
-      boardSides: tag,
-    });
+    // const tag = await getConnection()
+    //   .createQueryBuilder()
+    //   .select('boardSide')
+    //   .from(BoardSide, 'boardSide')
+    //   .innerJoinAndSelect('boardSide.boardTags', 'boardTag')
+    //   .where({ boards: board.boardId })
+    //   .getMany();
+
+    // return await this.boardRepository.save({
+    //   ...board,
+    //   boardSides: tag,
+    // });
   }
 
   async update({ boardId, updateBoardInput }) {
@@ -273,41 +340,154 @@ export class BoardService {
       ...board,
       ...updateBoardInput,
     };
-
     return await this.boardRepository.save(newBoard);
   }
 
   async delete({ boardId, currentUser }) {
-    const userData = await getConnection()
+    await this.boardRepository.softDelete({
+      boardId: 40,
+    });
+    // const userData = await getConnection()
+    //   .createQueryBuilder()
+    //   .select('user.userId')
+    //   .from(User, 'user')
+    //   .where({ userId: currentUser.userId })
+    //   .getOne();
+
+    // const boardData = await this.boardRepository.findOne({
+    //   where: {
+    //     boardId,
+    //   },
+    //   relations: ['user'],
+    // });
+
+    // if (
+    //   userData.userId === boardData.user.userId ||
+    //   userData.userState === true
+    // ) {
+    //   await this.elasticsearchService.delete({
+    //     index: 'board',
+    //     id: boardId,
+    //   });
+
+    //   await this.boardRepository.softDelete({
+    //     boardId,
+    //   });
+
+    //   return true;
+    // } else {
+    //   throw new ConflictException('작성자가 아닙니다!');
+    // }
+  }
+
+  async createaaa({ createBoardInput, boardTagsInput }) {
+    const { boardTagMenu, boardTagRegion, boardTagMood } = boardTagsInput;
+    const { subCategoryName, url, place, ...inputData } = createBoardInput;
+
+    const subCategory = await getConnection()
       .createQueryBuilder()
-      .select('user.userId')
-      .from(User, 'user')
-      .where({ userId: currentUser.userId })
+      .select('subCategory')
+      .from(SubCategory, 'subCategory')
+      .where({ subCategoryName })
       .getOne();
 
-    const boardData = await this.boardRepository.findOne({
-      where: {
-        boardId,
-      },
-      relations: ['user'],
+    const board = await this.boardRepository.save({
+      ...inputData,
+      subCategory,
     });
 
-    if (
-      userData.userId === boardData.user.userId ||
-      userData.userState === true
-    ) {
-      await this.elasticsearchService.delete({
-        index: 'board',
-        id: boardId,
-      });
+    await Promise.all([
+      boardTagMenu.reduce(async (acc, cur) => {
+        const menuData = await this.boardTagRepository.findOne({
+          boardTagName: cur,
+        });
+        await getConnection()
+          .createQueryBuilder()
+          .insert()
+          .into(BoardSide)
+          .values({
+            boards: board.boardId,
+            boardTags: menuData,
+          })
+          .execute();
+      }, ''),
 
-      await this.boardRepository.softDelete({
-        boardId,
-      });
+      boardTagRegion.reduce(async (acc, cur) => {
+        const regionData = await this.boardTagRepository.findOne({
+          boardTagName: cur,
+        });
+        await getConnection()
+          .createQueryBuilder()
+          .insert()
+          .into(BoardSide)
+          .values({
+            boards: board.boardId,
+            boardTags: regionData,
+          })
+          .execute();
+      }, ''),
+      boardTagMood.reduce(async (acc, cur) => {
+        const moodData = await this.boardTagRepository.findOne({
+          boardTagName: cur,
+        });
+        await getConnection()
+          .createQueryBuilder()
+          .insert()
+          .into(BoardSide)
+          .values({
+            boards: board.boardId,
+            boardTags: moodData,
+          })
+          .execute();
+      }, ''),
+      url.reduce(async (acc, cur) => {
+        await getConnection()
+          .createQueryBuilder()
+          .insert()
+          .into(Image)
+          .values({
+            board: board.boardId,
+            url: cur,
+          })
+          .execute();
+      }, ''),
+      new Promise(async (resolve) => {
+        const PlaceData = await getConnection()
+          .createQueryBuilder()
+          .select('place')
+          .from(Place, 'place')
+          .where({ placeName: place.placeName })
+          .getOne();
 
-      return true;
-    } else {
-      throw new ConflictException('작성자가 아닙니다!');
-    }
+        if (PlaceData) {
+          await getConnection()
+            .createQueryBuilder()
+            .update(Board)
+            .set({ place: PlaceData })
+            .where({ boardId: board.boardId })
+            .execute();
+          resolve(PlaceData);
+        } else {
+          const newPlace = await getConnection()
+            .createQueryBuilder()
+            .insert()
+            .into(Place)
+            .values({
+              ...place,
+            })
+            .execute();
+
+          await getConnection()
+            .createQueryBuilder()
+            .update(Board)
+            .set({ place: newPlace.generatedMaps[0].PlaceId })
+            .where({ boardId: board.boardId })
+            .execute();
+          resolve(newPlace);
+        }
+      }),
+    ]);
+
+    return board;
   }
 }

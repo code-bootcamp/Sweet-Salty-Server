@@ -4,6 +4,7 @@ import {
   Connection,
   RemoveEvent,
 } from 'typeorm';
+import { SoftRemoveEvent } from 'typeorm/subscriber/event/SoftRemoveEvent';
 
 import { Board } from './board.entity';
 
@@ -17,5 +18,11 @@ export class BoardSubscriber implements EntitySubscriberInterface<Board> {
     return Board;
   }
 
-  async afterRemove(event: RemoveEvent<Board>) {}
+  async afterSoftRemove(event: SoftRemoveEvent<Board>) {
+    console.log(event);
+    //console.log(event.entity);
+    // const data = await event.connection.getRepository(Board).find(event.entity);
+
+    //  console.log(data);
+  }
 }

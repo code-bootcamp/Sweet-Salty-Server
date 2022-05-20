@@ -4,33 +4,38 @@ import {
   BaseEntity,
   Column,
   Entity,
-  ManyToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 
 @ObjectType()
 @Entity()
-export class Store extends BaseEntity {
+export class Place extends BaseEntity {
   @PrimaryGeneratedColumn('uuid')
   @Field(() => String)
-  storeId: string;
+  PlaceId: string;
 
   @Column()
   @Field(() => String)
-  storeName: string;
+  placeName: string;
 
   @Column()
   @Field(() => String)
-  storeAddress: string;
+  placeAddress: string;
 
   @Column()
   @Field(() => String)
-  storeAddressInfo: string;
+  placeUrl: string;
 
   @Column()
   @Field(() => String)
-  storeUrl: string;
+  lat: string;
 
-  @ManyToOne((type) => Board, (Board) => Board.stores)
-  boards: Board[];
+  @Column()
+  @Field(() => String)
+  lng: string;
+
+  @OneToMany((type) => Board, (Board) => Board.place)
+  @Field(() => Board)
+  boards: Board;
 }

@@ -19,6 +19,6 @@ export class TopCategory extends BaseEntity {
   @Field(() => String)
   topCategoryName: string;
 
-  @OneToMany((type) => SubCategory, (SubCategory) => SubCategory.topCategories)
+  @OneToMany((type) => SubCategory, (SubCategory) => SubCategory.topCategory)
   subCategories: SubCategory;
 }
