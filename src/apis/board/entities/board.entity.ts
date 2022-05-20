@@ -5,6 +5,7 @@ import { SubCategory } from 'src/apis/subCategory/entities/subCategory.entity';
 import { User } from 'src/apis/user/entities/user.entity';
 
 import {
+  BaseEntity,
   Column,
   CreateDateColumn,
   DeleteDateColumn,
@@ -55,7 +56,7 @@ export abstract class Content {}
 
 @Entity()
 @ObjectType()
-export class Board {
+export class Board extends BaseEntity {
   @PrimaryGeneratedColumn('increment')
   @Field(() => Int)
   boardId: number;

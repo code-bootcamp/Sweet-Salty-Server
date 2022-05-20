@@ -1,6 +1,7 @@
 import { Field, Int, ObjectType } from '@nestjs/graphql';
 import { SubCategory } from 'src/apis/subCategory/entities/subCategory.entity';
 import {
+  BaseEntity,
   Column,
   CreateDateColumn,
   DeleteDateColumn,
@@ -12,7 +13,7 @@ import {
 
 @ObjectType()
 @Entity()
-export class Notice {
+export class Notice extends BaseEntity {
   @PrimaryGeneratedColumn('increment')
   @Field(() => Int)
   noticeId: number;

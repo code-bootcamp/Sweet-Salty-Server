@@ -1,5 +1,10 @@
 import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
-import { CacheModule, Module } from '@nestjs/common';
+import {
+  CacheModule,
+  MiddlewareConsumer,
+  Module,
+  NestModule,
+} from '@nestjs/common';
 import { GraphQLModule } from '@nestjs/graphql';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { RedisClientOptions } from 'redis';
@@ -16,12 +21,12 @@ import { CommentModule } from './apis/comment/comment.module';
 import { CommentLikeModule } from './apis/commentLike/commentLike.module';
 import { BoardLikeModule } from './apis/boardLike/boardLike.module';
 import { PointTransactionModule } from './apis/pointTransaction/pointTransaction.module';
-
 import { MessageModule } from './apis/message/message.module';
 import { ChatGateway } from './chat.gateway';
 import { ShopModule } from './apis/shop/shop.module';
 import { AdminModule } from './apis/admin/admin.module';
 import { NoticeModule } from './apis/notice/notice.module';
+import { graphqlUploadExpress } from 'graphql-upload';
 
 @Module({
   imports: [
@@ -71,8 +76,11 @@ import { NoticeModule } from './apis/notice/notice.module';
   controllers: [AppController],
   providers: [AppService, ChatGateway],
 })
-export class AppModule {
+export class AppModule implements NestModule {
   constructor(private readonly connection: Connection) {}
+  configure(consumer: MiddlewareConsumer) {
+    consumer.apply(graphqlUploadExpress()).forRoutes('graphql');
+  }
 }
 
 // 이거 배포할때 설정하는것

@@ -28,7 +28,6 @@ export class ImageUploadService {
 
     const url = await new Promise((resolve, reject) => {
       const uuid = uuidv4();
-      const extension = file.filename.substring(file.filename.lastIndexOf('.'));
       file
         .createReadStream()
         .pipe(sharp().webp({ effort: 1 }))
@@ -39,6 +38,7 @@ export class ImageUploadService {
         .on('error', (error) => reject(error));
     });
 
+    const extension = file.filename.substring(file.filename.lastIndexOf('.'));
     return url;
 
     // const waitedFiles = await Promise.all(files);

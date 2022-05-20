@@ -1,6 +1,7 @@
 import { Field, Float, ObjectType } from '@nestjs/graphql';
 import { User } from 'src/apis/user/entities/user.entity';
 import {
+  BaseEntity,
   Column,
   CreateDateColumn,
   Entity,
@@ -10,7 +11,7 @@ import {
 
 @ObjectType()
 @Entity()
-export class PaymentShopHistory {
+export class PaymentShopHistory extends BaseEntity {
   @PrimaryGeneratedColumn('uuid')
   @Field(() => String)
   paymentShopHistoryId: string;

@@ -3,6 +3,7 @@ import { Board } from 'src/apis/board/entities/board.entity';
 import { Notice } from 'src/apis/notice/entities/notice.entity';
 import { TopCategory } from 'src/apis/topCategory/entities/topCategory.entity';
 import {
+  BaseEntity,
   Column,
   Entity,
   JoinColumn,
@@ -13,7 +14,7 @@ import {
 
 @ObjectType()
 @Entity()
-export class SubCategory {
+export class SubCategory extends BaseEntity {
   @PrimaryGeneratedColumn('uuid')
   @Field(() => String)
   subCategory: string;

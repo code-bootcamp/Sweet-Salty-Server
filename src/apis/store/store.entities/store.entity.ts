@@ -1,10 +1,16 @@
 import { Field, ObjectType } from '@nestjs/graphql';
 import { Board } from 'src/apis/board/entities/board.entity';
-import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  BaseEntity,
+  Column,
+  Entity,
+  ManyToOne,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 
 @ObjectType()
 @Entity()
-export class Store {
+export class Store extends BaseEntity {
   @PrimaryGeneratedColumn('uuid')
   @Field(() => String)
   storeId: string;

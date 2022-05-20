@@ -4,6 +4,7 @@ import {
   GENDER_ENUM,
 } from 'src/apis/board/entities/board.entity';
 import {
+  BaseEntity,
   Column,
   CreateDateColumn,
   DeleteDateColumn,
@@ -23,7 +24,7 @@ export class fewUser {
 
 @ObjectType()
 @Entity()
-export class User {
+export class User extends BaseEntity {
   @PrimaryGeneratedColumn('uuid')
   @Field(() => String)
   userId: string;

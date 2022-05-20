@@ -39,9 +39,9 @@ export class BoardService {
 
   async elasticsearchFindTags({ tags }) {
     const tagsData = tags.reduce((acc, cur) => {
-      const tag = cur.substring(1);
-      return acc === '' ? acc + tag : acc + ' ' + tag;
+      return acc === '' ? acc + cur : acc + ' ' + cur;
     }, '');
+    console.log(tagsData);
     const redisInData = await this.cacheManager.get(tagsData);
     if (redisInData) {
       return redisInData;
@@ -206,9 +206,8 @@ export class BoardService {
 
     await Promise.all([
       boardTagMenu.reduce(async (acc, cur) => {
-        const menu = cur.substring(1);
         const menuData = await this.boardTagRepository.findOne({
-          boardTagName: menu,
+          boardTagName: cur,
         });
         await getConnection()
           .createQueryBuilder()
@@ -222,9 +221,8 @@ export class BoardService {
       }, ''),
 
       boardTagRegion.reduce(async (acc, cur) => {
-        const region = cur.substring(1);
         const regionData = await this.boardTagRepository.findOne({
-          boardTagName: region,
+          boardTagName: cur,
         });
         await getConnection()
           .createQueryBuilder()
@@ -237,9 +235,8 @@ export class BoardService {
           .execute();
       }, ''),
       boardTagMood.reduce(async (acc, cur) => {
-        const mood = cur.substring(1);
         const moodData = await this.boardTagRepository.findOne({
-          boardTagName: mood,
+          boardTagName: cur,
         });
         await getConnection()
           .createQueryBuilder()

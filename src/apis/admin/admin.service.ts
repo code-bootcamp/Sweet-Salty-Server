@@ -99,7 +99,7 @@ export class AdminService {
 
     const CommunityBoard = ['REVIEW', 'REQUEST', 'VISITED', 'TASTER'];
 
-    const NoticeBoard = ['All', 'NOTICE', 'EVENT', 'PROMOTION', 'TASTING'];
+    const NoticeBoard = ['NOTICE', 'EVENT', 'PROMOTION', 'TASTING'];
 
     CommunityBoard.map(async (el) => {
       await getConnection()
@@ -118,7 +118,6 @@ export class AdminService {
         .values({ subCategoryName: el, topCategories: Notice })
         .execute();
     });
-    console.log('aa');
 
     return '생성되었습니다.';
   }

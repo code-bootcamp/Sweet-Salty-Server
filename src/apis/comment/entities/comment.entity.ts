@@ -3,6 +3,7 @@ import { Board } from 'src/apis/board/entities/board.entity';
 import { User } from 'src/apis/user/entities/user.entity';
 
 import {
+  BaseEntity,
   Column,
   CreateDateColumn,
   DeleteDateColumn,
@@ -14,7 +15,7 @@ import {
 
 @ObjectType()
 @Entity()
-export class Comment {
+export class Comment extends BaseEntity {
   @PrimaryGeneratedColumn('uuid')
   @Field(() => String)
   commentId: string;
