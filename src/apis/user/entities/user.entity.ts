@@ -1,6 +1,7 @@
 import { ObjectType, Field, Int } from '@nestjs/graphql';
 import {
   AGE_GROUP_ENUM,
+  Board,
   GENDER_ENUM,
 } from 'src/apis/board/entities/board.entity';
 import {
@@ -9,6 +10,8 @@ import {
   CreateDateColumn,
   DeleteDateColumn,
   Entity,
+  JoinColumn,
+  OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
@@ -71,6 +74,10 @@ export class User extends BaseEntity {
   @Column({ type: 'enum', enum: GENDER_ENUM })
   @Field(() => GENDER_ENUM)
   gender: string;
+
+  @OneToMany((type) => Board, (Board) => Board.user)
+  @JoinColumn({ name: 'boardId', referencedColumnName: 'boardId' })
+  boards: Board;
 
   @Column({ default: '단짠맛집' })
   userSignUpSite: string;

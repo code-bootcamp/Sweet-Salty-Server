@@ -6,6 +6,7 @@ import {
   CreateDateColumn,
   DeleteDateColumn,
   Entity,
+  JoinColumn,
   ManyToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
@@ -34,6 +35,7 @@ export class Notice extends BaseEntity {
   noticeHit: number;
 
   @ManyToOne((type) => SubCategory, (SubCategory) => SubCategory.notices)
+  @JoinColumn({ name: 'subCategoryId', referencedColumnName: 'subCategoryId' })
   @Field(() => SubCategory)
   subCategory: SubCategory;
 

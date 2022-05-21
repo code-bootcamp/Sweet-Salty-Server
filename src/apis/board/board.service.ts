@@ -195,6 +195,8 @@ export class BoardService {
     const { boardTagMenu, boardTagRegion, boardTagMood } = boardTagsInput;
     const { subCategoryName, url, place, ...inputData } = createBoardInput;
 
+    console.log(inputData);
+
     const userData = await getConnection()
       .createQueryBuilder()
       .select([
@@ -344,8 +346,8 @@ export class BoardService {
   }
 
   async delete({ boardId, currentUser }) {
-    await this.boardRepository.softDelete({
-      boardId: 40,
+    await this.boardRepository.delete({
+      boardId,
     });
     // const userData = await getConnection()
     //   .createQueryBuilder()
@@ -384,6 +386,12 @@ export class BoardService {
     const { boardTagMenu, boardTagRegion, boardTagMood } = boardTagsInput;
     const { subCategoryName, url, place, ...inputData } = createBoardInput;
 
+    const pattern = /(image__data)\/[a-zA-Z0-9\-\.]+\.[a-zA-Z]{2,4}(\/\S*)?/;
+
+    const thumbnail = pattern.exec(inputData.boardContents)[0];
+
+    console.log(thumbnail);
+
     const subCategory = await getConnection()
       .createQueryBuilder()
       .select('subCategory')
@@ -394,6 +402,7 @@ export class BoardService {
     const board = await this.boardRepository.save({
       ...inputData,
       subCategory,
+      thumbnail,
     });
 
     await Promise.all([

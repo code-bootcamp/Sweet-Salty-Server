@@ -26,6 +26,6 @@ export class Image {
   @DeleteDateColumn()
   deleteAt: Date;
 
-  @ManyToOne((type) => Board, (Board) => Board.images)
+  @ManyToOne((type) => Board, (Board) => Board.images, { onDelete: 'CASCADE' })
   board: Board;
 }

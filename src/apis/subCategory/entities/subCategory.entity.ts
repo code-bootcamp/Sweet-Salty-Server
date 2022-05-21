@@ -17,7 +17,7 @@ import {
 export class SubCategory extends BaseEntity {
   @PrimaryGeneratedColumn('uuid')
   @Field(() => String)
-  subCategory: string;
+  subCategoryId: string;
 
   @Column({ unique: true })
   @Field(() => String)

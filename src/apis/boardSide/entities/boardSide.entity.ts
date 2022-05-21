@@ -3,6 +3,7 @@ import { Board } from 'src/apis/board/entities/board.entity';
 import { BoardTag } from 'src/apis/boardTag/entities/boardTag.entity';
 import {
   BaseEntity,
+  DeleteDateColumn,
   Entity,
   JoinColumn,
   ManyToOne,
@@ -21,7 +22,12 @@ export class BoardSide extends BaseEntity {
   @Field(() => BoardTag)
   boardTags: BoardTag;
 
-  @ManyToOne((type) => Board, (Board) => Board.boardSides)
+  @ManyToOne((type) => Board, (Board) => Board.boardSides, {
+    onDelete: 'CASCADE',
+  })
   @JoinColumn({ name: 'boardId', referencedColumnName: 'boardId' })
   boards: Board[];
+
+  @DeleteDateColumn()
+  deleteAt: Date;
 }

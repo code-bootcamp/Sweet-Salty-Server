@@ -2,7 +2,10 @@ import {
   EventSubscriber,
   EntitySubscriberInterface,
   Connection,
-  RemoveEvent,
+  UpdateEvent,
+  getConnection,
+  createQueryBuilder,
+  InsertEvent,
 } from 'typeorm';
 import { SoftRemoveEvent } from 'typeorm/subscriber/event/SoftRemoveEvent';
 
@@ -18,11 +21,23 @@ export class BoardSubscriber implements EntitySubscriberInterface<Board> {
     return Board;
   }
 
-  async afterSoftRemove(event: SoftRemoveEvent<Board>) {
-    console.log(event);
-    //console.log(event.entity);
-    // const data = await event.connection.getRepository(Board).find(event.entity);
+  async afterInsert(event: InsertEvent<Board>) {
+    const data = event.entity.boardContents.match(
+      /(image__data)\/[a-zA-Z0-9\-\.]+\.[a-zA-Z]{2,4}(\/\S*)?/,
+    );
+    const thumbnail111 = data[0];
+    console.log(event.entity.boardId);
 
-    //  console.log(data);
+    //  console.log(thumbnail);
+    // await getConnection()
+    //   .createQueryBuilder()
+    //   .update(Board)
+    //   .set({ thumbnail: thumbnail111 })
+    //   .where({ boardId: event.entity.boardId })
+    //   .execute();
   }
 }
+
+// 조금 큰 사이즈
+// 정규식
+// match(/(http|https|ftp|ftps)\:\/\/[a-zA-Z0-9\-\.]+\.[a-zA-Z]{2,3}(\/\S*)?/)

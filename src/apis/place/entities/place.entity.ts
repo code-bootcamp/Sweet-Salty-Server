@@ -13,7 +13,7 @@ import {
 export class Place extends BaseEntity {
   @PrimaryGeneratedColumn('uuid')
   @Field(() => String)
-  PlaceId: string;
+  placeId: string;
 
   @Column()
   @Field(() => String)

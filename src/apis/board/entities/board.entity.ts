@@ -75,7 +75,7 @@ export class Board extends BaseEntity {
   @Field(() => String)
   boardSalt: string;
 
-  @Column()
+  @Column({ type: 'text' })
   @Field(() => String)
   boardContents: string;
 
@@ -91,6 +91,10 @@ export class Board extends BaseEntity {
   @Field(() => Int)
   boardHit: number;
 
+  @Column({ nullable: true })
+  @Field(() => String)
+  thumbnail: string;
+
   @Column({ type: 'enum', enum: AGE_GROUP_ENUM })
   @Field(() => AGE_GROUP_ENUM)
   ageGroup: string;
@@ -98,26 +102,6 @@ export class Board extends BaseEntity {
   @Column({ type: 'enum', enum: GENDER_ENUM })
   @Field(() => GENDER_ENUM)
   gender: string;
-
-  @ManyToOne(() => User)
-  user: User;
-
-  @ManyToOne((type) => SubCategory, (SubCategory) => SubCategory.boards)
-  @Field(() => SubCategory)
-  subCategory: SubCategory;
-
-  @ManyToOne((type) => Place, (Place) => Place.boards)
-  @Field(() => Place)
-  place: Place;
-
-  @OneToMany((type) => BoardSide, (BoardSide) => BoardSide.boards)
-  @JoinColumn({ name: 'boardSideId', referencedColumnName: 'boardSideId' })
-  @Field(() => [BoardSide])
-  boardSides: BoardSide[];
-
-  @OneToMany((type) => Image, (Image) => Image.board)
-  @Field(() => [Image])
-  images: Image;
 
   @CreateDateColumn()
   @Field(() => Date)
@@ -129,4 +113,29 @@ export class Board extends BaseEntity {
 
   @DeleteDateColumn()
   deleteAt: Date;
+
+  @ManyToOne((type) => User, (User) => User.boards)
+  @JoinColumn({ name: 'userId', referencedColumnName: 'userId' })
+  user: User;
+
+  @ManyToOne((type) => SubCategory, (SubCategory) => SubCategory.boards)
+  @JoinColumn({ name: 'subCategoryId', referencedColumnName: 'subCategoryId' })
+  @Field(() => SubCategory)
+  subCategory: SubCategory;
+
+  @ManyToOne((type) => Place, (Place) => Place.boards)
+  @JoinColumn({ name: 'placeId', referencedColumnName: 'placeId' })
+  @Field(() => Place)
+  place: Place;
+
+  @OneToMany((type) => BoardSide, (BoardSide) => BoardSide.boards, {
+    cascade: true,
+  })
+  @JoinColumn({ name: 'boardSideId', referencedColumnName: 'boardSideId' })
+  @Field(() => [BoardSide])
+  boardSides: BoardSide[];
+
+  @OneToMany((type) => Image, (Image) => Image.board, { cascade: true })
+  @Field(() => [Image])
+  images: Image;
 }

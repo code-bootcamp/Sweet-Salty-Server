@@ -125,7 +125,7 @@ export class BoardResolver {
   @Mutation(() => Boolean)
   deleteBoard(
     @CurrentUser() currentUser: ICurrentUser,
-    @Args('boardId') boardId: string,
+    @Args({ name: 'boardId', type: () => Int }) boardId: number,
   ) {
     return this.boardService.delete({ boardId, currentUser });
   }

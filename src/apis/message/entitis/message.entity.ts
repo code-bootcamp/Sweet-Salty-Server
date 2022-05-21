@@ -6,6 +6,7 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  JoinColumn,
   ManyToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
@@ -71,6 +72,7 @@ export class Message extends BaseEntity {
   messageState: boolean;
 
   @ManyToOne(() => MessageInfo)
+  @JoinColumn({ name: 'messageInfoId', referencedColumnName: 'messageInfoId' })
   @Field(() => MessageInfo)
   messageInfo: MessageInfo;
 

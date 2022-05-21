@@ -41,59 +41,59 @@ async function bootstrap() {
   app.use(requestIp.mw());
   AdminBro.registerAdapter({ Database, Resource });
 
-  // const adminBro = new AdminBro({
-  //   resources: [
-  //     Board,
-  //     BoardSide,
-  //     BoardTag,
-  //     Comment,
-  //     CommentLike,
-  //     Message,
-  //     MessageInfo,
-  //     Notice,
-  //     PaymentHistory,
-  //     PaymentShopHistory,
-  //     Shop,
-  //     Place,
-  //     SubCategory,
-  //     TopCategory,
-  //     User,
-  //   ],
-  //   rootPath: '/adminhi485236fskr274gshkq2eoy9wqt43q',
-  // });
+  const adminBro = new AdminBro({
+    resources: [
+      Board,
+      BoardSide,
+      BoardTag,
+      Comment,
+      CommentLike,
+      Message,
+      MessageInfo,
+      Notice,
+      PaymentHistory,
+      PaymentShopHistory,
+      Shop,
+      Place,
+      SubCategory,
+      TopCategory,
+      User,
+    ],
+    rootPath: '/admin',
+  });
 
-  // const router = AdminBroExpress.buildAuthenticatedRouter(
-  //   adminBro,
-  //   {
-  //     cookieName: 'adminBro',
-  //     cookiePassword: 'session Key',
-  //     authenticate: async (email, password) => {
-  //       const user = await getConnection()
-  //         .createQueryBuilder()
-  //         .select('user')
-  //         .from(User, 'user')
-  //         .where({ userEmail: email })
-  //         .getOne();
+  const router = AdminBroExpress.buildAuthenticatedRouter(
+    adminBro,
+    {
+      cookieName: 'adminBro',
+      cookiePassword: 'session Key',
+      authenticate: async (email, password) => {
+        const user = await getConnection()
+          .createQueryBuilder()
+          .select('user')
+          .from(User, 'user')
+          .where({ userEmail: email })
+          .getOne();
 
-  //       if (!user || user.userState === false) {
-  //         return false;
-  //       } else {
-  //         const isAuth = await bcrypt.compare(password, user.userPassword);
-  //         if (isAuth) {
-  //           return user;
-  //         }
-  //       }
-  //     },
-  //   },
-  //   null,
-  //   {
-  //     // 추가
-  //     resave: false, // 추가
-  //     saveUninitialized: true, // 추가
-  //   },
-  // );
+        if (!user || user.userState === false) {
+          return false;
+        } else {
+          const isAuth = await bcrypt.compare(password, user.userPassword);
+          if (isAuth) {
+            return user;
+          }
+        }
+      },
+    },
+    null,
+    {
+      // 추가
+      resave: false, // 추가
+      saveUninitialized: true, // 추가
+    },
+  );
 
-  // app.use(adminBro.options.rootPath, router);
+  app.use(adminBro.options.rootPath, router);
   //Nest.js AdminBro 연결
 
   /// 사이트 간 위조 요청 방지 라이브러리
