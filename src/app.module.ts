@@ -18,10 +18,10 @@ import { BoardLikeModule } from './apis/boardLike/boardLike.module';
 import { PointTransactionModule } from './apis/pointTransaction/pointTransaction.module';
 
 import { MessageModule } from './apis/message/message.module';
-import { ChatGateway } from './chat.gateway';
 import { ShopModule } from './apis/shop/shop.module';
 import { AdminModule } from './apis/admin/admin.module';
 import { NoticeModule } from './apis/notice/notice.module';
+import { RealTimeModule } from './apis/realTime/realTime.module';
 
 @Module({
   imports: [
@@ -36,6 +36,7 @@ import { NoticeModule } from './apis/notice/notice.module';
     CommentModule,
     CommentLikeModule,
     ShopModule,
+    RealTimeModule,
     PointTransactionModule,
     ConfigModule.forRoot({
       isGlobal: true,
@@ -46,7 +47,7 @@ import { NoticeModule } from './apis/notice/notice.module';
       context: ({ req, res }) => ({ req, res }),
       cors: {
         Credential: true,
-        origin: ['http://localhost:3000'],
+        origin: ['http://localhost:3000', 'http://localhost:5501'],
       },
     }),
     TypeOrmModule.forRoot({
@@ -69,7 +70,7 @@ import { NoticeModule } from './apis/notice/notice.module';
     }),
   ],
   controllers: [AppController],
-  providers: [AppService, ChatGateway],
+  providers: [AppService],
 })
 export class AppModule {
   constructor(private readonly connection: Connection) {}

@@ -34,16 +34,16 @@ services:
   #   ports:
   #     - 9200:9200
 
-  logstash:
-    image: logstash:7.17.0
-    depends_on:
-      - elasticsearch
-    volumes:
-      - ./elk/logstash/logstash.conf:/usr/share/logstash/pipeline/logstash.conf
-      - ./elk/logstash/notice.conf:/usr/share/logstash/pipeline/notice.conf
-      - ./elk/logstash/mysql-connector-java-8.0.28.jar:/usr/share/logstash/mysql-connector-java-8.0.28.jar
-      - ./elk/logstash/board_template.json:/usr/share/logstash/templates/board_template.json
-      - ./elk/logstash/pipelines.yml:/usr/share/logstash/config/pipelines.yml
+  # logstash:
+  #   image: logstash:7.17.0
+  #   depends_on:
+  #     - elasticsearch
+  #   volumes:
+  #     - ./elk/logstash/logstash.conf:/usr/share/logstash/pipeline/logstash.conf
+  #     - ./elk/logstash/notice.conf:/usr/share/logstash/pipeline/notice.conf
+  #     - ./elk/logstash/mysql-connector-java-8.0.28.jar:/usr/share/logstash/mysql-connector-java-8.0.28.jar
+  #     - ./elk/logstash/board_template.json:/usr/share/logstash/templates/board_template.json
+  #     - ./elk/logstash/pipelines.yml:/usr/share/logstash/config/pipelines.yml
 
   # kibana:
   #   image: kibana:7.17.0
