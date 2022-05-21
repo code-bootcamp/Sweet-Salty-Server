@@ -22,11 +22,12 @@ import { CommentLikeModule } from './apis/commentLike/commentLike.module';
 import { BoardLikeModule } from './apis/boardLike/boardLike.module';
 import { PointTransactionModule } from './apis/pointTransaction/pointTransaction.module';
 import { MessageModule } from './apis/message/message.module';
-import { ChatGateway } from './chat.gateway';
 import { ShopModule } from './apis/shop/shop.module';
 import { AdminModule } from './apis/admin/admin.module';
 import { NoticeModule } from './apis/notice/notice.module';
 import { graphqlUploadExpress } from 'graphql-upload';
+import { RealTimeModule } from './apis/realTime/realTime.module';
+
 
 @Module({
   imports: [
@@ -41,6 +42,7 @@ import { graphqlUploadExpress } from 'graphql-upload';
     CommentModule,
     CommentLikeModule,
     ShopModule,
+    RealTimeModule,
     PointTransactionModule,
     ConfigModule.forRoot({
       isGlobal: true,
@@ -51,7 +53,7 @@ import { graphqlUploadExpress } from 'graphql-upload';
       context: ({ req, res }) => ({ req, res }),
       cors: {
         Credential: true,
-        origin: ['http://localhost:3000'],
+        origin: ['http://localhost:3000', 'http://localhost:5501'],
       },
     }),
     TypeOrmModule.forRoot({
@@ -74,7 +76,7 @@ import { graphqlUploadExpress } from 'graphql-upload';
     }),
   ],
   controllers: [AppController],
-  providers: [AppService, ChatGateway],
+  providers: [AppService],
 })
 export class AppModule implements NestModule {
   constructor(private readonly connection: Connection) {}

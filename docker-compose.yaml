@@ -39,6 +39,7 @@ services:
   #   depends_on:
   #     - elasticsearch
   #   volumes:
+
   #     - ./elk/logstash/board.conf:/usr/share/logstash/pipeline/board.conf
   #     - ./elk/logstash/notice.conf:/usr/share/logstash/pipeline/notice.conf
   #     - ./elk/logstash/mysql-connector-java-8.0.28.jar:/usr/share/logstash/mysql-connector-java-8.0.28.jar
