@@ -1,10 +1,13 @@
 import { Field, Int, ObjectType, registerEnumType } from '@nestjs/graphql';
 import { BoardSide } from 'src/apis/boardSide/entities/boardSide.entity';
-import { Store } from 'src/apis/store/store.entities/store.entity';
+import { Image } from 'src/apis/image/entites/image.entity';
+import { Place } from 'src/apis/place/entities/place.entity';
+
 import { SubCategory } from 'src/apis/subCategory/entities/subCategory.entity';
 import { User } from 'src/apis/user/entities/user.entity';
 
 import {
+  BaseEntity,
   Column,
   CreateDateColumn,
   DeleteDateColumn,
@@ -55,7 +58,7 @@ export abstract class Content {}
 
 @Entity()
 @ObjectType()
-export class Board {
+export class Board extends BaseEntity {
   @PrimaryGeneratedColumn('increment')
   @Field(() => Int)
   boardId: number;
@@ -72,7 +75,7 @@ export class Board {
   @Field(() => String)
   boardSalt: string;
 
-  @Column()
+  @Column({ type: 'text' })
   @Field(() => String)
   boardContents: string;
 
@@ -88,6 +91,10 @@ export class Board {
   @Field(() => Int)
   boardHit: number;
 
+  @Column({ nullable: true })
+  @Field(() => String)
+  thumbnail: string;
+
   @Column({ type: 'enum', enum: AGE_GROUP_ENUM })
   @Field(() => AGE_GROUP_ENUM)
   ageGroup: string;
@@ -95,22 +102,6 @@ export class Board {
   @Column({ type: 'enum', enum: GENDER_ENUM })
   @Field(() => GENDER_ENUM)
   gender: string;
-
-  @ManyToOne(() => User)
-  user: User;
-
-  @ManyToOne((type) => SubCategory, (SubCategory) => SubCategory.boards)
-  @Field(() => SubCategory)
-  subCategory: SubCategory;
-
-  @OneToMany((type) => Store, (Store) => Store.boards)
-  @Field(() => Store)
-  stores: Store;
-
-  @OneToMany((type) => BoardSide, (BoardSide) => BoardSide.boards)
-  @JoinColumn({ name: 'boardSideId', referencedColumnName: 'boardSideId' })
-  @Field(() => [BoardSide])
-  boardSides: BoardSide[];
 
   @CreateDateColumn()
   @Field(() => Date)
@@ -122,4 +113,29 @@ export class Board {
 
   @DeleteDateColumn()
   deleteAt: Date;
+
+  @ManyToOne((type) => User, (User) => User.boards)
+  @JoinColumn({ name: 'userId', referencedColumnName: 'userId' })
+  user: User;
+
+  @ManyToOne((type) => SubCategory, (SubCategory) => SubCategory.boards)
+  @JoinColumn({ name: 'subCategoryId', referencedColumnName: 'subCategoryId' })
+  @Field(() => SubCategory)
+  subCategory: SubCategory;
+
+  @ManyToOne((type) => Place, (Place) => Place.boards)
+  @JoinColumn({ name: 'placeId', referencedColumnName: 'placeId' })
+  @Field(() => Place)
+  place: Place;
+
+  @OneToMany((type) => BoardSide, (BoardSide) => BoardSide.boards, {
+    cascade: true,
+  })
+  @JoinColumn({ name: 'boardSideId', referencedColumnName: 'boardSideId' })
+  @Field(() => [BoardSide])
+  boardSides: BoardSide[];
+
+  @OneToMany((type) => Image, (Image) => Image.board, { cascade: true })
+  @Field(() => [Image])
+  images: Image;
 }

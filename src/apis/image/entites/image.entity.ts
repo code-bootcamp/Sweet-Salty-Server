@@ -1,34 +1,31 @@
 import { Field, ObjectType } from '@nestjs/graphql';
+import { Board } from 'src/apis/board/entities/board.entity';
 import {
-  BaseEntity,
   Column,
   CreateDateColumn,
   DeleteDateColumn,
   Entity,
+  ManyToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 
-@ObjectType()
 @Entity()
-export class MessageInfo extends BaseEntity {
+@ObjectType()
+export class Image {
   @PrimaryGeneratedColumn('uuid')
   @Field(() => String)
-  messageInfoId: string;
+  imageId: string;
 
   @Column()
   @Field(() => String)
-  messageInfoTitle: string;
-
-  @Column()
-  @Field(() => String)
-  messageInfoContents: string;
-
-  @Column({ default: 0 })
-  deleteCheckData: number;
+  url: string;
 
   @CreateDateColumn()
   createAt: Date;
 
   @DeleteDateColumn()
   deleteAt: Date;
+
+  @ManyToOne((type) => Board, (Board) => Board.images, { onDelete: 'CASCADE' })
+  board: Board;
 }

@@ -20,7 +20,7 @@ X-REQUEST-TYPE: GraphQL
 
   {
       "userEmail" : "yukina1418@gmail.com",
-      "userPassword" : "1414"
+      "userPassword" : "1234"
   }
 
 ###
@@ -37,7 +37,7 @@ X-REQUEST-TYPE: GraphQL
 
   {
       "userEmail" : "yukina1418@gmail.com",
-      "userPassword" : "1414"
+      "userPassword" : "1234"
   }
 
 
@@ -56,3 +56,19 @@ mutation uploadFile($files: [Upload!]!) {
 {
   "files" : ["https://storage.googleapis.com/image__data/1c99b718-187c-4993-b39c-3b165e796a9f.png"]
 }
+
+###
+POST http://localhost:3000/graphql
+Content-Type: application/json
+X-REQUEST-TYPE: GraphQL
+
+  mutation createTags($createTagInput: String!, $userPassword: String!) {
+    login(userEmail: $userEmail, userPassword: $userPassword) {
+      accessToken
+    }
+  }
+
+  {
+      "userEmail" : "yukina1418@gmail.com",
+      "userPassword" : "1234"
+  }

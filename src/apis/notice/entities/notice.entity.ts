@@ -1,10 +1,12 @@
 import { Field, Int, ObjectType } from '@nestjs/graphql';
 import { SubCategory } from 'src/apis/subCategory/entities/subCategory.entity';
 import {
+  BaseEntity,
   Column,
   CreateDateColumn,
   DeleteDateColumn,
   Entity,
+  JoinColumn,
   ManyToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
@@ -12,7 +14,7 @@ import {
 
 @ObjectType()
 @Entity()
-export class Notice {
+export class Notice extends BaseEntity {
   @PrimaryGeneratedColumn('increment')
   @Field(() => Int)
   noticeId: number;
@@ -33,6 +35,7 @@ export class Notice {
   noticeHit: number;
 
   @ManyToOne((type) => SubCategory, (SubCategory) => SubCategory.notices)
+  @JoinColumn({ name: 'subCategoryId', referencedColumnName: 'subCategoryId' })
   @Field(() => SubCategory)
   subCategory: SubCategory;
 

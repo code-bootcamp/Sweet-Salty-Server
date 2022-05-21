@@ -1,6 +1,6 @@
-- pipeline.id: logstash
+- pipeline.id: board
   pipeline.workers: 1
-  path.config: '/usr/share/logstash/pipeline/logstash.conf'
+  path.config: '/usr/share/logstash/pipeline/board.conf'
 
 - pipeline.id: notice
   pipeline.workers: 1

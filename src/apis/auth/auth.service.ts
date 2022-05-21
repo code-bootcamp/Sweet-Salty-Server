@@ -40,7 +40,7 @@ export class AuthService {
 
     await res.setHeader(
       'Set-Cookie',
-      `refreshToken=${refreshToken}; path=/; domain=localhost; Secure; httpOnly; SameSite=None;`,
+      `refreshToken=${refreshToken}; path=/; domain=project08.site; Secure; httpOnly; SameSite=None;`,
     );
   }
 

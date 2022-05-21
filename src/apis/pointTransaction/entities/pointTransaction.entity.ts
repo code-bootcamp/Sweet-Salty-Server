@@ -1,6 +1,7 @@
 import { ObjectType, Field, Int, registerEnumType } from '@nestjs/graphql';
 import { User } from 'src/apis/user/entities/user.entity';
 import {
+  BaseEntity,
   Column,
   CreateDateColumn,
   Entity,
@@ -18,7 +19,7 @@ registerEnumType(POINT_TRANSACTION_STATUS_ENUM, {
 
 @Entity()
 @ObjectType()
-export class PointTransaction {
+export class PointTransaction extends BaseEntity {
   @PrimaryGeneratedColumn('uuid')
   @Field(() => String)
   id: string;

@@ -99,14 +99,14 @@ export class AdminService {
 
     const CommunityBoard = ['REVIEW', 'REQUEST', 'VISITED', 'TASTER'];
 
-    const NoticeBoard = ['All', 'NOTICE', 'EVENT', 'PROMOTION', 'TASTING'];
+    const NoticeBoard = ['NOTICE', 'EVENT', 'PROMOTION', 'TASTING'];
 
     CommunityBoard.map(async (el) => {
       await getConnection()
         .createQueryBuilder()
         .insert()
         .into(SubCategory)
-        .values({ subCategoryName: el, topCategories: Community })
+        .values({ subCategoryName: el, topCategory: Community })
         .execute();
     });
 
@@ -115,10 +115,9 @@ export class AdminService {
         .createQueryBuilder()
         .insert()
         .into(SubCategory)
-        .values({ subCategoryName: el, topCategories: Notice })
+        .values({ subCategoryName: el, topCategory: Notice })
         .execute();
     });
-    console.log('aa');
 
     return '생성되었습니다.';
   }

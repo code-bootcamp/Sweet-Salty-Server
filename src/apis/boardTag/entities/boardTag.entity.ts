@@ -1,6 +1,12 @@
 import { Field, ObjectType, registerEnumType } from '@nestjs/graphql';
 import { BoardSide } from 'src/apis/boardSide/entities/boardSide.entity';
-import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  BaseEntity,
+  Column,
+  Entity,
+  OneToMany,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 
 export enum REF_Name_ENUM {
   'MENU' = 'MENU',
@@ -14,8 +20,9 @@ registerEnumType(REF_Name_ENUM, {
 
 @ObjectType()
 @Entity()
-export class BoardTag {
+export class BoardTag extends BaseEntity {
   @PrimaryGeneratedColumn('uuid')
+  @Field(() => String)
   boardTagId: string;
 
   @Column({ unique: true })
@@ -27,5 +34,6 @@ export class BoardTag {
   boardTagRefName: string;
 
   @OneToMany((type) => BoardSide, (BoardSide) => BoardSide.boardTags)
-  boardSides: BoardSide[];
+  @Field(() => BoardSide)
+  boardSide: BoardSide[];
 }

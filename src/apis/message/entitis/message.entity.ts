@@ -2,9 +2,11 @@ import { Field, ObjectType, registerEnumType } from '@nestjs/graphql';
 import { MessageInfo } from 'src/apis/messageInfo/entities/messageInfo.entity';
 
 import {
+  BaseEntity,
   Column,
   CreateDateColumn,
   Entity,
+  JoinColumn,
   ManyToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
@@ -48,7 +50,7 @@ export class ReceivedMessage {
 
 @ObjectType()
 @Entity()
-export class Message {
+export class Message extends BaseEntity {
   @PrimaryGeneratedColumn('uuid')
   @Field(() => String)
   messageId: string;
@@ -70,6 +72,7 @@ export class Message {
   messageState: boolean;
 
   @ManyToOne(() => MessageInfo)
+  @JoinColumn({ name: 'messageInfoId', referencedColumnName: 'messageInfoId' })
   @Field(() => MessageInfo)
   messageInfo: MessageInfo;
 

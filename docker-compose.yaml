@@ -20,10 +20,10 @@ services:
     ports:
       - 3306:3306
 
-  # my-redis:
-  #   image: redis:latest
-  #   ports:
-  #     - 6379:6379
+  my-redis:
+    image: redis:latest
+    ports:
+      - 6379:6379
 
   # elasticsearch:
   #   image: elasticsearch:7.17.0
@@ -39,7 +39,8 @@ services:
   #   depends_on:
   #     - elasticsearch
   #   volumes:
-  #     - ./elk/logstash/logstash.conf:/usr/share/logstash/pipeline/logstash.conf
+
+  #     - ./elk/logstash/board.conf:/usr/share/logstash/pipeline/board.conf
   #     - ./elk/logstash/notice.conf:/usr/share/logstash/pipeline/notice.conf
   #     - ./elk/logstash/mysql-connector-java-8.0.28.jar:/usr/share/logstash/mysql-connector-java-8.0.28.jar
   #     - ./elk/logstash/board_template.json:/usr/share/logstash/templates/board_template.json

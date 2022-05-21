@@ -95,18 +95,17 @@ export class BoardResolver {
     return this.boardService.findGenderWithAgeGroup({ gender, ageGroup, page });
   }
 
-  @UseGuards(GqlAuthAccessGuard)
+  //@UseGuards(GqlAuthAccessGuard)
   @Mutation(() => Board)
   createBoard(
     //
-    @CurrentUser() currentUser: ICurrentUser,
+    //  @CurrentUser() currentUser: ICurrentUser,
     @Args('createBoardInput') createBoardInput: CreateBoardInput,
     @Args('boardTagsInput') boardTagsInput: BoardTagsInput,
   ) {
-    return this.boardService.create({
+    return this.boardService.createaaa({
       createBoardInput,
       boardTagsInput,
-      currentUser,
     });
   }
 
@@ -122,11 +121,11 @@ export class BoardResolver {
     });
   }
 
-  @UseGuards(GqlAuthAccessGuard)
+  // @UseGuards(GqlAuthAccessGuard)
   @Mutation(() => Boolean)
   deleteBoard(
     @CurrentUser() currentUser: ICurrentUser,
-    @Args('boardId') boardId: string,
+    @Args({ name: 'boardId', type: () => Int }) boardId: number,
   ) {
     return this.boardService.delete({ boardId, currentUser });
   }
