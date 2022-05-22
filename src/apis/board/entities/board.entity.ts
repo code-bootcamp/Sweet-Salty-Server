@@ -1,6 +1,6 @@
 import { Field, Int, ObjectType, registerEnumType } from '@nestjs/graphql';
 import { BoardSide } from 'src/apis/boardSide/entities/boardSide.entity';
-import { Image } from 'src/apis/image/entites/image.entity';
+import { Image } from 'src/apis/image/entities/image.entity';
 import { Place } from 'src/apis/place/entities/place.entity';
 
 import { SubCategory } from 'src/apis/subCategory/entities/subCategory.entity';
@@ -19,7 +19,7 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 
-export enum SUB_CATEGORY_NAME_ENUM {
+export enum BOARD_SUB_CATEGORY_NAME_ENUM {
   REQUEST = 'REQUEST',
   VISITED = 'VISITED',
   REVIEW = 'REVIEW',
@@ -42,8 +42,8 @@ export enum AGE_GROUP_ENUM {
   SIXTY = 'SIXTY',
 }
 
-registerEnumType(SUB_CATEGORY_NAME_ENUM, {
-  name: 'SUB_CATEGORY_NAME_ENUM',
+registerEnumType(BOARD_SUB_CATEGORY_NAME_ENUM, {
+  name: 'BOARD_SUB_CATEGORY_NAME_ENUM',
 });
 
 registerEnumType(GENDER_ENUM, {
@@ -60,8 +60,8 @@ export abstract class Content {}
 @ObjectType()
 export class Board extends BaseEntity {
   @PrimaryGeneratedColumn('increment')
-  @Field(() => Int)
-  boardId: number;
+  @Field(() => String)
+  boardId: string;
 
   @Column()
   @Field(() => String)
@@ -96,12 +96,16 @@ export class Board extends BaseEntity {
   thumbnail: string;
 
   @Column({ type: 'enum', enum: AGE_GROUP_ENUM })
-  @Field(() => AGE_GROUP_ENUM)
+  @Field(() => String)
   ageGroup: string;
 
   @Column({ type: 'enum', enum: GENDER_ENUM })
-  @Field(() => GENDER_ENUM)
+  @Field(() => String)
   gender: string;
+
+  @Column({ type: 'enum', enum: BOARD_SUB_CATEGORY_NAME_ENUM })
+  @Field(() => String)
+  boardSubject: string;
 
   @CreateDateColumn()
   @Field(() => Date)

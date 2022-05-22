@@ -3,6 +3,7 @@
 # ------------------------------------------------------
 
 type BoardTag {
+  boardTagId: String!
   boardTagName: String!
   boardTagRefName: REF_Name_ENUM!
 }
@@ -18,21 +19,25 @@ type BoardSide {
   boardTags: BoardTag!
 }
 
-type Store {
-  storeId: String!
-  storeName: String!
-  storeAddress: String!
-  storeAddressInfo: String!
-  storeUrl: String!
+type TopCategory {
+  topCategoryId: String!
+  topCategoryName: String!
+}
+
+type SubCategory {
+  subCategoryId: String!
+  subCategoryName: String!
+  topCategory: TopCategory!
 }
 
 type Notice {
-  noticeId: Int!
+  noticeId: String!
   noticeTitle: String!
   noticeContents: String!
   noticeHit: Int!
-  subCategory: SubCategory!
   createAt: DateTime!
+  subCategory: SubCategory!
+  images: [Image!]
 }
 
 """
@@ -40,13 +45,23 @@ A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date
 """
 scalar DateTime
 
-type SubCategory {
-  subCategory: String!
-  subCategoryName: String!
+type Image {
+  imageId: String!
+  url: String!
+  createAt: DateTime!
+}
+
+type Place {
+  placeId: String!
+  placeName: String!
+  placeAddress: String!
+  placeUrl: String!
+  lat: String!
+  lng: String!
 }
 
 type Board {
-  boardId: Int!
+  boardId: String!
   boardTitle: String!
   boardSugar: String!
   boardSalt: String!
@@ -54,29 +69,16 @@ type Board {
   boardWriter: String!
   boardLikeCount: Int!
   boardHit: Int!
-  ageGroup: AGE_GROUP_ENUM!
-  gender: GENDER_ENUM!
-  subCategory: SubCategory!
-  stores: Store!
-  boardSides: [BoardSide!]!
+  thumbnail: String!
+  ageGroup: String!
+  gender: String!
+  boardSubject: String!
   createAt: DateTime!
   updateAt: DateTime!
-}
-
-enum AGE_GROUP_ENUM {
-  NONE
-  TEN
-  TWENTY
-  THIRTY
-  FORTY
-  FIFTY
-  SIXTY
-}
-
-enum GENDER_ENUM {
-  PRIVATE
-  MALE
-  FEMALE
+  subCategory: SubCategory!
+  place: Place!
+  boardSides: [BoardSide!]!
+  images: [Image!]!
 }
 
 type fewUser {
@@ -94,8 +96,8 @@ type User {
   userPhone: String!
   userAddress: String!
   userPoint: Int!
-  ageGroup: AGE_GROUP_ENUM!
-  gender: GENDER_ENUM!
+  ageGroup: String!
+  gender: String!
   createAt: DateTime!
   updateAt: DateTime!
 }
@@ -174,10 +176,12 @@ type Shop {
 type Query {
   fetchTags(refName: String!): [BoardTag!]!
   fetchBoardTitle(title: String!): [Board!]!
+  fetchBoardTitles(title: String!): JSONObject!
+  fetchBoardContents(contents: String!): JSONObject!
   fetchBoardWithTags(tags: [String!]!): JSONObject!
   fetchBoard(boardId: String!): Board!
   fetchBoards: [Board!]!
-  fetchBoardCategoryPick(category: SUB_CATEGORY_NAME_ENUM!): [Board!]!
+  fetchBoardCategoryPick(category: BOARD_SUB_CATEGORY_NAME_ENUM!): [Board!]!
   fetchGenderBoards(gender: GENDER_ENUM!, page: Int!): [Board!]!
   fetchAgeGroupBoards(ageGroup: AGE_GROUP_ENUM!, page: Int!): [Board!]!
   fetchAgeGroupWithGenderBoards(gender: GENDER_ENUM!, ageGroup: AGE_GROUP_ENUM!, page: Int!): [Board!]!
@@ -185,8 +189,10 @@ type Query {
   fetchUsers: [User!]!
   findUser(phone: String!): fewUser!
   fetchUserLoggedIn: User!
-  fetchNoticeAll(page: Int!): [Notice!]!
-  fetchNoticeCategoryPick(page: Int!, category: String!): [Notice!]!
+  fetchNotice(noticeId: String!): Notice!
+  fetchNoticeAll(page: Int): [Notice!]!
+  fetchNoticeCategoryPick(page: Int!, category: NOTICE_SUB_CATEGORY_NAME_ENUM!): [Notice!]!
+  fetchNoticeCount(category: String!): String!
   fetchReceivedMessages(page: Int!): [ReceivedMessage!]!
   fetchReceivedMessage(messageInfoId: String!): ReceivedMessage!
   fetchSendMessages(page: Int!): [SendMessage!]!
@@ -200,11 +206,34 @@ The `JSONObject` scalar type represents JSON objects as specified by [ECMA-404](
 """
 scalar JSONObject
 
-enum SUB_CATEGORY_NAME_ENUM {
+enum BOARD_SUB_CATEGORY_NAME_ENUM {
   REQUEST
   VISITED
   REVIEW
   TASTER
+}
+
+enum GENDER_ENUM {
+  PRIVATE
+  MALE
+  FEMALE
+}
+
+enum AGE_GROUP_ENUM {
+  NONE
+  TEN
+  TWENTY
+  THIRTY
+  FORTY
+  FIFTY
+  SIXTY
+}
+
+enum NOTICE_SUB_CATEGORY_NAME_ENUM {
+  NOTICE
+  EVENT
+  PROMOTION
+  TASTING
 }
 
 type Mutation {
@@ -217,6 +246,7 @@ type Mutation {
   signUpGetToken(phone: String!): String!
   signUpCheckToken(phone: String!, token: String!): Boolean!
   createBoard(createBoardInput: CreateBoardInput!, boardTagsInput: BoardTagsInput!): Board!
+  createBoardReq(createBoardWhitReqInput: CreateBoardWithReqInput!): Board!
   updateBoard(boardId: String!, updateBoardInput: UpdateBoardInput!): Board!
   deleteBoard(boardId: String!): Boolean!
   createBoardLike(boardId: String!): String!
@@ -226,7 +256,7 @@ type Mutation {
   updatePassword(userEmail: String!, password: String!): User!
   deleteUser(userEmail: String!): Boolean!
   restoreUser(userEmail: String!): Boolean!
-  createNotice(createNoticeInput: CreateNoticeInput!): String!
+  createNotice(createNoticeInput: CreateNoticeInput!): Notice!
   sendMessage(sendMessageInput: SendMessageInput!): String!
   deleteSendMessage(messageInfoId: String!): String!
   deleteReceivedMessage(messageInfoId: String!): String!
@@ -251,7 +281,16 @@ input CreateBoardInput {
   boardSugar: String
   boardSalt: String
   boardContents: String!
-  subCategoryName: SUB_CATEGORY_NAME_ENUM!
+  subCategoryName: BOARD_SUB_CATEGORY_NAME_ENUM!
+  place: PlaceInput!
+}
+
+input PlaceInput {
+  placeName: String!
+  placeAddress: String!
+  placeUrl: String!
+  lat: String!
+  lng: String!
 }
 
 input BoardTagsInput {
@@ -260,12 +299,22 @@ input BoardTagsInput {
   boardTagMood: [String!]
 }
 
+input CreateBoardWithReqInput {
+  boardTitle: String!
+  boardSugar: String
+  boardSalt: String
+  boardContents: String!
+  subCategoryName: BOARD_SUB_CATEGORY_NAME_ENUM!
+  place: PlaceInput
+}
+
 input UpdateBoardInput {
   boardTitle: String
   boardSugar: String
   boardSalt: String
   boardContents: String
-  subCategoryName: SUB_CATEGORY_NAME_ENUM
+  subCategoryName: BOARD_SUB_CATEGORY_NAME_ENUM
+  place: PlaceInput
 }
 
 """The `Upload` scalar type represents a file upload."""
@@ -289,7 +338,8 @@ input UpdateUserInput {
 input CreateNoticeInput {
   noticeTitle: String!
   noticeContents: String!
-  noticeCategory: String!
+  noticeCategory: NOTICE_SUB_CATEGORY_NAME_ENUM!
+  url: [String!]
 }
 
 input SendMessageInput {

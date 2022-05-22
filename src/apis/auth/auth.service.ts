@@ -25,7 +25,6 @@ export class AuthService {
         expiresIn: '2w',
       },
     );
-    console.log(Access);
 
     const obj = {};
     obj['accessToken'] = Access;
@@ -40,8 +39,15 @@ export class AuthService {
 
     await res.setHeader(
       'Set-Cookie',
-      `refreshToken=${refreshToken}; path=/; domain=project08.site; Secure; httpOnly; SameSite=None;`,
+      `refreshToken=${refreshToken}; path=/; Secure; httpOnly; SameSite=None;`,
     );
+
+    // await res.cookie('cookie', 'refreshToken=' + refreshToken, {
+    //   sameSite: 'none',
+    //   domain: 'localhost',
+    //   httpOnly: true,
+    //   SameSite: 'None',
+    // });
   }
 
   social_login({ user, res }) {

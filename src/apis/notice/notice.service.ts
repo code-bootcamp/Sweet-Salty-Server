@@ -1,8 +1,8 @@
 import { ConflictException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { getConnection, Repository } from 'typeorm';
+import { Image } from '../image/entities/image.entity';
 import { SubCategory } from '../subCategory/entities/subCategory.entity';
-import { User } from '../user/entities/user.entity';
 import { Notice } from './entities/notice.entity';
 
 @Injectable()
@@ -11,18 +11,18 @@ export class NoticeService {
     @InjectRepository(Notice)
     private readonly noticeRepository: Repository<Notice>,
   ) {}
-  async create({ createNoticeInput, currentUser }) {
-    const { noticeCategory, ...data } = createNoticeInput;
+  async create({ createNoticeInput }) {
+    const { noticeCategory, url, ...data } = createNoticeInput;
 
-    const isAdmin = await getConnection()
-      .createQueryBuilder()
-      .select('user')
-      .from(User, 'user')
-      .where({ userId: currentUser.userId })
-      .getOne();
+    // const isAdmin = await getConnection()
+    //   .createQueryBuilder()
+    //   .select('user')
+    //   .from(User, 'user')
+    //   .where({ userId: currentUser.userId })
+    //   .getOne();
 
-    if (isAdmin.userState === false)
-      throw new ConflictException('관리자만 글을 작성할 수 있습니다.');
+    // if (isAdmin.userState === false)
+    //   throw new ConflictException('관리자만 글을 작성할 수 있습니다.');
 
     const category = await getConnection()
       .createQueryBuilder()
@@ -31,11 +31,26 @@ export class NoticeService {
       .where({ subCategoryName: noticeCategory })
       .getOne();
 
-    await this.noticeRepository.save({
+    const notice = await this.noticeRepository.save({
       ...data,
       subCategory: category,
     });
-    return '글이 생성되었습니다.';
+
+    if (url) {
+      url.reduce(async (acc, cur) => {
+        await getConnection()
+          .createQueryBuilder()
+          .insert()
+          .into(Image)
+          .values({
+            notice: notice.noticeId,
+            url: cur,
+          })
+          .execute();
+      }, '');
+    }
+
+    return notice;
   }
 
   async findOne({ noticeId }) {
@@ -52,6 +67,7 @@ export class NoticeService {
       .select('notice')
       .from(Notice, 'notice')
       .leftJoinAndSelect('notice.subCategory', 'subCategory')
+      .leftJoinAndSelect('subCategory.topCategory', 'topCategory')
       .where('subCategoryName = :data', {
         data: category,
       })
@@ -67,7 +83,7 @@ export class NoticeService {
       .select('notice')
       .from(Notice, 'notice')
       .leftJoinAndSelect('notice.subCategory', 'subCategory')
-      .leftJoinAndSelect('subCategory.topCategories', 'topCategory')
+      .leftJoinAndSelect('subCategory.topCategory', 'topCategory')
       .where('topCategoryName = :data', {
         data: 'NOTICE',
       })
@@ -75,5 +91,27 @@ export class NoticeService {
       .limit(10)
       .orderBy('createAt', 'DESC')
       .getMany();
+  }
+
+  async volumeCheck({ category }) {
+    if (category === 'ALL') {
+      const data = await getConnection()
+        .createQueryBuilder()
+        .from(Notice, 'notice')
+        .getManyAndCount();
+
+      return data[1];
+    } else {
+      const data = await getConnection()
+        .createQueryBuilder()
+        .from(Notice, 'notice')
+        .leftJoin('notice.subCategory', 'subCategory')
+        .where('subCategoryName = :data', {
+          data: category,
+        })
+        .getManyAndCount();
+
+      return data[1];
+    }
   }
 }

@@ -16,7 +16,6 @@ import { ConfigModule } from '@nestjs/config';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { BoardModule } from './apis/board/board.module';
-import { ImageUploadModule } from './apis/imageUpload/imageUpload.module';
 import { CommentModule } from './apis/comment/comment.module';
 import { CommentLikeModule } from './apis/commentLike/commentLike.module';
 import { BoardLikeModule } from './apis/boardLike/boardLike.module';
@@ -27,7 +26,7 @@ import { AdminModule } from './apis/admin/admin.module';
 import { NoticeModule } from './apis/notice/notice.module';
 import { graphqlUploadExpress } from 'graphql-upload';
 import { RealTimeModule } from './apis/realTime/realTime.module';
-
+import { ImageModule } from './apis/image/image.module';
 
 @Module({
   imports: [
@@ -35,7 +34,7 @@ import { RealTimeModule } from './apis/realTime/realTime.module';
     AuthModule,
     BoardModule,
     BoardLikeModule,
-    ImageUploadModule,
+    ImageModule,
     UserModule,
     NoticeModule,
     MessageModule,
@@ -53,7 +52,7 @@ import { RealTimeModule } from './apis/realTime/realTime.module';
       context: ({ req, res }) => ({ req, res }),
       cors: {
         Credential: true,
-        origin: ['http://localhost:3000', 'http://localhost:5501'],
+        origin: ['http://localhost', 'http://localhost'],
       },
     }),
     TypeOrmModule.forRoot({

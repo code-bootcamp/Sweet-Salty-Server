@@ -11,6 +11,7 @@ import { JwtGoogleStrategy } from 'src/commons/auth/jwt-social-google.strategy';
 import { AuthController } from './auth.controller';
 import { UserService } from '../user/user.service';
 import { JwtKakaoStrategy } from 'src/commons/auth/jwt-social-kakao.strategy';
+import { JwtNaverStrategy } from 'src/commons/auth/jwt-social-naver.strategy';
 
 @Module({
   imports: [
@@ -32,6 +33,7 @@ import { JwtKakaoStrategy } from 'src/commons/auth/jwt-social-kakao.strategy';
     AuthService,
     JwtGoogleStrategy,
     JwtKakaoStrategy,
+    JwtNaverStrategy,
     UserService,
   ],
 })

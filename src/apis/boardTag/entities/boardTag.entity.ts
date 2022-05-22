@@ -34,6 +34,5 @@ export class BoardTag extends BaseEntity {
   boardTagRefName: string;
 
   @OneToMany((type) => BoardSide, (BoardSide) => BoardSide.boardTags)
-  @Field(() => BoardSide)
   boardSide: BoardSide[];
 }

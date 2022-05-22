@@ -64,7 +64,7 @@ export class Message extends BaseEntity {
   messageReceivedUser: string;
 
   @Column({ type: 'enum', enum: SEND_RECEIVED })
-  @Field(() => SEND_RECEIVED)
+  @Field(() => String)
   sendReceived: string;
 
   @Column({ default: false })

@@ -1,16 +1,18 @@
 import { Field, ObjectType } from '@nestjs/graphql';
 import { Board } from 'src/apis/board/entities/board.entity';
+import { Notice } from 'src/apis/notice/entities/notice.entity';
 import {
   Column,
   CreateDateColumn,
   DeleteDateColumn,
   Entity,
+  JoinColumn,
   ManyToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 
-@Entity()
 @ObjectType()
+@Entity()
 export class Image {
   @PrimaryGeneratedColumn('uuid')
   @Field(() => String)
@@ -21,11 +23,17 @@ export class Image {
   url: string;
 
   @CreateDateColumn()
+  @Field(() => Date)
   createAt: Date;
 
   @DeleteDateColumn()
   deleteAt: Date;
 
   @ManyToOne((type) => Board, (Board) => Board.images, { onDelete: 'CASCADE' })
+  @JoinColumn({ name: 'boardId', referencedColumnName: 'boardId' })
   board: Board;
+
+  @ManyToOne((type) => Notice, (Notice) => Notice.images)
+  @JoinColumn({ name: 'noticeId', referencedColumnName: 'noticeId' })
+  notice: Notice;
 }

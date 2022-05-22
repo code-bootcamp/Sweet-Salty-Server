@@ -1,4 +1,6 @@
-import { Field, Int, ObjectType } from '@nestjs/graphql';
+import { Field, Int, ObjectType, registerEnumType } from '@nestjs/graphql';
+import { Image } from 'src/apis/image/entities/image.entity';
+
 import { SubCategory } from 'src/apis/subCategory/entities/subCategory.entity';
 import {
   BaseEntity,
@@ -8,22 +10,34 @@ import {
   Entity,
   JoinColumn,
   ManyToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
+
+export enum NOTICE_SUB_CATEGORY_NAME_ENUM {
+  NOTICE = 'NOTICE',
+  EVENT = 'EVENT',
+  PROMOTION = 'PROMOTION',
+  TASTING = 'TASTING',
+}
+
+registerEnumType(NOTICE_SUB_CATEGORY_NAME_ENUM, {
+  name: 'NOTICE_SUB_CATEGORY_NAME_ENUM',
+});
 
 @ObjectType()
 @Entity()
 export class Notice extends BaseEntity {
   @PrimaryGeneratedColumn('increment')
-  @Field(() => Int)
-  noticeId: number;
+  @Field(() => String)
+  noticeId: string;
 
   @Column()
   @Field(() => String)
   noticeTitle: string;
 
-  @Column()
+  @Column({ type: 'text' })
   @Field(() => String)
   noticeContents: string;
 
@@ -34,11 +48,6 @@ export class Notice extends BaseEntity {
   @Field(() => Int)
   noticeHit: number;
 
-  @ManyToOne((type) => SubCategory, (SubCategory) => SubCategory.notices)
-  @JoinColumn({ name: 'subCategoryId', referencedColumnName: 'subCategoryId' })
-  @Field(() => SubCategory)
-  subCategory: SubCategory;
-
   @CreateDateColumn()
   @Field(() => Date)
   createAt: Date;
@@ -48,4 +57,13 @@ export class Notice extends BaseEntity {
 
   @DeleteDateColumn()
   deleteAt: Date;
+
+  @ManyToOne((type) => SubCategory, (SubCategory) => SubCategory.notices)
+  @JoinColumn({ name: 'subCategoryId', referencedColumnName: 'subCategoryId' })
+  @Field(() => SubCategory)
+  subCategory: SubCategory;
+
+  @OneToMany((type) => Image, (Image) => Image.notice)
+  @Field(() => [Image], { nullable: true })
+  images: Image;
 }
