@@ -16,6 +16,7 @@ export class AdminResolver {
     //
     @Args('createTagInput') createTagInput: CreateTagInput,
   ) {
+    console.log(11);
     return this.adminService.createTag({ createTagInput });
   }
 

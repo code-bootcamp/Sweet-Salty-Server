@@ -27,7 +27,6 @@ import { graphqlUploadExpress } from 'graphql-upload';
 import { ImageModule } from './apis/image/image.module';
 import { ChatBackEndModule } from './chatBackEnd/chatBackEnd.module';
 import { ChatFrontEndModule } from './chatFrontEnd/chatFrontEnd.module';
-
 @Module({
   imports: [
     AdminModule,
