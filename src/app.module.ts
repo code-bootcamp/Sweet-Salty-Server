@@ -24,11 +24,9 @@ import { ShopModule } from './apis/shop/shop.module';
 import { AdminModule } from './apis/admin/admin.module';
 import { NoticeModule } from './apis/notice/notice.module';
 import { graphqlUploadExpress } from 'graphql-upload';
-import { RealTimeModule } from './apis/realTime/realTime.module';
 import { ImageModule } from './apis/image/image.module';
 import { ChatBackEndModule } from './chatBackEnd/chatBackEnd.module';
 import { ChatFrontEndModule } from './chatFrontEnd/chatFrontEnd.module';
-
 
 @Module({
   imports: [
@@ -39,7 +37,7 @@ import { ChatFrontEndModule } from './chatFrontEnd/chatFrontEnd.module';
     ImageModule,
     ChatBackEndModule, // 추가
     ChatFrontEndModule, // 추가
-    ImageUploadModule,
+    ImageModule,
     UserModule,
     NoticeModule,
     MessageModule,

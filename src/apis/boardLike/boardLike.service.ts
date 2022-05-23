@@ -22,7 +22,23 @@ export class BoardLikeService {
       })
       .getOne();
 
-    if (check) throw new ConflictException('이미 좋아요를 누르셨습니다.');
+    if (check) {
+      await getConnection()
+        .createQueryBuilder()
+        .update(Board)
+        .set({ boardLikeCount: () => `boardLikeCount-1` })
+        .where({ boardId })
+        .execute();
+
+      await getConnection()
+        .createQueryBuilder()
+        .delete()
+        .from(BoardLike)
+        .where({ user: currentUser.userId })
+        .execute();
+
+      return `좋아요 -1`;
+    }
 
     await this.boardLikeRepository.save({
       user: currentUser.userId, //
@@ -36,6 +52,6 @@ export class BoardLikeService {
       .where({ boardId })
       .execute();
 
-    return `좋아요`;
+    return `좋아요 +1`;
   }
 }

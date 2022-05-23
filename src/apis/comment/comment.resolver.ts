@@ -1,5 +1,5 @@
 import { UseGuards } from '@nestjs/common';
-import { Args, Mutation, Resolver } from '@nestjs/graphql';
+import { Query, Args, Mutation, Resolver } from '@nestjs/graphql';
 import { GqlAuthAccessGuard } from 'src/commons/auth/gql-auth.guard';
 import { CurrentUser, ICurrentUser } from 'src/commons/auth/gql-user-param';
 import { commentService } from './comment.service';
@@ -8,6 +8,11 @@ import { Comment } from './entities/comment.entity';
 @Resolver()
 export class commentResolver {
   constructor(private readonly commentService: commentService) {}
+
+  @Query(() => [Comment])
+  fetchComment(@Args('boardId') boardId: string) {
+    return this.commentService.findAll({ boardId });
+  }
 
   @UseGuards(GqlAuthAccessGuard)
   @Mutation(() => Comment)

@@ -12,6 +12,15 @@ export class commentService {
     private readonly commentRepository: Repository<Comment>,
   ) {}
 
+  async findAll({ boardId }) {
+    return await this.commentRepository.find({
+      where: {
+        board: boardId,
+      },
+      relations: ['board'],
+    });
+  }
+
   async create({ currentUser, boardId, contents }) {
     const userData = await getConnection()
       .createQueryBuilder()
