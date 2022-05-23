@@ -197,6 +197,7 @@ type Query {
   fetchReceivedMessage(messageInfoId: String!): ReceivedMessage!
   fetchSendMessages(page: Int!): [SendMessage!]!
   fetchSendMessage(messageInfoId: String!): SendMessage!
+  fetchComment(boardId: String!): [Comment!]!
   fetchShop(shopId: String!): Shop!
   shopHistoryFindOne: [PaymentShopHistory!]!
 }
