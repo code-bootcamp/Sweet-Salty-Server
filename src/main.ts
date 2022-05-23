@@ -33,10 +33,12 @@ import { TopCategory } from './apis/topCategory/entities/topCategory.entity';
 import * as bcrypt from 'bcrypt';
 import { Place } from './apis/place/entities/place.entity';
 import { SocketIoAdapter } from './adapters/socket-io.adapters';
+import { graphqlUploadExpress } from 'graphql-upload';
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
   app.useGlobalFilters(new HttpExceptionFilter());
+  app.use(graphqlUploadExpress());
   // 추가
   app.useWebSocketAdapter(new SocketIoAdapter(app));
   app.useStaticAssets(join(__dirname, '..', 'public'));
@@ -45,30 +47,30 @@ async function bootstrap() {
   //
   app.use(json());
   app.use(requestIp.mw());
-  AdminBro.registerAdapter({ Database, Resource });
+  // AdminBro.registerAdapter({ Database, Resource });
 
-  const adminBro = new AdminBro({
-    resources: [
-      Board,
-      BoardSide,
-      BoardTag,
-      Comment,
-      CommentLike,
-      Message,
-      MessageInfo,
-      Notice,
-      PaymentHistory,
-      PaymentShopHistory,
-      Shop,
-      Place,
-      SubCategory,
-      TopCategory,
-      User,
-    ],
-    rootPath: '/admin',
-  });
+  // const adminBro = new AdminBro({
+  //   resources: [
+  //     Board,
+  //     BoardSide,
+  //     BoardTag,
+  //     Comment,
+  //     CommentLike,
+  //     Message,
+  //     MessageInfo,
+  //     Notice,
+  //     PaymentHistory,
+  //     PaymentShopHistory,
+  //     Shop,
+  //     Place,
+  //     SubCategory,
+  //     TopCategory,
+  //     User,
+  //   ],
+  //   rootPath: '/admin',
+  // });
 
-  // 잠시주석
+  // // 잠시주석
   // const router = AdminBroExpress.buildAuthenticatedRouter(
   //   adminBro,
   //   {

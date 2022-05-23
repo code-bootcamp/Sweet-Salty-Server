@@ -28,6 +28,7 @@ import { ImageModule } from './apis/image/image.module';
 import { ChatBackEndModule } from './chatBackEnd/chatBackEnd.module';
 import { ChatFrontEndModule } from './chatFrontEnd/chatFrontEnd.module';
 
+import { AppController } from './app.controller';
 @Module({
   imports: [
     AdminModule,
@@ -37,7 +38,6 @@ import { ChatFrontEndModule } from './chatFrontEnd/chatFrontEnd.module';
     ImageModule,
     ChatBackEndModule, // 추가
     ChatFrontEndModule, // 추가
-    ImageModule,
     UserModule,
     NoticeModule,
     MessageModule,
@@ -54,16 +54,16 @@ import { ChatFrontEndModule } from './chatFrontEnd/chatFrontEnd.module';
       context: ({ req, res }) => ({ req, res }),
       cors: {
         Credential: true,
-        origin: ['http://localhost', 'http://localhost'],
+        origin: ['http://localhost:3000'],
       },
     }),
     TypeOrmModule.forRoot({
       type: 'mysql',
-      host: 'my-database',
+      host: '10.16.96.3',
       port: 3306,
       username: 'root',
       password: 'root',
-      database: 'team_project',
+      database: 'team_data',
       entities: [__dirname + '/apis/**/*.entity.*'],
       synchronize: true,
       logging: true,
@@ -72,19 +72,23 @@ import { ChatFrontEndModule } from './chatFrontEnd/chatFrontEnd.module';
     }),
     CacheModule.register<RedisClientOptions>({
       store: redisStore,
-      url: 'redis://my-redis:6379',
+      url: 'redis://XkjocNA3@10.140.0.4:6379',
       isGlobal: true,
     }),
   ],
   providers: [AppService],
+  controllers: [AppController],
 })
-export class AppModule implements NestModule {
+export class AppModule {
   constructor(private readonly connection: Connection) {}
-  configure(consumer: MiddlewareConsumer) {
-    consumer.apply(graphqlUploadExpress()).forRoutes('graphql');
-  }
 }
 
+// export class AppModule implements NestModule {
+//   constructor(private readonly connection: Connection) {}
+//   configure(consumer: MiddlewareConsumer) {
+//     consumer.apply(graphqlUploadExpress()).forRoutes('graphql');
+//   }
+// }
 // 이거 배포할때 설정하는것
 // TypeOrmModule.forRoot({
 //   type: 'mysql',
