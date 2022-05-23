@@ -13,7 +13,6 @@ import { UserModule } from './apis/user/user.module';
 import * as redisStore from 'cache-manager-redis-store';
 import { AuthModule } from './apis/auth/auth.module';
 import { ConfigModule } from '@nestjs/config';
-import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { BoardModule } from './apis/board/board.module';
 import { CommentModule } from './apis/comment/comment.module';
@@ -25,8 +24,13 @@ import { ShopModule } from './apis/shop/shop.module';
 import { AdminModule } from './apis/admin/admin.module';
 import { NoticeModule } from './apis/notice/notice.module';
 import { graphqlUploadExpress } from 'graphql-upload';
+<<<<<<< HEAD
 import { RealTimeModule } from './apis/realTime/realTime.module';
 import { ImageModule } from './apis/image/image.module';
+=======
+import { ChatBackEndModule } from './chatBackEnd/chatBackEnd.module';
+import { ChatFrontEndModule } from './chatFrontEnd/chatFrontEnd.module';
+>>>>>>> dc8f6e13e3e6a31c802e3b463a5873197f6e14cf
 
 @Module({
   imports: [
@@ -34,14 +38,19 @@ import { ImageModule } from './apis/image/image.module';
     AuthModule,
     BoardModule,
     BoardLikeModule,
+<<<<<<< HEAD
     ImageModule,
+=======
+    ChatBackEndModule, // 추가
+    ChatFrontEndModule, // 추가
+    ImageUploadModule,
+>>>>>>> dc8f6e13e3e6a31c802e3b463a5873197f6e14cf
     UserModule,
     NoticeModule,
     MessageModule,
     CommentModule,
     CommentLikeModule,
     ShopModule,
-    RealTimeModule,
     PointTransactionModule,
     ConfigModule.forRoot({
       isGlobal: true,
@@ -74,7 +83,6 @@ import { ImageModule } from './apis/image/image.module';
       isGlobal: true,
     }),
   ],
-  controllers: [AppController],
   providers: [AppService],
 })
 export class AppModule implements NestModule {

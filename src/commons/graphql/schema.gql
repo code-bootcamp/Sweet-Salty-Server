@@ -6,6 +6,7 @@ type BoardTag {
   boardTagId: String!
   boardTagName: String!
   boardTagRefName: REF_Name_ENUM!
+  boardSide: BoardSide!
 }
 
 enum REF_Name_ENUM {
@@ -19,6 +20,7 @@ type BoardSide {
   boardTags: BoardTag!
 }
 
+<<<<<<< HEAD
 type TopCategory {
   topCategoryId: String!
   topCategoryName: String!
@@ -28,6 +30,21 @@ type SubCategory {
   subCategoryId: String!
   subCategoryName: String!
   topCategory: TopCategory!
+=======
+type Image {
+  imageId: String!
+  url: String!
+}
+
+type Place {
+  placeId: String!
+  placeName: String!
+  placeAddress: String!
+  placeUrl: String!
+  lat: String!
+  lng: String!
+  boards: Board!
+>>>>>>> dc8f6e13e3e6a31c802e3b463a5873197f6e14cf
 }
 
 type Notice {
@@ -45,6 +62,7 @@ A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date
 """
 scalar DateTime
 
+<<<<<<< HEAD
 type Image {
   imageId: String!
   url: String!
@@ -58,6 +76,17 @@ type Place {
   placeUrl: String!
   lat: String!
   lng: String!
+=======
+type TopCategory {
+  topCategoryId: String!
+  topCategoryName: String!
+}
+
+type SubCategory {
+  subCategoryId: String!
+  subCategoryName: String!
+  topCategory: TopCategory!
+>>>>>>> dc8f6e13e3e6a31c802e3b463a5873197f6e14cf
 }
 
 type Board {
@@ -70,15 +99,39 @@ type Board {
   boardLikeCount: Int!
   boardHit: Int!
   thumbnail: String!
+<<<<<<< HEAD
   ageGroup: String!
   gender: String!
   boardSubject: String!
+=======
+  ageGroup: AGE_GROUP_ENUM!
+  gender: GENDER_ENUM!
+>>>>>>> dc8f6e13e3e6a31c802e3b463a5873197f6e14cf
   createAt: DateTime!
   updateAt: DateTime!
   subCategory: SubCategory!
   place: Place!
   boardSides: [BoardSide!]!
   images: [Image!]!
+<<<<<<< HEAD
+=======
+}
+
+enum AGE_GROUP_ENUM {
+  NONE
+  TEN
+  TWENTY
+  THIRTY
+  FORTY
+  FIFTY
+  SIXTY
+}
+
+enum GENDER_ENUM {
+  PRIVATE
+  MALE
+  FEMALE
+>>>>>>> dc8f6e13e3e6a31c802e3b463a5873197f6e14cf
 }
 
 type fewUser {
@@ -249,7 +302,7 @@ type Mutation {
   createBoard(createBoardInput: CreateBoardInput!, boardTagsInput: BoardTagsInput!): Board!
   createBoardReq(createBoardWhitReqInput: CreateBoardWithReqInput!): Board!
   updateBoard(boardId: String!, updateBoardInput: UpdateBoardInput!): Board!
-  deleteBoard(boardId: String!): Boolean!
+  deleteBoard(boardId: Int!): Boolean!
   createBoardLike(boardId: String!): String!
   uploadFile(file: Upload!): String!
   createUser(createUserInput: CreateUserInput!): User!
@@ -282,7 +335,12 @@ input CreateBoardInput {
   boardSugar: String
   boardSalt: String
   boardContents: String!
+<<<<<<< HEAD
   subCategoryName: BOARD_SUB_CATEGORY_NAME_ENUM!
+=======
+  subCategoryName: SUB_CATEGORY_NAME_ENUM!
+  url: [String!]!
+>>>>>>> dc8f6e13e3e6a31c802e3b463a5873197f6e14cf
   place: PlaceInput!
 }
 
@@ -314,7 +372,12 @@ input UpdateBoardInput {
   boardSugar: String
   boardSalt: String
   boardContents: String
+<<<<<<< HEAD
   subCategoryName: BOARD_SUB_CATEGORY_NAME_ENUM
+=======
+  subCategoryName: SUB_CATEGORY_NAME_ENUM
+  url: [String!]
+>>>>>>> dc8f6e13e3e6a31c802e3b463a5873197f6e14cf
   place: PlaceInput
 }
 
