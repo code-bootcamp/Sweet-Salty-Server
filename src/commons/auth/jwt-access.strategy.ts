@@ -5,7 +5,7 @@ import { ExtractJwt, Strategy } from 'passport-jwt';
 import { Repository } from 'typeorm';
 import { Cache } from 'cache-manager';
 import { CACHE_MANAGER, Inject } from '@nestjs/common';
-import { User } from 'src/apis/user/entities/user.entity';
+import { User } from 'src/apis/User/entities/user.entity';
 
 @Injectable()
 export class JwtAccessStrategy extends PassportStrategy(Strategy, 'access') {
@@ -26,6 +26,7 @@ export class JwtAccessStrategy extends PassportStrategy(Strategy, 'access') {
 
   async validate(req, payload) {
     const access = req.headers.authorization.replace('Bearer ', '');
+    console.log(access);
 
     const check = await this.cacheManager.get(access);
 
@@ -33,12 +34,12 @@ export class JwtAccessStrategy extends PassportStrategy(Strategy, 'access') {
 
     const user = await this.userRepository
       .createQueryBuilder()
-      .where({ userEmail: payload.userEmail })
+      .where({ user_email: payload.user_email })
       .getOne();
 
     return {
-      userEmail: payload.userEmail,
-      userId: user.userId,
+      user_email: payload.user_email,
+      user_id: user.user_id,
     };
   }
 }
