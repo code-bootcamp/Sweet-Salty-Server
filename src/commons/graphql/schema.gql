@@ -3,8 +3,10 @@
 # ------------------------------------------------------
 
 type BoardTag {
+  boardTagId: String!
   boardTagName: String!
   boardTagRefName: REF_Name_ENUM!
+  boardSide: BoardSide!
 }
 
 enum REF_Name_ENUM {
@@ -18,12 +20,19 @@ type BoardSide {
   boardTags: BoardTag!
 }
 
-type Store {
-  storeId: String!
-  storeName: String!
-  storeAddress: String!
-  storeAddressInfo: String!
-  storeUrl: String!
+type Image {
+  imageId: String!
+  url: String!
+}
+
+type Place {
+  placeId: String!
+  placeName: String!
+  placeAddress: String!
+  placeUrl: String!
+  lat: String!
+  lng: String!
+  boards: Board!
 }
 
 type Notice {
@@ -40,9 +49,15 @@ A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date
 """
 scalar DateTime
 
+type TopCategory {
+  topCategoryId: String!
+  topCategoryName: String!
+}
+
 type SubCategory {
-  subCategory: String!
+  subCategoryId: String!
   subCategoryName: String!
+  topCategory: TopCategory!
 }
 
 type Board {
@@ -54,13 +69,15 @@ type Board {
   boardWriter: String!
   boardLikeCount: Int!
   boardHit: Int!
+  thumbnail: String!
   ageGroup: AGE_GROUP_ENUM!
   gender: GENDER_ENUM!
-  subCategory: SubCategory!
-  stores: Store!
-  boardSides: [BoardSide!]!
   createAt: DateTime!
   updateAt: DateTime!
+  subCategory: SubCategory!
+  place: Place!
+  boardSides: [BoardSide!]!
+  images: [Image!]!
 }
 
 enum AGE_GROUP_ENUM {
@@ -218,7 +235,7 @@ type Mutation {
   signUpCheckToken(phone: String!, token: String!): Boolean!
   createBoard(createBoardInput: CreateBoardInput!, boardTagsInput: BoardTagsInput!): Board!
   updateBoard(boardId: String!, updateBoardInput: UpdateBoardInput!): Board!
-  deleteBoard(boardId: String!): Boolean!
+  deleteBoard(boardId: Int!): Boolean!
   createBoardLike(boardId: String!): String!
   uploadFile(file: Upload!): String!
   createUser(createUserInput: CreateUserInput!): User!
@@ -252,6 +269,16 @@ input CreateBoardInput {
   boardSalt: String
   boardContents: String!
   subCategoryName: SUB_CATEGORY_NAME_ENUM!
+  url: [String!]!
+  place: PlaceInput!
+}
+
+input PlaceInput {
+  placeName: String!
+  placeAddress: String!
+  placeUrl: String!
+  lat: String!
+  lng: String!
 }
 
 input BoardTagsInput {
@@ -266,6 +293,8 @@ input UpdateBoardInput {
   boardSalt: String
   boardContents: String
   subCategoryName: SUB_CATEGORY_NAME_ENUM
+  url: [String!]
+  place: PlaceInput
 }
 
 """The `Upload` scalar type represents a file upload."""
