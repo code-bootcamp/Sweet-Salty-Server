@@ -3,16 +3,13 @@ import { Controller, Get, Req, Res, UseGuards } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 
 import { Request, Response } from 'express';
-import { User } from '../user/entities/user.entity';
-import { RealIP } from 'nestjs-real-ip';
-import { UserService } from '../user/user.service';
+import { User } from '../User/entities/user.entity';
+
+import { UserService } from '../User/user.service';
 import { AuthService } from './auth.service';
 
 interface IOAuthUser {
-  user: Pick<
-    User,
-    'userEmail' | 'userPhone' | 'userNickname' | 'userSignUpSite'
-  >;
+  user: Pick<User, 'user_email' | 'user_phone' | 'user_nickname'>;
 }
 
 @Controller('/')
@@ -28,19 +25,10 @@ export class AuthController {
     @Req() req: Request & IOAuthUser, //
     @Res() res: Response,
   ) {
-    const user = await this.userService.findCheck({
-      userEmail: req.user.userEmail,
-      userSignUpSite: req.user.userSignUpSite,
-    });
-
-    if (user) {
-      this.authService.social_login({ user, res });
-
-      console.log(res);
-    } else {
-      const newUser = await this.userService.socialCreate({ user: req.user });
-      this.authService.social_login({ user: newUser, res });
-    }
+    // 계정이 이미 생성된 상태인지 확인
+    const social_user = await this.userService.socialCreate({ user: req.user });
+    // 로그인
+    this.authService.social_login({ user: social_user, res });
   }
 
   @Get('/login/kakao')
@@ -49,22 +37,10 @@ export class AuthController {
     @Req() req: Request & IOAuthUser, //
     @Res() res: Response,
   ) {
-    const user = await this.userService.findCheck({
-      userEmail: req.user.userEmail,
-      userSignUpSite: req.user.userSignUpSite,
-    });
-
-    if (user) {
-      this.authService.social_login({ user, res });
-    } else {
-      const newUser = await this.userService.socialCreate({ user: req.user });
-      this.authService.social_login({ user: newUser, res });
-    }
-  }
-
-  @Get('my-ip')
-  get(@RealIP() ip: string): string {
-    return ip;
+    // 계정이 이미 생성된 상태인지 확인
+    const social_user = await this.userService.socialCreate({ user: req.user });
+    // 로그인
+    this.authService.social_login({ user: social_user, res });
   }
 
   @Get('/login/naver')
@@ -73,16 +49,10 @@ export class AuthController {
     @Req() req: Request & IOAuthUser, //
     @Res() res: Response,
   ) {
-    const user = await this.userService.findCheck({
-      userEmail: req.user.userEmail,
-      userSignUpSite: req.user.userSignUpSite,
-    });
-
-    if (user) {
-      this.authService.social_login({ user, res });
-    } else {
-      const newUser = await this.userService.socialCreate({ user: req.user });
-      this.authService.social_login({ user: newUser, res });
-    }
+    // 계정이 이미 생성된 상태인지 확인
+    const social_user = await this.userService.socialCreate({ user: req.user });
+    console.log(social_user);
+    // 로그인
+    this.authService.social_login({ user: social_user, res });
   }
 }
