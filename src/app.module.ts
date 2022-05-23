@@ -29,7 +29,6 @@ import { ImageModule } from './apis/image/image.module';
 import { ChatBackEndModule } from './chatBackEnd/chatBackEnd.module';
 import { ChatFrontEndModule } from './chatFrontEnd/chatFrontEnd.module';
 
-
 @Module({
   imports: [
     AdminModule,
@@ -39,7 +38,6 @@ import { ChatFrontEndModule } from './chatFrontEnd/chatFrontEnd.module';
     ImageModule,
     ChatBackEndModule, // 추가
     ChatFrontEndModule, // 추가
-    ImageUploadModule,
     UserModule,
     NoticeModule,
     MessageModule,
