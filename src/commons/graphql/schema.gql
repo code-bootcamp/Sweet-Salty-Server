@@ -191,8 +191,8 @@ type Query {
   fetchUserLoggedIn: User!
   fetchNotice(noticeId: String!): Notice!
   fetchNoticeAll(page: Int): [Notice!]!
-  fetchNoticeCategoryPick(page: Int!, category: NOTICE_SUB_CATEGORY_NAME_ENUM!): [Notice!]!
-  fetchNoticeCount(category: String!): String!
+  fetchNoticeCategoryPick(page: Int, category: NOTICE_SUB_CATEGORY_NAME_ENUM!): [Notice!]!
+  fetchNoticeCount(category: NOTICE_SUB_CATEGORY_NAME_ENUM!): String!
   fetchReceivedMessages(page: Int!): [ReceivedMessage!]!
   fetchReceivedMessage(messageInfoId: String!): ReceivedMessage!
   fetchSendMessages(page: Int!): [SendMessage!]!
@@ -230,6 +230,7 @@ enum AGE_GROUP_ENUM {
 }
 
 enum NOTICE_SUB_CATEGORY_NAME_ENUM {
+  ALL
   NOTICE
   EVENT
   PROMOTION

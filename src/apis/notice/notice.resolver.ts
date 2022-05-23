@@ -37,7 +37,7 @@ export class NoticeResolver {
 
   @Query(() => [Notice])
   fetchNoticeCategoryPick(
-    @Args({ name: 'page', type: () => Int }) page: number,
+    @Args({ name: 'page', nullable: true, type: () => Int }) page: number,
     @Args({ name: 'category', type: () => NOTICE_SUB_CATEGORY_NAME_ENUM })
     category: NOTICE_SUB_CATEGORY_NAME_ENUM,
   ) {
@@ -45,7 +45,10 @@ export class NoticeResolver {
   }
 
   @Query(() => String)
-  fetchNoticeCount(@Args('category') category: string) {
-    return this.noticeService.volumeCheck({ category });
+  fetchNoticeCount(
+    @Args({ name: 'category', type: () => NOTICE_SUB_CATEGORY_NAME_ENUM })
+    category: NOTICE_SUB_CATEGORY_NAME_ENUM,
+  ) {
+    return this.noticeService.getCount({ category });
   }
 }

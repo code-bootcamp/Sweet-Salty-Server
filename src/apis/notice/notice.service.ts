@@ -62,56 +62,84 @@ export class NoticeService {
   }
 
   async findPick({ page, category }) {
-    return await getConnection()
-      .createQueryBuilder()
-      .select('notice')
-      .from(Notice, 'notice')
-      .leftJoinAndSelect('notice.subCategory', 'subCategory')
-      .leftJoinAndSelect('subCategory.topCategory', 'topCategory')
-      .where('subCategoryName = :data', {
-        data: category,
-      })
-      .offset((page - 1) * 10)
-      .limit(10)
-      .orderBy('createAt', 'DESC')
-      .getMany();
+    if (!page) {
+      return await getConnection()
+        .createQueryBuilder()
+        .select('notice')
+        .from(Notice, 'notice')
+        .leftJoinAndSelect('notice.subCategory', 'subCategory')
+        .leftJoinAndSelect('subCategory.topCategory', 'topCategory')
+        .where('subCategoryName = :data', {
+          data: category,
+        })
+        .offset(0)
+        .limit(10)
+        .orderBy('createAt', 'DESC')
+        .getMany();
+    } else {
+      return await getConnection()
+        .createQueryBuilder()
+        .select('notice')
+        .from(Notice, 'notice')
+        .leftJoinAndSelect('notice.subCategory', 'subCategory')
+        .leftJoinAndSelect('subCategory.topCategory', 'topCategory')
+        .where('subCategoryName = :data', {
+          data: category,
+        })
+        .offset((page - 1) * 10)
+        .limit(10)
+        .orderBy('createAt', 'DESC')
+        .getMany();
+    }
   }
 
   async findALL({ page }) {
-    return await getConnection()
-      .createQueryBuilder()
-      .select('notice')
-      .from(Notice, 'notice')
-      .leftJoinAndSelect('notice.subCategory', 'subCategory')
-      .leftJoinAndSelect('subCategory.topCategory', 'topCategory')
-      .where('topCategoryName = :data', {
-        data: 'NOTICE',
-      })
-      .offset((page - 1) * 10)
-      .limit(10)
-      .orderBy('createAt', 'DESC')
-      .getMany();
+    if (!page) {
+      return await getConnection()
+        .createQueryBuilder()
+        .select('notice')
+        .from(Notice, 'notice')
+        .leftJoinAndSelect('notice.subCategory', 'subCategory')
+        .leftJoinAndSelect('subCategory.topCategory', 'topCategory')
+        .where('topCategoryName = :data', {
+          data: 'NOTICE',
+        })
+        .offset(0)
+        .limit(10)
+        .orderBy('createAt', 'DESC')
+        .getMany();
+    } else {
+      return await getConnection()
+        .createQueryBuilder()
+        .select('notice')
+        .from(Notice, 'notice')
+        .leftJoinAndSelect('notice.subCategory', 'subCategory')
+        .leftJoinAndSelect('subCategory.topCategory', 'topCategory')
+        .where('topCategoryName = :data', {
+          data: 'NOTICE',
+        })
+        .offset((page - 1) * 10)
+        .limit(10)
+        .orderBy('createAt', 'DESC')
+        .getMany();
+    }
   }
 
-  async volumeCheck({ category }) {
+  async getCount({ category }) {
     if (category === 'ALL') {
-      const data = await getConnection()
+      return await getConnection()
         .createQueryBuilder()
         .from(Notice, 'notice')
-        .getManyAndCount();
-
-      return data[1];
+        .getCount();
     } else {
-      const data = await getConnection()
+      return await getConnection()
         .createQueryBuilder()
         .from(Notice, 'notice')
         .leftJoin('notice.subCategory', 'subCategory')
         .where('subCategoryName = :data', {
           data: category,
         })
-        .getManyAndCount();
-
-      return data[1];
+        .getCount();
     }
   }
 }

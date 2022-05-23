@@ -16,6 +16,7 @@ import {
 } from 'typeorm';
 
 export enum NOTICE_SUB_CATEGORY_NAME_ENUM {
+  ALL = 'ALL',
   NOTICE = 'NOTICE',
   EVENT = 'EVENT',
   PROMOTION = 'PROMOTION',
