@@ -24,7 +24,6 @@ import { ShopModule } from './apis/shop/shop.module';
 import { AdminModule } from './apis/admin/admin.module';
 import { NoticeModule } from './apis/notice/notice.module';
 import { graphqlUploadExpress } from 'graphql-upload';
-import { RealTimeModule } from './apis/realTime/realTime.module';
 import { ImageModule } from './apis/image/image.module';
 import { ChatBackEndModule } from './chatBackEnd/chatBackEnd.module';
 import { ChatFrontEndModule } from './chatFrontEnd/chatFrontEnd.module';
