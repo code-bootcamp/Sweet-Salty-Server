@@ -75,18 +75,27 @@ export class AuthResolver {
   ) {
     const now = new Date();
     const access = context.req.headers.authorization.replace('Bearer ', '');
+
     const access_decoded = this.jwtService.decode(access);
+
     const access_time = new Date(access_decoded['exp'] * 1000);
+
+    console.log(access_decoded);
     const access_end = Math.floor(
       (access_time.getTime() - now.getTime()) / 1000,
     );
 
     const refresh = context.req.headers.cookie.replace('refreshToken=', '');
+
     const refresh_decoded = this.jwtService.decode(refresh);
+    console.log(refresh_decoded);
     const refresh_time = new Date(refresh_decoded['exp'] * 1000);
     const refresh_end = Math.floor(
       (refresh_time.getTime() - now.getTime()) / 1000,
     );
+
+    console.log(access_end);
+    console.log(refresh_end);
 
     try {
       jwt.verify(access, this.config.get('ACCESS'));
@@ -103,7 +112,7 @@ export class AuthResolver {
   }
 
   @Mutation(() => String)
-  async signInGetToken(
+  async signUpGetToken(
     //
     @Args('phone') phone: string,
   ) {
@@ -111,7 +120,7 @@ export class AuthResolver {
   }
 
   @Mutation(() => Boolean)
-  async signInCheckToken(
+  async signUpCheckToken(
     @Args('phone') phone: string,
     @Args('token') token: string,
   ) {

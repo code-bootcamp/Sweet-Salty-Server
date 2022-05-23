@@ -3,7 +3,7 @@ version: '3.3'
 services:
   my-backend:
     platform: linux/x86_64
-    image: asia.gcr.io/mainproject-349212/team:3.3
+    image: asia.gcr.io/mainproject-349212/team:9.9
     build:
       context: .
       dockerfile: Dockerfile
@@ -19,7 +19,7 @@ services:
   #   platform: linux/x86_64
   #   image: mysql:latest
   #   environment:
-  #     MYSQL_DATABASE: 'mainproject'
+  #     MYSQL_DATABASE: 'teamproject'
   #     MYSQL_ROOT_PASSWORD: 'root'
   #   ports:
   #     - 3306:3306
@@ -41,7 +41,7 @@ services:
   #   volumes:
   #     - ./elk/logstash/logstash.conf:/usr/share/logstash/pipeline/logstash.conf
   #     - ./elk/logstash/mysql-connector-java-8.0.28.jar:/usr/share/logstash/mysql-connector-java-8.0.28.jar
-  #     - ./elk/logstash/post_template.json:/usr/share/logstash/post_template.json
+  #    - ./elk/logstash/post_template.json:/usr/share/logstash/post_template.json
 
   # kibana:
   #   image: kibana:7.17.0

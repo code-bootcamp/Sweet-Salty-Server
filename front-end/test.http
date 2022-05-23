@@ -1,0 +1,96 @@
+POST https://api.iamport.kr/users/getToken
+Content-Type: application/json
+
+{
+   "imp_key": "6404604046350897",
+   "imp_secret": "HOcGDueyE77diZ1ZTEq2cJ4qs8Jnolf5asMNW1mA8uOquPqnuQqHzv81DRp2dF8n7Ub3WyE42tvxiVUN"
+}
+
+###
+
+POST https://project08.site/graphql
+Content-Type: application/json
+X-REQUEST-TYPE: GraphQL
+
+  mutation login($userEmail: String!, $userPassword: String!) {
+    login(userEmail: $userEmail, userPassword: $userPassword) {
+      accessToken
+    }
+  }
+
+  {
+      "userEmail" : "yukina1418@gmail.com",
+      "userPassword" : "1234"
+  }
+
+###
+
+POST http://localhost:3000/graphql
+Content-Type: application/json
+X-REQUEST-TYPE: GraphQL
+
+  mutation login($userEmail: String!, $userPassword: String!) {
+    login(userEmail: $userEmail, userPassword: $userPassword) {
+
+    }
+  }
+
+  {
+      "userEmail" : "yukina1418@gmail.com",
+      "userPassword" : "1234"
+  }
+
+
+###
+http://localhost:3000/my-ip
+
+###
+http://localhost:3000/graphql
+Content-Type: multipart/form-data
+X-REQUEST-TYPE: GraphQL
+
+
+mutation uploadFile($files: [Upload!]!) { 
+  uploadFile(files: $files) }
+
+{
+  "files" : ["https://storage.googleapis.com/image__data/1c99b718-187c-4993-b39c-3b165e796a9f.png"]
+}
+
+###
+POST https://project08.site/graphql
+Content-Type: application/json
+X-REQUEST-TYPE: GraphQL
+
+    mutation createNotice($createNoticeInput: CreateNoticeInput!){
+        createNotice(createNoticeInput:$createNoticeInput){
+          String
+        }
+    }
+
+{
+    createNoticeInput:{
+            "noticeTitle": "data.title",
+            "noticeContents": "data.boardContents"
+            "noticeCategory" : "data.category"
+            "url": ["www.naver.com"]
+    }
+
+}  
+
+###
+
+POST https://project08.site/graphql
+Content-Type: application/json
+X-REQUEST-TYPE: GraphQL
+
+  mutation login($userEmail: String!, $userPassword: String!) {
+    login(userEmail: $userEmail, userPassword: $userPassword) {
+      accessToken
+    }
+  }
+
+  {
+      "userEmail" : "yukina1418@gmail.com",
+      "userPassword" : "1234"
+  }

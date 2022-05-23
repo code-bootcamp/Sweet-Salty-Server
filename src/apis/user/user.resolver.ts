@@ -1,7 +1,7 @@
 import { UseGuards } from '@nestjs/common';
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { GqlAuthAccessGuard } from 'src/commons/auth/gql-auth.guard';
-import { CurrentUser } from 'src/commons/auth/gql-user-param';
+import { CurrentUser, ICurrentUser } from 'src/commons/auth/gql-user-param';
 
 import { CreateUserInput } from './dto/createUser.input';
 import { UpdateUserInput } from './dto/updateUser.input';
@@ -43,12 +43,17 @@ export class UserResolver {
   }
   //
   //
+  @UseGuards(GqlAuthAccessGuard)
+  @Query(() => User)
+  fetchUserLoggedIn(@CurrentUser() currentUser: ICurrentUser) {
+    return this.userService.findLoggedIn({ currentUser });
+  }
 
   // Update Api Update Api  Update Api  Update Api  Update Api  Update Api  Update Api  Update Api  Update Api  //
   @UseGuards(GqlAuthAccessGuard)
   @Mutation(() => User)
   async updateUser(
-    @CurrentUser() currentUser: any,
+    @CurrentUser() currentUser: ICurrentUser,
     @Args('updateUserInput') updateUserInput: UpdateUserInput,
   ) {
     return await this.userService.update({

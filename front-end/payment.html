@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <title>결제페이지</title>
+    <!-- Axios -->
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <!-- JQuery -->
+    <script
+      type="text/javascript"
+      src="https://code.jquery.com/jquery-1.12.4.min.js"
+    ></script>
+    <!-- iamport.payment.js -->
+    <script
+      type="text/javascript"
+      src="https://cdn.iamport.kr/js/iamport.payment-1.2.0.js"
+    ></script>
+    <script>
+      async function cancelPay() {
+        const impUid = document.getElementById('UID').value;
+        const amount = Number(document.getElementById('price').value);
+        const reason = document.getElementById('reason').value;
+
+        const data = await axios.post(
+          'http://localhost:3000/graphql',
+          {
+            query: `mutation {cancelPointTransaction(impUid: "${impUid}", amount: ${amount}, reason:"${reason}") {id}}`,
+          },
+          {
+            headers: {
+              authorization:
+                'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyRW1haWwiOiJhQGEuY29tIiwiaWF0IjoxNjUyOTQ5Nzc5LCJleHAiOjE2NTI5NTE1Nzl9.qW2fwUscFbCclkwfVhU7u54WEQj5ayICDozRjBCKeo4',
+            },
+          },
+        );
+      }
+
+      function requestPay() {
+        const myAmount = document.getElementById('amount').value;
+        const pick = document.getElementById('pick').value;
+        const IMP = window.IMP; // 생략 가능
+        IMP.init('imp12511287'); // Example: imp00000000
+        IMP.request_pay(
+          {
+            pg: 'html5_inicis',
+            pay_method: 'card',
+            name: pick,
+            amount: myAmount,
+            buyer_email: 'gildong@gmail.com',
+            buyer_name: '홍길동',
+            buyer_tel: '010-4242-4242',
+            buyer_addr: '서울특별시 강남구 신사동',
+            buyer_postcode: '01181',
+          },
+          async function (rsp) {
+            if (rsp.success) {
+              const data = await axios.post(
+                'http://localhost:3000/graphql',
+                {
+                  query: `
+                          mutation {
+                            createPointTransaction(impUid: "${rsp.imp_uid}",amount:${rsp.paid_amount}){
+                              id
+                            }
+                          }
+                        `,
+                },
+                {
+                  headers: {
+                    Authorization:
+                      'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyRW1haWwiOiJhQGEuY29tIiwiaWF0IjoxNjUyOTQ5Nzc5LCJleHAiOjE2NTI5NTE1Nzl9.qW2fwUscFbCclkwfVhU7u54WEQj5ayICDozRjBCKeo4',
+                  },
+                },
+              );
+              console.log(data);
+            } else {
+              alert('결제에 실패했습니다!!');
+            }
+          },
+        );
+      }
+    </script>
+  </head>
+  <body>
+    충전 금액: <input type="text" id="amount" /> 구매 물품:
+    <input type="text" id="pick" />
+    <button onclick="requestPay()">결제하기</button>
+
+    <br />
+
+    환불ID: <input type="text" id="UID" /> 환불 사유:
+    <input type="text" id="reason" />
+    환불금액: <input type="text" id="price" />
+    <br />
+    <button onclick="cancelPay()">환불하기</button>
+  </body>
+</html>

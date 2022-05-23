@@ -4,7 +4,6 @@ import { JwtService } from '@nestjs/jwt';
 import { HttpService } from '@nestjs/axios';
 import { Cache } from 'cache-manager';
 import { CACHE_MANAGER, Inject } from '@nestjs/common';
-import { Token } from './entities/auth.entity';
 
 @Injectable()
 export class AuthService {
@@ -23,7 +22,7 @@ export class AuthService {
       { userEmail: user.userEmail },
       {
         secret: this.config.get('ACCESS'),
-        expiresIn: '30m',
+        expiresIn: '2w',
       },
     );
 
@@ -32,20 +31,28 @@ export class AuthService {
 
     return obj;
   }
-  setRefreshToken({ user, res }) {
+  async setRefreshToken({ user, res }) {
     const refreshToken = this.jwtService.sign(
       { userEmail: user.userEmail },
       { secret: this.config.get('REFRESH'), expiresIn: '2w' },
     );
-    // 개발 환경
-    res.setHeader('Set-Cookie', `refreshToken=${refreshToken}`);
+
+    await res.setHeader(
+      'Set-Cookie',
+      `refreshToken=${refreshToken}; path=/; Secure; httpOnly; SameSite=None;`,
+    );
+
+    // await res.cookie('cookie', 'refreshToken=' + refreshToken, {
+    //   sameSite: 'none',
+    //   domain: 'localhost',
+    //   httpOnly: true,
+    //   SameSite: 'None',
+    // });
   }
 
   social_login({ user, res }) {
     this.setRefreshToken({ user, res });
-    res.redirect(
-      'http://localhost:5500/main-project/frontend/login/index.html',
-    );
+    res.redirect('http://localhost:5501/front-end/login/index.html');
   }
 
   async sendTokenToPhone({ phone }) {
