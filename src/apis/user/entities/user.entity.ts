@@ -68,11 +68,11 @@ export class User extends BaseEntity {
   userPoint: number;
 
   @Column({ type: 'enum', enum: AGE_GROUP_ENUM })
-  @Field(() => AGE_GROUP_ENUM)
+  @Field(() => String)
   ageGroup: string;
 
   @Column({ type: 'enum', enum: GENDER_ENUM })
-  @Field(() => GENDER_ENUM)
+  @Field(() => String)
   gender: string;
 
   @OneToMany((type) => Board, (Board) => Board.user)

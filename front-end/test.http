@@ -31,7 +31,7 @@ X-REQUEST-TYPE: GraphQL
 
   mutation login($userEmail: String!, $userPassword: String!) {
     login(userEmail: $userEmail, userPassword: $userPassword) {
-      accessToken
+
     }
   }
 
@@ -58,11 +58,33 @@ mutation uploadFile($files: [Upload!]!) {
 }
 
 ###
-POST http://localhost:3000/graphql
+POST https://project08.site/graphql
 Content-Type: application/json
 X-REQUEST-TYPE: GraphQL
 
-  mutation createTags($createTagInput: String!, $userPassword: String!) {
+    mutation createNotice($createNoticeInput: CreateNoticeInput!){
+        createNotice(createNoticeInput:$createNoticeInput){
+          String
+        }
+    }
+
+{
+    createNoticeInput:{
+            "noticeTitle": "data.title",
+            "noticeContents": "data.boardContents"
+            "noticeCategory" : "data.category"
+            "url": ["www.naver.com"]
+    }
+
+}  
+
+###
+
+POST https://project08.site/graphql
+Content-Type: application/json
+X-REQUEST-TYPE: GraphQL
+
+  mutation login($userEmail: String!, $userPassword: String!) {
     login(userEmail: $userEmail, userPassword: $userPassword) {
       accessToken
     }

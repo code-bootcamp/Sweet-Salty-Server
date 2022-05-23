@@ -3,12 +3,28 @@
   "index_patterns": ["board"],
   "order": "1",
   "settings": {
-    "refresh_interval": "5s"
+    "refresh_interval": "5s",
+    "analysis": {
+      "analyzer": {
+        "custom_analyzer": {
+          "tokenizer": "custom_gram"
+        }
+      },
+      "tokenizer": {
+        "custom_gram": {
+          "type": "nGram",
+          "min_gram": "1",
+          "max_gram": "10"
+        }
+      }
+    },
+    "max_ngram_diff": "20"
   },
   "mappings": {
     "properties": {
       "boardtitle": {
         "type": "text",
+        "analyzer": "custom_analyzer",
         "fields": {
           "keyword": { "type": "keyword" }
         }
@@ -27,6 +43,7 @@
       },
       "boardcontents": {
         "type": "text",
+        "analyzer": "custom_analyzer",
         "fields": {
           "keyword": { "type": "keyword" }
         }
@@ -42,13 +59,13 @@
       "createat": { "type": "date" },
       "boardlikecount": { "type": "short" },
       "boardhit": { "type": "long" },
+      "thumbnail": { "type": "keyword" },
       "tags": {
         "type": "text",
         "fields": {
           "keyword": { "type": "keyword" }
         }
-      },
-      "sortData": { "type": "short" }
+      }
     }
   }
 }

@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { Storage } from '@google-cloud/storage';
 import { FileUpload } from 'graphql-upload';
-import { ImageUpload } from './entities/imageUpload.entity';
+import { Image } from './entities/image.entity';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { ConfigService } from '@nestjs/config';
@@ -11,13 +11,13 @@ import * as sharp from 'sharp';
 interface IFile {
   file: FileUpload;
 }
-// 객체로 들어온 파일의 정보를 인터페이스화 시켜서 리졸버단에서 쓰던 자동완성을 서비스단에서도 쓸 수 있게 한다
+
 @Injectable()
-export class ImageUploadService {
+export class ImageService {
   constructor(
     //
-    @InjectRepository(ImageUpload)
-    private readonly BoardImageRepository: Repository<ImageUpload>,
+    @InjectRepository(Image)
+    private readonly imageRepository: Repository<Image>,
     private readonly config: ConfigService,
   ) {}
   async upload({ file }: IFile) {

@@ -36,6 +36,5 @@ export class Place extends BaseEntity {
   lng: string;
 
   @OneToMany((type) => Board, (Board) => Board.place)
-  @Field(() => Board)
   boards: Board;
 }

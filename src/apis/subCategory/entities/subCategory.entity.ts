@@ -1,5 +1,8 @@
 import { Field, ObjectType } from '@nestjs/graphql';
-import { Board } from 'src/apis/board/entities/board.entity';
+import {
+  Board,
+  BOARD_SUB_CATEGORY_NAME_ENUM,
+} from 'src/apis/board/entities/board.entity';
 import { Notice } from 'src/apis/notice/entities/notice.entity';
 import { TopCategory } from 'src/apis/topCategory/entities/topCategory.entity';
 import {

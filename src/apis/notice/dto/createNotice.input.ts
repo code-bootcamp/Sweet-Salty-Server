@@ -1,4 +1,5 @@
 import { Field, InputType } from '@nestjs/graphql';
+import { NOTICE_SUB_CATEGORY_NAME_ENUM } from '../entities/notice.entity';
 
 @InputType()
 export class CreateNoticeInput {
@@ -8,6 +9,9 @@ export class CreateNoticeInput {
   @Field(() => String)
   noticeContents: string;
 
-  @Field(() => String)
+  @Field(() => NOTICE_SUB_CATEGORY_NAME_ENUM)
   noticeCategory: string;
+
+  @Field(() => [String], { nullable: true })
+  url: string[];
 }

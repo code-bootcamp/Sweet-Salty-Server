@@ -1,4 +1,9 @@
-import { Injectable, CACHE_MANAGER, Inject } from '@nestjs/common';
+import {
+  Injectable,
+  CACHE_MANAGER,
+  Inject,
+  ConflictException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { getConnection, Repository } from 'typeorm';
 import { ElasticsearchService } from '@nestjs/elasticsearch';
@@ -8,8 +13,9 @@ import { BoardTag } from '../boardTag/entities/boardTag.entity';
 import { SubCategory } from '../subCategory/entities/subCategory.entity';
 import { User } from '../user/entities/user.entity';
 import { Board } from './entities/board.entity';
-import { Image } from '../image/entites/image.entity';
+
 import { Place } from '../place/entities/place.entity';
+import { Image } from '../image/entities/image.entity';
 
 @Injectable()
 export class BoardService {
@@ -35,10 +41,11 @@ export class BoardService {
   }
 
   async elasticsearchFindTags({ tags }) {
-    const tagsData = tags.reduce((acc, cur) => {
+    const sortingData = tags.sort();
+
+    const tagsData = sortingData.reduce((acc, cur) => {
       return acc === '' ? acc + cur : acc + ' ' + cur;
     }, '');
-    console.log(tagsData);
     const redisInData = await this.cacheManager.get(tagsData);
     if (redisInData) {
       return redisInData;
@@ -54,6 +61,8 @@ export class BoardService {
           'boardhit',
           'createat',
           'boardid',
+          'thumbnail',
+          'boardsubject',
         ],
         query: {
           match: {
@@ -64,7 +73,69 @@ export class BoardService {
           },
         },
       });
-      await this.cacheManager.set(tagsData, data, { ttl: 20 });
+
+      await this.cacheManager.set(tagsData, data, { ttl: 10 });
+      return data;
+    }
+  }
+
+  async elasticsearchFindTitle({ title }) {
+    const redisInData = await this.cacheManager.get(title);
+    if (redisInData) {
+      return redisInData;
+    } else {
+      const data = await this.elasticsearchService.search({
+        index: 'board',
+        size: 10000,
+        sort: 'createat:desc',
+        _source: [
+          'boardtitle',
+          'boardwriter',
+          'boardlikecount',
+          'boardhit',
+          'createat',
+          'boardid',
+          'thumbnail',
+          'boardsubject',
+        ],
+        query: {
+          match: {
+            boardtitle: title,
+          },
+        },
+      });
+      await this.cacheManager.set(title, data, { ttl: 10 });
+      return data;
+    }
+  }
+
+  async elasticsearchFindContents({ contents }) {
+    const redisInData = await this.cacheManager.get(contents);
+    if (redisInData) {
+      return redisInData;
+    } else {
+      const data = await this.elasticsearchService.search({
+        index: 'board',
+        size: 10000,
+        sort: 'createat:desc',
+        _source: [
+          'boardtitle',
+          'boardwriter',
+          'boardlikecount',
+          'boardhit',
+          'createat',
+          'boardid',
+          'thumbnail',
+          'boardsubject',
+        ],
+        query: {
+          match: {
+            boardcontents: contents,
+          },
+        },
+      });
+      await this.cacheManager.set(contents, data, { ttl: 10 });
+
       return data;
     }
   }
@@ -104,6 +175,7 @@ export class BoardService {
         .leftJoinAndSelect('boardSide.boardTags', 'boardTag')
         .leftJoinAndSelect('board.images', 'image')
         .leftJoinAndSelect('board.place', 'place')
+        .orderBy('boardTag.boardTagRefName', 'ASC')
         .where({ boardId })
         .getOne();
     } else {
@@ -117,12 +189,30 @@ export class BoardService {
         .leftJoinAndSelect('boardSide.boardTags', 'boardTag')
         .leftJoinAndSelect('board.images', 'image')
         .leftJoinAndSelect('board.place', 'place')
+        .orderBy('boardTag.boardTagRefName', 'ASC')
         .where({ boardId })
         .getOne();
     }
   }
 
   async findPickList({ category }) {
+    if (category === 'REVIEW') {
+      return await getConnection()
+        .createQueryBuilder()
+        .select('board')
+        .from(Board, 'board')
+        .leftJoinAndSelect('board.subCategory', 'subCategory')
+        .leftJoinAndSelect('board.boardSides', 'boardSide')
+        .leftJoinAndSelect('boardSide.boardTags', 'boardTag')
+        .where('subCategoryName = :category1', {
+          category1: 'REVIEW',
+        })
+        .orWhere('subCategoryName = :category2', {
+          category2: 'VISITED',
+        })
+        .orderBy('createAt', 'DESC')
+        .getMany();
+    }
     return await getConnection()
       .createQueryBuilder()
       .select('board')
@@ -193,9 +283,46 @@ export class BoardService {
 
   async create({ createBoardInput, boardTagsInput, currentUser }) {
     const { boardTagMenu, boardTagRegion, boardTagMood } = boardTagsInput;
-    const { subCategoryName, url, place, ...inputData } = createBoardInput;
+    const { subCategoryName, place, ...inputData } = createBoardInput;
 
-    console.log(inputData);
+    const pattern = new RegExp(
+      /(image__data)\/[a-zA-Z0-9\-\.]+\.[a-zA-Z]{2,4}(\/\S*)?/,
+      'gi',
+    );
+
+    const imageData = [...inputData.boardContents.matchAll(pattern)];
+
+    const subCategory = await getConnection()
+      .createQueryBuilder()
+      .select('subCategory')
+      .from(SubCategory, 'subCategory')
+      .where({ subCategoryName })
+      .getOne();
+
+    const isPlace = await getConnection()
+      .createQueryBuilder()
+      .select('place')
+      .from(Place, 'place')
+      .where({ placeName: place.placeName })
+      .getOne();
+
+    if (!isPlace) {
+      await getConnection()
+        .createQueryBuilder()
+        .insert()
+        .into(Place)
+        .values({
+          ...place,
+        })
+        .execute();
+    }
+
+    const placeData = await getConnection()
+      .createQueryBuilder()
+      .select('place')
+      .from(Place, 'place')
+      .where({ placeName: place.placeName })
+      .getOne();
 
     const userData = await getConnection()
       .createQueryBuilder()
@@ -209,13 +336,6 @@ export class BoardService {
       .where({ userId: currentUser.userId })
       .getOne();
 
-    const subCategory = await getConnection()
-      .createQueryBuilder()
-      .select('subCategory')
-      .from(SubCategory, 'subCategory')
-      .where({ subCategoryName })
-      .getOne();
-
     const board = await this.boardRepository.save({
       ...inputData,
       subCategory,
@@ -223,6 +343,9 @@ export class BoardService {
       gender: userData.gender,
       boardWriter: userData.userNickname,
       user: { userId: userData.userId },
+      thumbnail: imageData[0][0],
+      place: placeData,
+      boardSubject: subCategory.subCategoryName,
     });
 
     await Promise.all([
@@ -269,68 +392,20 @@ export class BoardService {
           })
           .execute();
       }, ''),
-      url.reduce(async (acc, cur) => {
+      imageData.reduce(async (acc, cur) => {
         await getConnection()
           .createQueryBuilder()
           .insert()
           .into(Image)
           .values({
             board: board.boardId,
-            url: cur,
+            url: cur[0],
           })
           .execute();
       }, ''),
-      new Promise(async (resolve) => {
-        const PlaceData = await getConnection()
-          .createQueryBuilder()
-          .select('place')
-          .from(Place, 'place')
-          .where({ placeName: place.placeName })
-          .getOne();
-
-        if (PlaceData) {
-          await getConnection()
-            .createQueryBuilder()
-            .update(Board)
-            .set({ place: PlaceData })
-            .where({ boardId: board.boardId })
-            .execute();
-          resolve(PlaceData);
-        } else {
-          const newPlace = await getConnection()
-            .createQueryBuilder()
-            .insert()
-            .into(Place)
-            .values({
-              ...place,
-            })
-            .execute();
-
-          await getConnection()
-            .createQueryBuilder()
-            .update(Board)
-            .set({ place: newPlace.generatedMaps[0].PlaceId })
-            .where({ boardId: board.boardId })
-            .execute();
-          resolve(newPlace);
-        }
-      }),
     ]);
 
     return board;
-
-    // const tag = await getConnection()
-    //   .createQueryBuilder()
-    //   .select('boardSide')
-    //   .from(BoardSide, 'boardSide')
-    //   .innerJoinAndSelect('boardSide.boardTags', 'boardTag')
-    //   .where({ boards: board.boardId })
-    //   .getMany();
-
-    // return await this.boardRepository.save({
-    //   ...board,
-    //   boardSides: tag,
-    // });
   }
 
   async update({ boardId, updateBoardInput }) {
@@ -346,157 +421,152 @@ export class BoardService {
   }
 
   async delete({ boardId, currentUser }) {
-    await this.boardRepository.delete({
-      boardId,
-    });
-    // const userData = await getConnection()
-    //   .createQueryBuilder()
-    //   .select('user.userId')
-    //   .from(User, 'user')
-    //   .where({ userId: currentUser.userId })
-    //   .getOne();
-
-    // const boardData = await this.boardRepository.findOne({
-    //   where: {
-    //     boardId,
-    //   },
-    //   relations: ['user'],
-    // });
-
-    // if (
-    //   userData.userId === boardData.user.userId ||
-    //   userData.userState === true
-    // ) {
-    //   await this.elasticsearchService.delete({
-    //     index: 'board',
-    //     id: boardId,
-    //   });
-
-    //   await this.boardRepository.softDelete({
-    //     boardId,
-    //   });
-
-    //   return true;
-    // } else {
-    //   throw new ConflictException('작성자가 아닙니다!');
-    // }
-  }
-
-  async createaaa({ createBoardInput, boardTagsInput }) {
-    const { boardTagMenu, boardTagRegion, boardTagMood } = boardTagsInput;
-    const { subCategoryName, url, place, ...inputData } = createBoardInput;
-
-    const pattern = /(image__data)\/[a-zA-Z0-9\-\.]+\.[a-zA-Z]{2,4}(\/\S*)?/;
-
-    const thumbnail = pattern.exec(inputData.boardContents)[0];
-
-    console.log(thumbnail);
-
-    const subCategory = await getConnection()
+    const userData = await getConnection()
       .createQueryBuilder()
-      .select('subCategory')
-      .from(SubCategory, 'subCategory')
-      .where({ subCategoryName })
+      .select('user.userId')
+      .from(User, 'user')
+      .where({ userId: currentUser.userId })
       .getOne();
 
-    const board = await this.boardRepository.save({
-      ...inputData,
-      subCategory,
-      thumbnail,
+    const boardData = await this.boardRepository.findOne({
+      where: {
+        boardId,
+      },
+      relations: ['user'],
     });
 
-    await Promise.all([
-      boardTagMenu.reduce(async (acc, cur) => {
-        const menuData = await this.boardTagRepository.findOne({
-          boardTagName: cur,
-        });
-        await getConnection()
-          .createQueryBuilder()
-          .insert()
-          .into(BoardSide)
-          .values({
-            boards: board.boardId,
-            boardTags: menuData,
-          })
-          .execute();
-      }, ''),
+    if (
+      userData.userId === boardData.user.userId ||
+      userData.userState === true
+    ) {
+      await this.elasticsearchService.delete({
+        index: 'board',
+        id: boardId,
+      });
 
-      boardTagRegion.reduce(async (acc, cur) => {
-        const regionData = await this.boardTagRepository.findOne({
-          boardTagName: cur,
-        });
-        await getConnection()
-          .createQueryBuilder()
-          .insert()
-          .into(BoardSide)
-          .values({
-            boards: board.boardId,
-            boardTags: regionData,
-          })
-          .execute();
-      }, ''),
-      boardTagMood.reduce(async (acc, cur) => {
-        const moodData = await this.boardTagRepository.findOne({
-          boardTagName: cur,
-        });
-        await getConnection()
-          .createQueryBuilder()
-          .insert()
-          .into(BoardSide)
-          .values({
-            boards: board.boardId,
-            boardTags: moodData,
-          })
-          .execute();
-      }, ''),
-      url.reduce(async (acc, cur) => {
-        await getConnection()
-          .createQueryBuilder()
-          .insert()
-          .into(Image)
-          .values({
-            board: board.boardId,
-            url: cur,
-          })
-          .execute();
-      }, ''),
-      new Promise(async (resolve) => {
-        const PlaceData = await getConnection()
-          .createQueryBuilder()
-          .select('place')
-          .from(Place, 'place')
-          .where({ placeName: place.placeName })
-          .getOne();
+      await this.boardRepository.softDelete({
+        boardId,
+      });
 
-        if (PlaceData) {
-          await getConnection()
-            .createQueryBuilder()
-            .update(Board)
-            .set({ place: PlaceData })
-            .where({ boardId: board.boardId })
-            .execute();
-          resolve(PlaceData);
-        } else {
-          const newPlace = await getConnection()
-            .createQueryBuilder()
-            .insert()
-            .into(Place)
-            .values({
-              ...place,
-            })
-            .execute();
-
-          await getConnection()
-            .createQueryBuilder()
-            .update(Board)
-            .set({ place: newPlace.generatedMaps[0].PlaceId })
-            .where({ boardId: board.boardId })
-            .execute();
-          resolve(newPlace);
-        }
-      }),
-    ]);
-
-    return board;
+      return true;
+    } else {
+      throw new ConflictException('작성자가 아닙니다!');
+    }
   }
 }
+
+// async createaaa({ createBoardInput, boardTagsInput }) {
+//   const { boardTagMenu, boardTagRegion, boardTagMood } = boardTagsInput;
+//   const { subCategoryName, url, place, ...inputData } = createBoardInput;
+
+//   const pattern = new RegExp(
+//     /(image__data)\/[a-zA-Z0-9\-\.]+\.[a-zA-Z]{2,4}(\/\S*)?/,
+//     'gi',
+//   );
+
+//   const imageData = [...inputData.boardContents.matchAll(pattern)];
+//   // console.log(imageData);
+
+//   // // const pattern = /(image__data)\/[a-zA-Z0-9\-\.]+\.[a-zA-Z]{2,4}(\/\S*)?/;
+
+//   // const thumbnail = pattern.exec(inputData.boardContents)[0];
+
+//   const subCategory = await getConnection()
+//     .createQueryBuilder()
+//     .select('subCategory')
+//     .from(SubCategory, 'subCategory')
+//     .where({ subCategoryName })
+//     .getOne();
+
+//   const isPlace = await getConnection()
+//     .createQueryBuilder()
+//     .select('place')
+//     .from(Place, 'place')
+//     .where({ placeName: place.placeName })
+//     .getOne();
+
+//   if (!isPlace) {
+//     await getConnection()
+//       .createQueryBuilder()
+//       .insert()
+//       .into(Place)
+//       .values({
+//         ...place,
+//       })
+//       .execute();
+//   }
+
+//   const placeData = await getConnection()
+//     .createQueryBuilder()
+//     .select('place')
+//     .from(Place, 'place')
+//     .where({ placeName: place.placeName })
+//     .getOne();
+
+//   const board = await this.boardRepository.save({
+//     ...inputData,
+//     subCategory,
+//     thumbnail: imageData[0][0],
+//     place: placeData,
+//     boardSubject: subCategory.subCategoryName,
+//   });
+
+//   await Promise.all([
+//     boardTagMenu.reduce(async (acc, cur) => {
+//       const menuData = await this.boardTagRepository.findOne({
+//         boardTagName: cur,
+//       });
+//       await getConnection()
+//         .createQueryBuilder()
+//         .insert()
+//         .into(BoardSide)
+//         .values({
+//           boards: board.boardId,
+//           boardTags: menuData,
+//         })
+//         .execute();
+//     }, ''),
+
+//     boardTagRegion.reduce(async (acc, cur) => {
+//       const regionData = await this.boardTagRepository.findOne({
+//         boardTagName: cur,
+//       });
+//       await getConnection()
+//         .createQueryBuilder()
+//         .insert()
+//         .into(BoardSide)
+//         .values({
+//           boards: board.boardId,
+//           boardTags: regionData,
+//         })
+//         .execute();
+//     }, ''),
+//     boardTagMood.reduce(async (acc, cur) => {
+//       const moodData = await this.boardTagRepository.findOne({
+//         boardTagName: cur,
+//       });
+//       await getConnection()
+//         .createQueryBuilder()
+//         .insert()
+//         .into(BoardSide)
+//         .values({
+//           boards: board.boardId,
+//           boardTags: moodData,
+//         })
+//         .execute();
+//     }, ''),
+//     imageData.reduce(async (acc, cur) => {
+//       await getConnection()
+//         .createQueryBuilder()
+//         .insert()
+//         .into(Image)
+//         .values({
+//           board: board.boardId,
+//           url: cur[0],
+//         })
+//         .execute();
+//     }, ''),
+//   ]);
+
+//   return board;
+// }

@@ -15,7 +15,6 @@ import { AuthModule } from './apis/auth/auth.module';
 import { ConfigModule } from '@nestjs/config';
 import { AppService } from './app.service';
 import { BoardModule } from './apis/board/board.module';
-import { ImageUploadModule } from './apis/imageUpload/imageUpload.module';
 import { CommentModule } from './apis/comment/comment.module';
 import { CommentLikeModule } from './apis/commentLike/commentLike.module';
 import { BoardLikeModule } from './apis/boardLike/boardLike.module';
@@ -25,8 +24,11 @@ import { ShopModule } from './apis/shop/shop.module';
 import { AdminModule } from './apis/admin/admin.module';
 import { NoticeModule } from './apis/notice/notice.module';
 import { graphqlUploadExpress } from 'graphql-upload';
+import { RealTimeModule } from './apis/realTime/realTime.module';
+import { ImageModule } from './apis/image/image.module';
 import { ChatBackEndModule } from './chatBackEnd/chatBackEnd.module';
 import { ChatFrontEndModule } from './chatFrontEnd/chatFrontEnd.module';
+
 
 @Module({
   imports: [
@@ -34,6 +36,7 @@ import { ChatFrontEndModule } from './chatFrontEnd/chatFrontEnd.module';
     AuthModule,
     BoardModule,
     BoardLikeModule,
+    ImageModule,
     ChatBackEndModule, // 추가
     ChatFrontEndModule, // 추가
     ImageUploadModule,
@@ -53,7 +56,7 @@ import { ChatFrontEndModule } from './chatFrontEnd/chatFrontEnd.module';
       context: ({ req, res }) => ({ req, res }),
       cors: {
         Credential: true,
-        origin: ['http://localhost:3000', 'http://localhost:5501'],
+        origin: ['http://localhost', 'http://localhost'],
       },
     }),
     TypeOrmModule.forRoot({
