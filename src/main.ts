@@ -11,8 +11,8 @@ import { rateLimit } from 'express-rate-limit';
 import * as requestIp from 'request-ip';
 
 import { Database, Resource } from '@admin-bro/typeorm';
-const AdminBroExpress = require('@admin-bro/express');
-const AdminBro = require('admin-bro');
+import AdminBroExpress from '@admin-bro/express';
+import AdminBro from 'admin-bro';
 
 import { HttpExceptionFilter } from './commons/filter/http-exception.filter';
 import { User } from './apis/user/entities/user.entity';
@@ -32,11 +32,17 @@ import { SubCategory } from './apis/subCategory/entities/subCategory.entity';
 import { TopCategory } from './apis/topCategory/entities/topCategory.entity';
 import * as bcrypt from 'bcrypt';
 import { Place } from './apis/place/entities/place.entity';
+import { SocketIoAdapter } from './adapters/socket-io.adapters';
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
   app.useGlobalFilters(new HttpExceptionFilter());
-  app.useStaticAssets(join(__dirname, '..', 'static'));
+  // 추가
+  app.useWebSocketAdapter(new SocketIoAdapter(app));
+  app.useStaticAssets(join(__dirname, '..', 'public'));
+  app.setBaseViewsDir(join(__dirname, '..', 'views'));
+  app.setViewEngine('ejs');
+  //
   app.use(json());
   app.use(requestIp.mw());
   AdminBro.registerAdapter({ Database, Resource });
@@ -62,38 +68,41 @@ async function bootstrap() {
     rootPath: '/admin',
   });
 
-  const router = AdminBroExpress.buildAuthenticatedRouter(
-    adminBro,
-    {
-      cookieName: 'adminBro',
-      cookiePassword: 'session Key',
-      authenticate: async (email, password) => {
-        const user = await getConnection()
-          .createQueryBuilder()
-          .select('user')
-          .from(User, 'user')
-          .where({ userEmail: email })
-          .getOne();
+  // 잠시주석
+  // const router = AdminBroExpress.buildAuthenticatedRouter(
+  //   adminBro,
+  //   {
+  //     cookieName: 'adminBro',
+  //     cookiePassword: 'session Key',
+  //     authenticate: async (email, password) => {
+  //       const user = await getConnection()
+  //         .createQueryBuilder()
+  //         .select('user')
+  //         .from(User, 'user')
+  //         .where({ userEmail: email })
+  //         .getOne();
 
-        if (!user || user.userState === false) {
-          return false;
-        } else {
-          const isAuth = await bcrypt.compare(password, user.userPassword);
-          if (isAuth) {
-            return user;
-          }
-        }
-      },
-    },
-    null,
-    {
-      // 추가
-      resave: false, // 추가
-      saveUninitialized: true, // 추가
-    },
-  );
+  //       if (!user || user.userState === false) {
+  //         return false;
+  //       } else {
+  //         const isAuth = await bcrypt.compare(password, user.userPassword);
+  //         if (isAuth) {
+  //           return user;
+  //         }
+  //       }
+  //     },
+  //   },
+  //   null,
+  //   {
+  //     // 추가
+  //     resave: false, // 추가
+  //     saveUninitialized: true, // 추가
+  //   },
+  // );
 
-  app.use(adminBro.options.rootPath, router);
+  // app.use(adminBro.options.rootPath, router);
+  // 여기까지
+
   //Nest.js AdminBro 연결
 
   /// 사이트 간 위조 요청 방지 라이브러리

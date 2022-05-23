@@ -13,7 +13,6 @@ import { UserModule } from './apis/user/user.module';
 import * as redisStore from 'cache-manager-redis-store';
 import { AuthModule } from './apis/auth/auth.module';
 import { ConfigModule } from '@nestjs/config';
-import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { BoardModule } from './apis/board/board.module';
 import { CommentModule } from './apis/comment/comment.module';
@@ -27,6 +26,9 @@ import { NoticeModule } from './apis/notice/notice.module';
 import { graphqlUploadExpress } from 'graphql-upload';
 import { RealTimeModule } from './apis/realTime/realTime.module';
 import { ImageModule } from './apis/image/image.module';
+import { ChatBackEndModule } from './chatBackEnd/chatBackEnd.module';
+import { ChatFrontEndModule } from './chatFrontEnd/chatFrontEnd.module';
+
 
 @Module({
   imports: [
@@ -35,13 +37,15 @@ import { ImageModule } from './apis/image/image.module';
     BoardModule,
     BoardLikeModule,
     ImageModule,
+    ChatBackEndModule, // 추가
+    ChatFrontEndModule, // 추가
+    ImageUploadModule,
     UserModule,
     NoticeModule,
     MessageModule,
     CommentModule,
     CommentLikeModule,
     ShopModule,
-    RealTimeModule,
     PointTransactionModule,
     ConfigModule.forRoot({
       isGlobal: true,
@@ -74,7 +78,6 @@ import { ImageModule } from './apis/image/image.module';
       isGlobal: true,
     }),
   ],
-  controllers: [AppController],
   providers: [AppService],
 })
 export class AppModule implements NestModule {
