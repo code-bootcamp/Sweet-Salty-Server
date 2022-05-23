@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # ------------------------------------------------------
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
@@ -433,3 +434,5 @@ input updateShopInput {
   shopStock: Int
   shopUrl: String
 }
+=======
+>>>>>>> a8d95fe2f4f10a0d57d0626754c127875efb3848

@@ -25,12 +25,20 @@ import { AdminModule } from './apis/admin/admin.module';
 import { NoticeModule } from './apis/notice/notice.module';
 import { graphqlUploadExpress } from 'graphql-upload';
 <<<<<<< HEAD
+<<<<<<< HEAD
 import { RealTimeModule } from './apis/realTime/realTime.module';
 import { ImageModule } from './apis/image/image.module';
 =======
 import { ChatBackEndModule } from './chatBackEnd/chatBackEnd.module';
 import { ChatFrontEndModule } from './chatFrontEnd/chatFrontEnd.module';
 >>>>>>> dc8f6e13e3e6a31c802e3b463a5873197f6e14cf
+=======
+import { RealTimeModule } from './apis/realTime/realTime.module';
+import { ImageModule } from './apis/image/image.module';
+import { ChatBackEndModule } from './chatBackEnd/chatBackEnd.module';
+import { ChatFrontEndModule } from './chatFrontEnd/chatFrontEnd.module';
+
+>>>>>>> a8d95fe2f4f10a0d57d0626754c127875efb3848
 
 @Module({
   imports: [
@@ -39,12 +47,19 @@ import { ChatFrontEndModule } from './chatFrontEnd/chatFrontEnd.module';
     BoardModule,
     BoardLikeModule,
 <<<<<<< HEAD
+<<<<<<< HEAD
     ImageModule,
 =======
     ChatBackEndModule, // 추가
     ChatFrontEndModule, // 추가
     ImageUploadModule,
 >>>>>>> dc8f6e13e3e6a31c802e3b463a5873197f6e14cf
+=======
+    ImageModule,
+    ChatBackEndModule, // 추가
+    ChatFrontEndModule, // 추가
+    ImageUploadModule,
+>>>>>>> a8d95fe2f4f10a0d57d0626754c127875efb3848
     UserModule,
     NoticeModule,
     MessageModule,
