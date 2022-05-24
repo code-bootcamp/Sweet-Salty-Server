@@ -16,7 +16,7 @@ export class commentService {
   ) {}
 
   async findAll({ boardId }) {
-    const aaa = await this.commentRepository.find({
+    const data = await this.commentRepository.find({
       where: {
         board: boardId,
       },
@@ -28,14 +28,14 @@ export class commentService {
 
     // 작성자닉네임 , 프로필 , 작성일
     const fetch = [];
-    for (let i = 0; i < aaa.length; i++) {
+    for (let i = 0; i < data.length; i++) {
       fetch[i] = {
-        commentId: aaa[i].commentId,
-        userId: aaa[i].user.userId,
-        userNickname: aaa[i].user.userNickname,
-        userImage: aaa[i].user.userImage,
-        commentCreateAt: aaa[i].createAt,
-        commentContents: aaa[i].commentContents,
+        commentId: data[i].commentId,
+        userId: data[i].user.userId,
+        userNickname: data[i].user.userNickname,
+        userImage: data[i].user.userImage,
+        commentCreateAt: data[i].createAt,
+        commentContents: data[i].commentContents,
       };
     }
 
