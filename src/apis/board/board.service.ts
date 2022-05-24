@@ -42,12 +42,25 @@ export class BoardService {
   }
 
   async best() {
-    const start = new Date();
-    start.setHours(0, 0, 0, 0);
-    const end = new Date(start);
-    end.setDate(start.getDate() + 1);
+    const end = new Date();
+    end.setHours(0, 0, 0, 0);
+    end.setDate(end.getDate() + 1);
+    const start = new Date(end);
+    start.setDate(end.getDate() - 30);
     console.log(start);
     console.log(end);
+
+    return await getConnection()
+      .createQueryBuilder()
+      .select('board')
+      .from(Board, 'board')
+      .where(
+        `createAt BETWEEN '${start.toISOString()}' AND '${end.toISOString()}'`,
+      )
+      .orderBy('boardLikeCount', 'DESC')
+      .addOrderBy('createAt', 'DESC')
+      .limit(3)
+      .getMany();
   }
 
   async elasticsearchFindTags({ tags }) {
