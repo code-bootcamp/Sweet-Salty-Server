@@ -49,6 +49,10 @@ export class Notice extends BaseEntity {
   @Field(() => Int)
   noticeHit: number;
 
+  @Column()
+  @Field(() => String)
+  noticeSubject: string;
+
   @CreateDateColumn()
   @Field(() => Date)
   createAt: Date;

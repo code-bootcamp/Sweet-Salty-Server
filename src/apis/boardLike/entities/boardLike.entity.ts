@@ -1,13 +1,7 @@
-import { Field, Int, ObjectType } from '@nestjs/graphql';
+import { Field, ObjectType } from '@nestjs/graphql';
 import { Board } from 'src/apis/board/entities/board.entity';
 import { User } from 'src/apis/user/entities/user.entity';
-import {
-  BaseEntity,
-  Column,
-  Entity,
-  ManyToOne,
-  PrimaryGeneratedColumn,
-} from 'typeorm';
+import { BaseEntity, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 
 @ObjectType()
 @Entity()
@@ -16,7 +10,7 @@ export class BoardLike extends BaseEntity {
   @Field(() => String)
   boardLikeCountId: string;
 
-  @ManyToOne(() => Board)
+  @ManyToOne((type) => Board, (Board) => Board.boardLikes)
   board: Board;
 
   @ManyToOne(() => User)

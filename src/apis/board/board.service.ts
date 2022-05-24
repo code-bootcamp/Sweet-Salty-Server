@@ -16,6 +16,7 @@ import { Board } from './entities/board.entity';
 
 import { Place } from '../place/entities/place.entity';
 import { Image } from '../image/entities/image.entity';
+import { BoardLike } from '../boardLike/entities/boardLike.entity';
 
 @Injectable()
 export class BoardService {
@@ -259,6 +260,16 @@ export class BoardService {
     });
   }
 
+  async findLikeBoard({ currentUser }) {
+    const aa = await getConnection()
+      .createQueryBuilder()
+      .select('boardLike')
+      .from(BoardLike, 'boardLike')
+      .leftJoinAndSelect('boardLike.board', 'board')
+      .where('boardLike.user = :data', { data: currentUser.userId })
+      .getMany();
+    console.log(aa);
+  }
   // async findTest({ boardTagsInput }) {
   //   const { boardTagMenu, boardTagRegion, boardTagTogether } = boardTagsInput;
 
@@ -408,7 +419,7 @@ export class BoardService {
     return board;
   }
 
-  async update({ boardId, updateBoardInput }) {
+  async update({ boardId, updateBoardInput, boardTagsInput }) {
     const board = await this.boardRepository.findOne({
       where: { boardId },
     });
@@ -444,7 +455,7 @@ export class BoardService {
         id: boardId,
       });
 
-      await this.boardRepository.softDelete({
+      await this.boardRepository.softRemove({
         boardId,
       });
 

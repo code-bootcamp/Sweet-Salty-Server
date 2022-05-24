@@ -12,6 +12,7 @@ services:
       - 3000:3000
 
   my-database:
+    platform: linux/x86_64
     image: mysql:latest
     environment:
       MYSQL_DATABASE: 'team_project'
@@ -42,6 +43,7 @@ services:
   #     - ./elk/logstash/notice.conf:/usr/share/logstash/pipeline/notice.conf
   #     - ./elk/logstash/mysql-connector-java-8.0.28.jar:/usr/share/logstash/mysql-connector-java-8.0.28.jar
   #     - ./elk/logstash/board_template.json:/usr/share/logstash/templates/board_template.json
+  #     - ./elk/logstash/notice_template.json:/usr/share/logstash/templates/notice_template.json
   #     - ./elk/logstash/pipelines.yml:/usr/share/logstash/config/pipelines.yml
 
   # kibana:

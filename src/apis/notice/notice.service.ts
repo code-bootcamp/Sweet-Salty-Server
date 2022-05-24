@@ -1,15 +1,25 @@
-import { ConflictException, Injectable } from '@nestjs/common';
+import {
+  ConflictException,
+  CACHE_MANAGER,
+  Inject,
+  Injectable,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { getConnection, Repository } from 'typeorm';
 import { Image } from '../image/entities/image.entity';
 import { SubCategory } from '../subCategory/entities/subCategory.entity';
 import { Notice } from './entities/notice.entity';
+import { ElasticsearchService } from '@nestjs/elasticsearch';
+import { Cache } from 'cache-manager';
 
 @Injectable()
 export class NoticeService {
   constructor(
     @InjectRepository(Notice)
     private readonly noticeRepository: Repository<Notice>,
+    private readonly elasticsearchService: ElasticsearchService,
+    @Inject(CACHE_MANAGER)
+    private readonly cacheManager: Cache,
   ) {}
   async create({ createNoticeInput }) {
     const { noticeCategory, url, ...data } = createNoticeInput;
@@ -24,7 +34,7 @@ export class NoticeService {
     // if (isAdmin.userState === false)
     //   throw new ConflictException('관리자만 글을 작성할 수 있습니다.');
 
-    const category = await getConnection()
+    const subCategory = await getConnection()
       .createQueryBuilder()
       .select('subCategory')
       .from(SubCategory, 'subCategory')
@@ -33,7 +43,8 @@ export class NoticeService {
 
     const notice = await this.noticeRepository.save({
       ...data,
-      subCategory: category,
+      subCategory: subCategory,
+      noticeSubject: subCategory.subCategoryName,
     });
 
     if (url) {
@@ -51,6 +62,62 @@ export class NoticeService {
     }
 
     return notice;
+  }
+
+  async elasticsearchFindTitle({ title }) {
+    const redisInData = await this.cacheManager.get(title);
+    if (redisInData) {
+      return redisInData;
+    } else {
+      const data = await this.elasticsearchService.search({
+        index: 'notice',
+        size: 10000,
+        sort: 'createat:desc',
+        _source: [
+          'noticeid',
+          'createat',
+          'noticetitle',
+          'noticesubject',
+          'noticewriter',
+          'noticehit',
+        ],
+        query: {
+          match: {
+            noticetitle: title,
+          },
+        },
+      });
+      await this.cacheManager.set(title, data, { ttl: 10 });
+      return data;
+    }
+  }
+
+  async elasticsearchFindContents({ contents }) {
+    const redisInData = await this.cacheManager.get(contents);
+    if (redisInData) {
+      return redisInData;
+    } else {
+      const data = await this.elasticsearchService.search({
+        index: 'notice',
+        size: 10000,
+        sort: 'createat:desc',
+        _source: [
+          'noticeid',
+          'createat',
+          'noticetitle',
+          'noticesubject',
+          'noticewriter',
+          'noticehit',
+        ],
+        query: {
+          match: {
+            noticecontents: contents,
+          },
+        },
+      });
+      await this.cacheManager.set(contents, data, { ttl: 10 });
+      return data;
+    }
   }
 
   async findOne({ noticeId }) {

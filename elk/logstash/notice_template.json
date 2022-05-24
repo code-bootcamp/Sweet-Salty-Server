@@ -3,9 +3,33 @@
   "index_patterns": ["notice"],
   "order": "1",
   "settings": {
-    "refresh_interval": "5s"
+    "refresh_interval": "5s",
+    "analysis": {
+      "analyzer": {
+        "custom_analyzer": {
+          "tokenizer": "custom_gram"
+        }
+      },
+      "tokenizer": {
+        "custom_gram": {
+          "type": "nGram",
+          "min_gram": "1",
+          "max_gram": "10"
+        }
+      }
+    },
+    "max_ngram_diff": "20"
   },
   "mappings": {
-    "properties": {}
+    "properties": {
+      "noticetitle": {
+        "type": "text",
+        "analyzer": "custom_analyzer"
+      },
+      "noticecontents": {
+        "type": "text",
+        "analyzer": "custom_analyzer"
+      }
+    }
   }
 }

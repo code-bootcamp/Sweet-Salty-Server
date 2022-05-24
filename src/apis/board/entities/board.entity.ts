@@ -1,4 +1,5 @@
 import { Field, Int, ObjectType, registerEnumType } from '@nestjs/graphql';
+import { BoardLike } from 'src/apis/boardLike/entities/boardLike.entity';
 import { BoardSide } from 'src/apis/boardSide/entities/boardSide.entity';
 import { Image } from 'src/apis/image/entities/image.entity';
 import { Place } from 'src/apis/place/entities/place.entity';
@@ -131,6 +132,10 @@ export class Board extends BaseEntity {
   @JoinColumn({ name: 'placeId', referencedColumnName: 'placeId' })
   @Field(() => Place)
   place: Place;
+
+  @OneToMany((type) => BoardLike, (BoardLike) => BoardLike.board)
+  @Field(() => [BoardLike])
+  boardLikes: BoardLike;
 
   @OneToMany((type) => BoardSide, (BoardSide) => BoardSide.boards, {
     cascade: true,
