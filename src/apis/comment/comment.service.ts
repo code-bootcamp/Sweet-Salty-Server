@@ -36,6 +36,7 @@ export class commentService {
         userImage: data[i].user.userImage,
         commentCreateAt: data[i].createAt,
         commentContents: data[i].commentContents,
+        commentLikeCount: data[i].commentLikeCount,
       };
     }
 
@@ -58,12 +59,12 @@ export class commentService {
     });
   }
 
-  async update({ currentUser, boardId, contents }): Promise<Comment> {
+  async update({ currentUser, commentId, contents }): Promise<Comment> {
     const target = await getConnection()
       .createQueryBuilder()
       .select('comment')
       .from(Comment, 'comment')
-      .where({ user: currentUser.userId, board: boardId })
+      .where({ user: currentUser.userId, commentId })
       .getOne();
 
     return await this.commentRepository.save({
