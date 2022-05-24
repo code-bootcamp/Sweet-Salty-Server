@@ -1,5 +1,12 @@
-import { ConflictException, Injectable } from '@nestjs/common';
+import {
+  CACHE_MANAGER,
+  ConflictException,
+  Inject,
+  Injectable,
+} from '@nestjs/common';
+import { ElasticsearchService } from '@nestjs/elasticsearch';
 import { InjectRepository } from '@nestjs/typeorm';
+import { Cache } from 'cache-manager';
 import { Connection, getConnection, Repository } from 'typeorm';
 import { PaymentShopHistory } from '../paymentShopHistory/entities/paymentShopHistory.entity';
 import { User } from '../user/entities/user.entity';
@@ -16,8 +23,46 @@ export class ShopService {
     @InjectRepository(PaymentShopHistory)
     private readonly PaymentHistoryRepository: Repository<PaymentShopHistory>,
 
+    @Inject(CACHE_MANAGER)
+    private readonly cacheManager: Cache,
+
     private readonly connection: Connection,
+
+    private readonly elasticsearchService: ElasticsearchService,
   ) {}
+
+  async elasticsearchFindTitle({ title }) {
+    const redisData = await this.cacheManager.get(title);
+
+    if (redisData) {
+      return redisData;
+    }
+
+    const data = await this.elasticsearchService.search({
+      index: 'shop',
+      size: 10000,
+      sort: 'createat:desc',
+      _source: [
+        'shopproductname',
+        'shopseller',
+        'shopdiscount',
+        'shopdiscountprice',
+        'shoporiginalprice',
+        'shopdescription',
+        'shopstock',
+        'thumbnail',
+      ],
+      query: {
+        match: {
+          shopseller: title,
+        },
+      },
+    });
+
+    await this.cacheManager.set(title, data, { ttl: 10 });
+
+    return data;
+  }
 
   async findOne({ shopId }) {
     const shop = await this.shopRepository.findOne({
