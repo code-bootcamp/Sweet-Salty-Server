@@ -21,6 +21,11 @@ export class commentService {
     });
   }
 
+  async test({ boardId }) {
+
+    const qqq = await 
+  }
+
   async create({ currentUser, boardId, contents }) {
     const userData = await getConnection()
       .createQueryBuilder()
