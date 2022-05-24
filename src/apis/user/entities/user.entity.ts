@@ -59,10 +59,6 @@ export class User extends BaseEntity {
   @Field(() => String)
   userPhone: string;
 
-  @Column({ nullable: true })
-  @Field(() => String)
-  userAddress: string;
-
   @Column({ default: 0 })
   @Field(() => Int)
   userPoint: number;
