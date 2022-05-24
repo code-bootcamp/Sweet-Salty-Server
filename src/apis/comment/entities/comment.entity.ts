@@ -29,6 +29,7 @@ export class Comment extends BaseEntity {
   commentLikeCount: number;
 
   @CreateDateColumn()
+  @Field(() => Date)
   createAt: Date;
 
   @UpdateDateColumn()
@@ -37,6 +38,7 @@ export class Comment extends BaseEntity {
   @ManyToOne(() => Board)
   board: Board;
 
+  @Field(() => User)
   @ManyToOne(() => User)
   user: User;
 }
