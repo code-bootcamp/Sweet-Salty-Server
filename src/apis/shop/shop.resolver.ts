@@ -7,6 +7,7 @@ import { CurrentUser, ICurrentUser } from 'src/commons/auth/gql-user-param';
 import { GqlAuthAccessGuard } from 'src/commons/auth/gql-auth.guard';
 import { UseGuards } from '@nestjs/common';
 import { PaymentShopHistory } from '../paymentShopHistory/entities/paymentShopHistory.entity';
+import { GraphQLJSONObject } from 'graphql-type-json';
 
 @Resolver()
 export class ShopResolver {
@@ -14,6 +15,12 @@ export class ShopResolver {
     private readonly shopSerivece: ShopService, //
   ) {}
 
+  @Query(() => GraphQLJSONObject)
+  fetchShopTitles(@Args('title') title: string) {
+    return this.shopSerivece.elasticsearchFindTitle({ title });
+  }
+
+  @Query(() => Shop)
   @Query(() => Shop)
   fetchShop(@Args('shopId') shopId: string) {
     return this.shopSerivece.findOne({ shopId });
