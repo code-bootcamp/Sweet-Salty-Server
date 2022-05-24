@@ -41,6 +41,15 @@ export class BoardService {
       .getMany();
   }
 
+  async best() {
+    const start = new Date();
+    start.setHours(0, 0, 0, 0);
+    const end = new Date(start);
+    end.setDate(start.getDate() + 1);
+    console.log(start);
+    console.log(end);
+  }
+
   async elasticsearchFindTags({ tags }) {
     const sortingData = tags.sort();
 

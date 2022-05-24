@@ -104,6 +104,11 @@ export class BoardResolver {
     return this.boardService.findGenderWithAgeGroup({ gender, ageGroup, page });
   }
 
+  @Query(() => String)
+  fetchBoardBest() {
+    return this.boardService.best();
+  }
+
   @UseGuards(GqlAuthAccessGuard)
   @Mutation(() => Board)
   createBoard(
