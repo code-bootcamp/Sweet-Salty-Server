@@ -12,7 +12,7 @@ import { ShopService } from './shop.service';
   imports: [
     TypeOrmModule.forFeature([Shop, User, PaymentShopHistory]),
     ElasticsearchModule.register({
-      node: 'http://elasticsearch:9200',
+      node: 'http://147.47.209.114:9200',
     }),
   ],
 
