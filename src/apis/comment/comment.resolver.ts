@@ -15,11 +15,6 @@ export class commentResolver {
     return this.commentService.findAll({ boardId });
   }
 
-  @Query(() => [Comment])
-  test(@Args('boardId') boardId: string) {
-    return this.commentService.test({ boardId });
-  }
-
   @UseGuards(GqlAuthAccessGuard)
   @Mutation(() => Comment)
   createComment(

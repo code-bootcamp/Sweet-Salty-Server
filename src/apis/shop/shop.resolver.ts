@@ -21,7 +21,6 @@ export class ShopResolver {
   }
 
   @Query(() => Shop)
-  @Query(() => Shop)
   fetchShop(@Args('shopId') shopId: string) {
     return this.shopSerivece.findOne({ shopId });
   }
