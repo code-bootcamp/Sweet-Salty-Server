@@ -10,15 +10,36 @@ export class commentService {
   constructor(
     @InjectRepository(Comment)
     private readonly commentRepository: Repository<Comment>,
+
+    @InjectRepository(User)
+    private readonly userRepository: Repository<User>,
   ) {}
 
   async findAll({ boardId }) {
-    return await this.commentRepository.find({
+    const aaa = await this.commentRepository.find({
       where: {
         board: boardId,
       },
-      relations: ['board'],
+      relations: ['board', 'user'],
+      order: {
+        createAt: 'ASC',
+      },
     });
+
+    // 작성자닉네임 , 프로필 , 작성일
+    const fetch = [];
+    for (let i = 0; i < aaa.length; i++) {
+      fetch[i] = {
+        commentId: aaa[i].commentId,
+        userId: aaa[i].user.userId,
+        userNickname: aaa[i].user.userNickname,
+        userImage: aaa[i].user.userImage,
+        commentCreateAt: aaa[i].createAt,
+        commentContents: aaa[i].commentContents,
+      };
+    }
+
+    return fetch;
   }
 
   async create({ currentUser, boardId, contents }) {

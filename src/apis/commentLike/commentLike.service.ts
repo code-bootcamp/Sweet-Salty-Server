@@ -11,7 +11,7 @@ export class commentLikeService {
     private readonly commentLikeRepository: Repository<CommentLike>,
   ) {}
 
-  async create({ currentUser, boardId, commentId }) {
+  async create({ currentUser, commentId }) {
     const check = await this.commentLikeRepository
       .createQueryBuilder()
       .select('commentLike')
@@ -19,7 +19,6 @@ export class commentLikeService {
       .where({
         user: currentUser.userId, //
         comment: commentId,
-        board: boardId,
       })
       .getOne();
 
@@ -28,7 +27,6 @@ export class commentLikeService {
     await this.commentLikeRepository.save({
       user: currentUser.userId, //
       comment: commentId,
-      board: boardId,
     });
 
     await getConnection()

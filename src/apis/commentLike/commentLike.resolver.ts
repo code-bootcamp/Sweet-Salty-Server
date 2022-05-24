@@ -13,9 +13,9 @@ export class commentLikeResolver {
   @Mutation(() => CommentLike)
   createCommentLike(
     @CurrentUser() currentUser: ICurrentUser, //
-    @Args('boardId') boardId: string,
+
     @Args('commentId') commentId: string,
   ) {
-    return this.commentLikeService.create({ currentUser, boardId, commentId });
+    return this.commentLikeService.create({ currentUser, commentId });
   }
 }

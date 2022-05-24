@@ -2,6 +2,10 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
+type BoardLike {
+  boardLikeCountId: String!
+}
+
 type BoardTag {
   boardTagId: String!
   boardTagName: String!
@@ -35,6 +39,7 @@ type Notice {
   noticeTitle: String!
   noticeContents: String!
   noticeHit: Int!
+  noticeSubject: String!
   createAt: DateTime!
   subCategory: SubCategory!
   images: [Image!]
@@ -77,6 +82,7 @@ type Board {
   updateAt: DateTime!
   subCategory: SubCategory!
   place: Place!
+  boardLikes: [BoardLike!]!
   boardSides: [BoardSide!]!
   images: [Image!]!
 }
@@ -94,7 +100,6 @@ type User {
   userNickname: String!
   userImage: String!
   userPhone: String!
-  userAddress: String!
   userPoint: Int!
   ageGroup: String!
   gender: String!
@@ -110,6 +115,8 @@ type Comment {
   commentId: String!
   commentContents: String!
   commentLikeCount: Int!
+  createAt: DateTime!
+  user: User!
 }
 
 type CommentLike {
@@ -187,11 +194,15 @@ type Query {
   fetchGenderBoards(gender: GENDER_ENUM!, page: Int!): [Board!]!
   fetchAgeGroupBoards(ageGroup: AGE_GROUP_ENUM!, page: Int!): [Board!]!
   fetchAgeGroupWithGenderBoards(gender: GENDER_ENUM!, ageGroup: AGE_GROUP_ENUM!, page: Int!): [Board!]!
+  fetchLoggedInLikeBoard: Board!
+  test: String!
   fetchUser(userEmail: String!): User!
   fetchUsers: [User!]!
   findUser(phone: String!): fewUser!
   fetchUserLoggedIn: User!
   fetchNotice(noticeId: String!): Notice!
+  fetchNoticeSearchTitle(title: String!): JSONObject!
+  fetchNoticeSearchContents(contents: String!): JSONObject!
   fetchNoticeAll(page: Int): [Notice!]!
   fetchNoticeCategoryPick(page: Int, category: NOTICE_SUB_CATEGORY_NAME_ENUM!): [Notice!]!
   fetchNoticeCount(category: NOTICE_SUB_CATEGORY_NAME_ENUM!): String!
@@ -199,7 +210,7 @@ type Query {
   fetchReceivedMessage(messageInfoId: String!): ReceivedMessage!
   fetchSendMessages(page: Int!): [SendMessage!]!
   fetchSendMessage(messageInfoId: String!): SendMessage!
-  fetchComment(boardId: String!): [Comment!]!
+  fetchComments(boardId: String!): [JSONObject!]!
   fetchShopTitles(title: String!): JSONObject!
   fetchShop(shopId: String!): Shop!
   shopHistoryFindOne: [PaymentShopHistory!]!
@@ -252,7 +263,7 @@ type Mutation {
   signUpCheckToken(phone: String!, token: String!): Boolean!
   createBoard(createBoardInput: CreateBoardInput!, boardTagsInput: BoardTagsInput!): Board!
   createBoardReq(createBoardWhitReqInput: CreateBoardWithReqInput!): Board!
-  updateBoard(boardId: String!, updateBoardInput: UpdateBoardInput!): Board!
+  updateBoard(boardId: String!, updateBoardInput: UpdateBoardInput!, boardTagsInput: BoardTagsInput!): Board!
   deleteBoard(boardId: String!): Boolean!
   createBoardLike(boardId: String!): String!
   uploadFile(file: Upload!): String!
@@ -268,7 +279,7 @@ type Mutation {
   createComment(boardId: String!, contents: String!): Comment!
   updateComment(boardId: String!, contents: String!): Comment!
   deleteComment(commentId: String!): String!
-  createCommentLike(boardId: String!, commentId: String!): CommentLike!
+  createCommentLike(commentId: String!): CommentLike!
   createShop(createShopInput: CreateShopInput!): Shop!
   updateShop(shopId: String!, updateShopInput: updateShopInput!): Shop!
   payShop(stock: Float!, shopId: String!): String!
@@ -331,13 +342,14 @@ input CreateUserInput {
   userName: String!
   userPhone: String!
   userNickname: String!
-  userAddress: String
+  gender: GENDER_ENUM!
+  ageGroup: AGE_GROUP_ENUM!
+  prefer: [String!]!
 }
 
 input UpdateUserInput {
   userPassword: String!
   userPhone: String!
-  userAddress: String
 }
 
 input CreateNoticeInput {
