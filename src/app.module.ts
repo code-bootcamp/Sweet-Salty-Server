@@ -79,8 +79,11 @@ import { AppController } from './app.controller';
   providers: [AppService],
   controllers: [AppController],
 })
-export class AppModule {
+export class AppModule implements NestModule {
   constructor(private readonly connection: Connection) {}
+  configure(consumer: MiddlewareConsumer) {
+    consumer.apply(graphqlUploadExpress()).forRoutes('graphql');
+  }
 }
 
 // export class AppModule implements NestModule {

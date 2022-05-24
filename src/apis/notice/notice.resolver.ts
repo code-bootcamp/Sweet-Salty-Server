@@ -1,5 +1,6 @@
 import { UseGuards } from '@nestjs/common';
 import { Args, Int, Mutation, Query, Resolver } from '@nestjs/graphql';
+import { GraphQLJSONObject } from 'graphql-type-json';
 import { GqlAuthAccessGuard } from 'src/commons/auth/gql-auth.guard';
 import { CurrentUser, ICurrentUser } from 'src/commons/auth/gql-user-param';
 import { CreateNoticeInput } from './dto/createNotice.input';
@@ -25,6 +26,16 @@ export class NoticeResolver {
   @Query(() => Notice)
   fetchNotice(@Args('noticeId') noticeId: string) {
     return this.noticeService.findOne({ noticeId });
+  }
+
+  @Query(() => GraphQLJSONObject)
+  fetchNoticeSearchTitle(@Args('title') title: string) {
+    return this.noticeService.elasticsearchFindTitle({ title });
+  }
+
+  @Query(() => GraphQLJSONObject)
+  fetchNoticeSearchContents(@Args('contents') contents: string) {
+    return this.noticeService.elasticsearchFindContents({ contents });
   }
 
   @Query(() => [Notice])

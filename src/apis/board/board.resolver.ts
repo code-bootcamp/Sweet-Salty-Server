@@ -118,6 +118,12 @@ export class BoardResolver {
     });
   }
 
+  @UseGuards(GqlAuthAccessGuard)
+  @Query(() => Board)
+  fetchLoggedInLikeBoard(@CurrentUser() currentUser: ICurrentUser) {
+    return this.boardService.findLikeBoard({ currentUser });
+  }
+
   @Mutation(() => Board)
   createBoardReq(
     @Args('createBoardWhitReqInput')
@@ -130,10 +136,12 @@ export class BoardResolver {
   async updateBoard(
     @Args('boardId') boardId: string,
     @Args('updateBoardInput') updateBoardInput: UpdateBoardInput,
+    @Args('boardTagsInput') boardTagsInput: BoardTagsInput,
   ) {
     return await this.boardService.update({
       boardId,
       updateBoardInput,
+      boardTagsInput,
     });
   }
 

@@ -1,4 +1,4 @@
-import { Args, Mutation, Resolver } from '@nestjs/graphql';
+import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { FileUpload, GraphQLUpload } from 'graphql-upload';
 import { ImageService } from './image.service';
 
@@ -23,4 +23,9 @@ export class ImageResolver {
   // ) {
   //   return this.boardImageService.delete({ bucketName, fileName });
   // }
+
+  @Query(() => String)
+  async test() {
+    return await this.imageService.getBarcode();
+  }
 }
