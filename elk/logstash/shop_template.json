@@ -24,42 +24,12 @@
     "properties": {
       "shopproductname": {
         "type": "text",
-        "analyzer": "custom_analyzer",
-        "fields": {
-          "keyword": { "type": "keyword" }
-        }
+        "analyzer": "custom_analyzer"
       },
       "shopseller": {
-        "type": "custom_analyzer",
-        "analyzer": "custom_analyzer",
-        "fields": {
-          "keyword": { "type": "keyword" }
-        }
-      },
-      "shopdiscount": {
         "type": "text",
-        "fields": {
-          "keyword": { "type": "keyword" }
-        }
-      },
-      "shopdiscountprice": {
-        "type": "text",
-        "fields": {
-          "keyword": { "type": "keyword" }
-        }
-      },
-      "shoporiginalprice": {
-        "type": "text",
-        "fields": {
-          "keyword": { "type": "keyword" }
-        }
-      },
-      "shopdescription": { "type": "keyword" },
-      "shopstock": { "type": "keyword" },
-      "thumbnail": { "type": "keyword" },
-      "createat": { "type": "Date" },
-      "updateat": { "type": "Date" },
-      "deleteat": { "type": "Date" }
+        "analyzer": "custom_analyzer"
+      }
     }
   }
 }

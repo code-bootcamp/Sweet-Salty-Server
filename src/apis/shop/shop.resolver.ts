@@ -20,7 +20,11 @@ export class ShopResolver {
     return this.shopSerivece.elasticsearchFindTitle({ title });
   }
 
-  @Query(() => Shop)
+  @Query(() => GraphQLJSONObject)
+  fetchShopSeller(@Args('seller') seller: string) {
+    return this.shopSerivece.elasticsearchFindSeller({ seller });
+  }
+
   @Query(() => Shop)
   fetchShop(@Args('shopId') shopId: string) {
     return this.shopSerivece.findOne({ shopId });

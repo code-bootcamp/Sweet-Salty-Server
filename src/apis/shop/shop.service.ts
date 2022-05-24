@@ -54,12 +54,45 @@ export class ShopService {
       ],
       query: {
         match: {
-          shopseller: title,
+          shopproductname: title,
         },
       },
     });
 
     await this.cacheManager.set(title, data, { ttl: 10 });
+
+    return data;
+  }
+
+  async elasticsearchFindSeller({ seller }) {
+    const redisData = await this.cacheManager.get(seller);
+
+    if (redisData) {
+      return redisData;
+    }
+
+    const data = await this.elasticsearchService.search({
+      index: 'shop',
+      size: 10000,
+      sort: 'createat:desc',
+      _source: [
+        'shopproductname',
+        'shopseller',
+        'shopdiscount',
+        'shopdiscountprice',
+        'shoporiginalprice',
+        'shopdescription',
+        'shopstock',
+        'thumbnail',
+      ],
+      query: {
+        match: {
+          shopproductname: seller,
+        },
+      },
+    });
+
+    await this.cacheManager.set(seller, data, { ttl: 10 });
 
     return data;
   }
