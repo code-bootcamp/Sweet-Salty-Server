@@ -28,14 +28,14 @@ export class commentResolver {
   @UseGuards(GqlAuthAccessGuard)
   @Mutation(() => Comment)
   updateComment(
-    @Args('boardId') boardId: string,
+    @Args('commentId') commentId: string,
     @Args('contents') contents: string,
     @CurrentUser() currentUser: ICurrentUser,
   ) {
     return this.commentService.update({
       currentUser,
-      boardId,
       contents,
+      commentId,
     });
   }
 
