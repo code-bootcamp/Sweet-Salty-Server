@@ -10,7 +10,7 @@ export class commentLikeResolver {
   constructor(private readonly commentLikeService: commentLikeService) {}
 
   @UseGuards(GqlAuthAccessGuard)
-  @Mutation(() => CommentLike)
+  @Mutation(() => String)
   createCommentLike(
     @CurrentUser() currentUser: ICurrentUser, //
 
