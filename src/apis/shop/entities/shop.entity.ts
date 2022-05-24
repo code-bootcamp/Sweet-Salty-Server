@@ -3,9 +3,12 @@ import { User } from 'src/apis/user/entities/user.entity';
 import {
   BaseEntity,
   Column,
+  CreateDateColumn,
+  DeleteDateColumn,
   Entity,
   ManyToOne,
   PrimaryGeneratedColumn,
+  UpdateDateColumn,
 } from 'typeorm';
 
 @ObjectType()
@@ -44,10 +47,21 @@ export class Shop extends BaseEntity {
   shopStock: number;
 
   @Column()
-  @Field(() => String)
-  shopUrl: string;
+  @Field(() => String, { nullable: true })
+  thumbnail: string;
 
   @ManyToOne(() => User)
   @Field(() => User)
   user: User;
+
+  @CreateDateColumn()
+  @Field(() => Date)
+  createAt: Date;
+
+  @UpdateDateColumn()
+  @Field(() => Date)
+  updateAt: Date;
+
+  @DeleteDateColumn()
+  deleteAt: Date;
 }

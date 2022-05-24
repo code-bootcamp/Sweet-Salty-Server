@@ -23,6 +23,9 @@ export class CreateShopInput {
   @Field(() => Int)
   shopStock: number;
 
+  @Field(() => String, { nullable: true })
+  thumbnail: string;
+
   @Field(() => String)
   shopUrl: string;
 }
