@@ -116,11 +116,8 @@ type Comment {
   commentContents: String!
   commentLikeCount: Int!
   createAt: DateTime!
+  deleteAt: DateTime!
   user: User!
-}
-
-type CommentLike {
-  commentLikeCountId: String!
 }
 
 type PointTransaction {
@@ -279,9 +276,9 @@ type Mutation {
   deleteSendMessage(messageInfoId: String!): String!
   deleteReceivedMessage(messageInfoId: String!): String!
   createComment(boardId: String!, contents: String!): Comment!
-  updateComment(boardId: String!, contents: String!): Comment!
+  updateComment(commentId: String!, contents: String!): Comment!
   deleteComment(commentId: String!): String!
-  createCommentLike(commentId: String!): CommentLike!
+  createCommentLike(commentId: String!): String!
   createShop(createShopInput: CreateShopInput!): Shop!
   updateShop(shopId: String!, updateShopInput: updateShopInput!): Shop!
   payShop(stock: Float!, shopId: String!): String!
