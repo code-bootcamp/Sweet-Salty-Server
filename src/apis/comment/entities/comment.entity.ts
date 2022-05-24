@@ -32,6 +32,10 @@ export class Comment extends BaseEntity {
   @Field(() => Date)
   createAt: Date;
 
+  @DeleteDateColumn()
+  @Field(() => Date)
+  deleteAt: Date;
+
   @UpdateDateColumn()
   updateAt: Date;
 

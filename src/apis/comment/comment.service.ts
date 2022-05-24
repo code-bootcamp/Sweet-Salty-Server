@@ -76,7 +76,7 @@ export class commentService {
   async delete({ commentId }) {
     const result = await getConnection()
       .createQueryBuilder()
-      .delete()
+      .softDelete()
       .from(Comment, 'comment')
       .where({ commentId })
       .execute();
