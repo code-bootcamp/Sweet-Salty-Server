@@ -194,6 +194,7 @@ type Query {
   fetchGenderBoards(gender: GENDER_ENUM!, page: Int!): [Board!]!
   fetchAgeGroupBoards(ageGroup: AGE_GROUP_ENUM!, page: Int!): [Board!]!
   fetchAgeGroupWithGenderBoards(gender: GENDER_ENUM!, ageGroup: AGE_GROUP_ENUM!, page: Int!): [Board!]!
+  fetchBoardBest: String!
   fetchLoggedInLikeBoard: Board!
   test: String!
   fetchUser(userEmail: String!): User!
