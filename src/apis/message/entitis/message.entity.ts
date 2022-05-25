@@ -1,4 +1,4 @@
-import { Field, ObjectType, registerEnumType } from '@nestjs/graphql';
+import { Field, Int, ObjectType, registerEnumType } from '@nestjs/graphql';
 import { MessageInfo } from 'src/apis/messageInfo/entities/messageInfo.entity';
 
 import {
@@ -24,6 +24,9 @@ registerEnumType(SEND_RECEIVED, {
 @ObjectType()
 export class SendMessage {
   @Field(() => String)
+  messageId: string;
+
+  @Field(() => String)
   messageReceivedUser: string;
 
   @Field(() => MessageInfo)
@@ -35,6 +38,9 @@ export class SendMessage {
 
 @ObjectType()
 export class ReceivedMessage {
+  @Field(() => String)
+  messageId: string;
+
   @Field(() => String)
   messageSendUser: string;
 

@@ -125,6 +125,7 @@ export class NoticeService {
       where: {
         noticeId,
       },
+      relations: ['images'],
     });
   }
 

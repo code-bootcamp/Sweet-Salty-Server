@@ -12,22 +12,22 @@ import { GraphQLJSONObject } from 'graphql-type-json';
 @Resolver()
 export class ShopResolver {
   constructor(
-    private readonly shopSerivece: ShopService, //
+    private readonly shopService: ShopService, //
   ) {}
 
   @Query(() => GraphQLJSONObject)
   fetchShopTitles(@Args('title') title: string) {
-    return this.shopSerivece.elasticsearchFindTitle({ title });
+    return this.shopService.elasticsearchFindTitle({ title });
   }
 
   @Query(() => GraphQLJSONObject)
   fetchShopSeller(@Args('seller') seller: string) {
-    return this.shopSerivece.elasticsearchFindSeller({ seller });
+    return this.shopService.elasticsearchFindSeller({ seller });
   }
 
   @Query(() => [Shop])
   fetchShops() {
-    return this.shopSerivece.findAll();
+    return this.shopService.findAll();
   }
 
   @UseGuards(GqlAuthAccessGuard)
@@ -35,7 +35,7 @@ export class ShopResolver {
   shopHistoryFindOne(
     @CurrentUser() currentUser: ICurrentUser, //
   ) {
-    return this.shopSerivece.histroyFindOne({ currentUser });
+    return this.shopService.historyFindOne({ currentUser });
   }
 
   @UseGuards(GqlAuthAccessGuard)
@@ -44,7 +44,7 @@ export class ShopResolver {
     @Args('createShopInput') createShopInput: CreateShopInput, //
     @CurrentUser() currentUser: ICurrentUser,
   ) {
-    return this.shopSerivece.create({ createShopInput, currentUser });
+    return this.shopService.create({ createShopInput, currentUser });
   }
   @UseGuards(GqlAuthAccessGuard)
   @Mutation(() => Shop)
@@ -54,7 +54,7 @@ export class ShopResolver {
     @Args('updateShopInput') updateShopInput: updateShopInput,
   ) {
     // 수정하기
-    return await this.shopSerivece.update({
+    return await this.shopService.update({
       shopId,
       updateShopInput,
       currentUser,
@@ -67,7 +67,7 @@ export class ShopResolver {
     @Args('shopId') shopId: string,
     @CurrentUser() currentUser: ICurrentUser,
   ) {
-    return this.shopSerivece.paymentShop({ shopId, currentUser, stock });
+    return this.shopService.paymentShop({ shopId, currentUser, stock });
   }
 
   //   @Mutation(() => Boolean)

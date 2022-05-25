@@ -54,10 +54,10 @@ export class BoardService {
       .from(Board, 'board')
       .where(
         `createAt BETWEEN '${start.toISOString()}' AND '${end.toISOString()}'`,
-      );
+      )
+      .leftJoinAndSelect('board.place', 'place');
 
     if (category === ('VISITED' || 'REVIEW')) {
-      console.log(category);
       return qb
         .andWhere({ boardSubject: 'VISITED' })
         .orWhere({ boardSubject: 'REVIEW' })
@@ -183,6 +183,7 @@ export class BoardService {
       .leftJoinAndSelect('board.subCategory', 'subCategory')
       .leftJoinAndSelect('board.boardSides', 'boardSide')
       .leftJoinAndSelect('boardSide.boardTags', 'boardTag')
+      .leftJoinAndSelect('board.place', 'place')
       .orderBy('createAt', 'DESC')
       .getMany();
   }
@@ -239,6 +240,7 @@ export class BoardService {
         .leftJoinAndSelect('board.subCategory', 'subCategory')
         .leftJoinAndSelect('board.boardSides', 'boardSide')
         .leftJoinAndSelect('boardSide.boardTags', 'boardTag')
+        .leftJoinAndSelect('board.place', 'place')
         .where('subCategoryName = :category1', {
           category1: 'REVIEW',
         })
@@ -255,6 +257,7 @@ export class BoardService {
       .leftJoinAndSelect('board.subCategory', 'subCategory')
       .leftJoinAndSelect('board.boardSides', 'boardSide')
       .leftJoinAndSelect('boardSide.boardTags', 'boardTag')
+      .leftJoinAndSelect('board.place', 'place')
       .where('subCategoryName = :category', {
         category: category,
       })
@@ -300,6 +303,7 @@ export class BoardService {
       .select('boardLike')
       .from(BoardLike, 'boardLike')
       .leftJoinAndSelect('boardLike.board', 'board')
+      .leftJoinAndSelect('board.place', 'place')
       .where('boardLike.user = :data', { data: currentUser.userId })
       .getMany();
     console.log(aa);
