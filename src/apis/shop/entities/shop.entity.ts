@@ -64,4 +64,16 @@ export class Shop extends BaseEntity {
 
   @DeleteDateColumn()
   deleteAt: Date;
+
+  @Field(() => String)
+  shopAddress: string;
+
+  @Field(() => String)
+  shopUrl: string;
+
+  @Field(() => String)
+  lat: string;
+
+  @Field(() => String)
+  lng: string;
 }

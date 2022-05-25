@@ -29,3 +29,21 @@ export class CreateShopInput {
   @Field(() => String)
   shopUrl: string;
 }
+
+@InputType()
+export class PlaceInput {
+  @Field(() => String)
+  placeName: string;
+
+  @Field(() => String)
+  placeAddress: string;
+
+  @Field(() => String)
+  placeUrl: string;
+
+  @Field(() => String)
+  lat: string;
+
+  @Field(() => String)
+  lng: string;
+}

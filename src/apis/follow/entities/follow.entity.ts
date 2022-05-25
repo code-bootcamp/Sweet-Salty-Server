@@ -4,16 +4,16 @@ import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 
 @ObjectType()
 @Entity()
-export class Fallow {
+export class Follow {
   @PrimaryGeneratedColumn('uuid')
   @Field(() => String)
-  fallowId: string;
-
-  @Column()
-  @Field(() => String)
-  fallowerId: string;
+  followId: string;
 
   @ManyToOne(() => User)
   @Field(() => User)
-  fallowingId: string;
+  followerId: string;
+
+  @ManyToOne(() => User)
+  @Field(() => User)
+  followingId: string;
 }
