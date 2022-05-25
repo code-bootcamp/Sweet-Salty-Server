@@ -27,8 +27,8 @@ import { graphqlUploadExpress } from 'graphql-upload';
 import { ImageModule } from './apis/image/image.module';
 import { ChatBackEndModule } from './chatBackEnd/chatBackEnd.module';
 import { ChatFrontEndModule } from './chatFrontEnd/chatFrontEnd.module';
-
 import { AppController } from './app.controller';
+import { FallowModule } from './apis/follow/fallow.module';
 @Module({
   imports: [
     AdminModule,
@@ -36,8 +36,9 @@ import { AppController } from './app.controller';
     BoardModule,
     BoardLikeModule,
     ImageModule,
-    ChatBackEndModule, // 추가
-    ChatFrontEndModule, // 추가
+    ChatBackEndModule,
+    ChatFrontEndModule,
+    FallowModule,
     UserModule,
     NoticeModule,
     MessageModule,
