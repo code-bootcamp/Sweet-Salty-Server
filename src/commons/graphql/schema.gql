@@ -143,12 +143,14 @@ type MessageInfo {
 }
 
 type SendMessage {
+  messageId: String!
   messageReceivedUser: String!
   messageInfo: MessageInfo!
   sendAt: DateTime!
 }
 
 type ReceivedMessage {
+  messageId: String!
   messageSendUser: String!
   messageState: Boolean!
   messageInfo: MessageInfo!
@@ -182,12 +184,6 @@ type Shop {
   shopUrl: String!
   lat: String!
   lng: String!
-}
-
-type Follow {
-  followId: String!
-  followerId: User!
-  followingId: User!
 }
 
 type Query {
@@ -277,7 +273,8 @@ type Mutation {
   deleteBoard(boardId: String!): Boolean!
   createBoardLike(boardId: String!): String!
   uploadFile(file: Upload!): String!
-  fallow(followerNickname: String!): Follow!
+  follow(followerNickname: String!): String!
+  followCount(followerNickname: String!): [String!]!
   createUser(createUserInput: CreateUserInput!): User!
   updateUser(updateUserInput: UpdateUserInput!): User!
   updatePassword(userEmail: String!, password: String!): User!
