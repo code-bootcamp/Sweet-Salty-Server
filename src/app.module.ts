@@ -60,11 +60,11 @@ import { FallowModule } from './apis/follow/fallow.module';
     }),
     TypeOrmModule.forRoot({
       type: 'mysql',
-      host: '10.16.96.3',
+      host: 'my-database',
       port: 3306,
       username: 'root',
       password: 'root',
-      database: 'team_data',
+      database: 'team_project',
       entities: [__dirname + '/apis/**/*.entity.*'],
       synchronize: true,
       logging: true,
@@ -73,7 +73,7 @@ import { FallowModule } from './apis/follow/fallow.module';
     }),
     CacheModule.register<RedisClientOptions>({
       store: redisStore,
-      url: 'redis://XkjocNA3@10.140.0.4:6379',
+      url: 'redis://my-redis:6379',
       isGlobal: true,
     }),
   ],

@@ -101,7 +101,7 @@ export class ShopService {
     return await this.shopRepository.find();
   }
 
-  async histroyFindOne({ currentUser }) {
+  async historyFindOne({ currentUser }) {
     return this.PaymentHistoryRepository.find({
       userId: currentUser.userId,
     });
