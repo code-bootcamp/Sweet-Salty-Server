@@ -97,11 +97,8 @@ export class ShopService {
     return data;
   }
 
-  async findOne({ shopId }) {
-    const shop = await this.shopRepository.findOne({
-      where: { shopId },
-    });
-    return shop;
+  async findAll() {
+    return await this.shopRepository.find();
   }
 
   async histroyFindOne({ currentUser }) {
