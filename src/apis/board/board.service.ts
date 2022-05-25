@@ -298,7 +298,7 @@ export class BoardService {
   }
 
   async findLikeBoard({ currentUser }) {
-    const aa = await getConnection()
+    return await getConnection()
       .createQueryBuilder()
       .select('boardLike')
       .from(BoardLike, 'boardLike')
@@ -306,7 +306,18 @@ export class BoardService {
       .leftJoinAndSelect('board.place', 'place')
       .where('boardLike.user = :data', { data: currentUser.userId })
       .getMany();
-    console.log(aa);
+  }
+
+  async findUser({ userNickname }) {
+    return await getConnection()
+      .createQueryBuilder()
+      .select('board')
+      .from(Board, 'board')
+      .leftJoin('board.user', 'user')
+      .leftJoinAndSelect('board.place', 'place')
+      .where('userNickname = :data', { data: userNickname })
+      .orderBy('board.createAt', 'DESC')
+      .getMany();
   }
   // async findTest({ boardTagsInput }) {
   //   const { boardTagMenu, boardTagRegion, boardTagTogether } = boardTagsInput;
