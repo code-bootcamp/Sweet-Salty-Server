@@ -133,7 +133,9 @@ export class Board extends BaseEntity {
   @Field(() => Place)
   place: Place;
 
-  @OneToMany((type) => BoardLike, (BoardLike) => BoardLike.board)
+  @OneToMany((type) => BoardLike, (BoardLike) => BoardLike.board, {
+    cascade: true,
+  })
   @Field(() => [BoardLike])
   boardLikes: BoardLike;
 

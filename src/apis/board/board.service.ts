@@ -41,26 +41,38 @@ export class BoardService {
       .getMany();
   }
 
-  async best() {
+  async best({ category }) {
     const end = new Date();
     end.setHours(0, 0, 0, 0);
     end.setDate(end.getDate() + 1);
     const start = new Date(end);
     start.setDate(end.getDate() - 30);
-    console.log(start);
-    console.log(end);
 
-    return await getConnection()
+    const qb = await getConnection()
       .createQueryBuilder()
       .select('board')
       .from(Board, 'board')
       .where(
         `createAt BETWEEN '${start.toISOString()}' AND '${end.toISOString()}'`,
-      )
-      .orderBy('boardLikeCount', 'DESC')
-      .addOrderBy('createAt', 'DESC')
-      .limit(3)
-      .getMany();
+      );
+
+    if (category === ('VISITED' || 'REVIEW')) {
+      console.log(category);
+      return qb
+        .andWhere({ boardSubject: 'VISITED' })
+        .orWhere({ boardSubject: 'REVIEW' })
+        .orderBy('boardLikeCount', 'DESC')
+        .addOrderBy('createAt', 'DESC')
+        .limit(3)
+        .getMany();
+    } else {
+      return qb
+        .andWhere({ boardSubject: category })
+        .orderBy('boardLikeCount', 'DESC')
+        .addOrderBy('createAt', 'DESC')
+        .limit(3)
+        .getMany();
+    }
   }
 
   async elasticsearchFindTags({ tags }) {
@@ -88,11 +100,11 @@ export class BoardService {
           'boardsubject',
         ],
         query: {
-          match: {
-            tags: {
-              query: tagsData,
-              operator: 'and',
-            },
+          multi_match: {
+            query: tagsData,
+            type: 'cross_fields',
+            operator: 'AND',
+            fields: ['tags', 'boardsubject'],
           },
         },
       });
@@ -477,9 +489,14 @@ export class BoardService {
         id: boardId,
       });
 
-      await this.boardRepository.softRemove({
-        boardId,
+      const relationsData = await this.boardRepository.findOne({
+        where: {
+          boardId,
+        },
+        relations: ['images', 'boardSides'],
       });
+
+      await this.boardRepository.softRemove(relationsData);
 
       return true;
     } else {
