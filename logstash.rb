@@ -1,9 +1,6 @@
-convert("   tekramngnaad   ") == "DAANGNMARKET" # true
-convert("   torrak         ") == "KARROT" # true
-convert("   remmus         ") == "SUMMER" # true
+data = "VISITED"
 
-convert.strip
-
-def convert(input)
-  # ???
+if data != "REVIEW"
+  data = "REVIEW"
+  puts data
 end

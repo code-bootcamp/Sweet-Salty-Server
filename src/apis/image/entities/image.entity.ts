@@ -29,7 +29,7 @@ export class Image {
   @DeleteDateColumn()
   deleteAt: Date;
 
-  @ManyToOne((type) => Board, (Board) => Board.images, { onDelete: 'CASCADE' })
+  @ManyToOne((type) => Board, (Board) => Board.images)
   @JoinColumn({ name: 'boardId', referencedColumnName: 'boardId' })
   board: Board;
 
