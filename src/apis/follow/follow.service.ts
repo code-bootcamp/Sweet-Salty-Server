@@ -36,21 +36,34 @@ export class FollowService {
         followId: checkFollow.followId,
       });
 
-      return;
+      return `언팔로우`;
     }
-
-    console.log(checkFollow);
-    console.log(checkFollowing);
 
     await this.followRepository.save({
       followerId: checkNickname.userId,
       followingId: followingUserId,
     });
 
-    const aaa = await this.followRepository.findAndCount({
+    return `팔로우`;
+  }
+
+  async count({ followingUserId, followerNickname }) {
+    const checkNickname = await this.userRepository.findOne({
+      userNickname: followerNickname,
+    });
+
+    const followerCount = await this.followRepository.findAndCount({
       followerId: checkNickname.userId,
     });
 
-    console.log(aaa[1]);
+    console.log(followerCount[1]);
+
+    const followingCount = await this.followRepository.findAndCount({
+      followingId: followingUserId,
+    });
+
+    console.log(followingCount[1]);
+
+    return [`팔로워`, followerCount[1], `팔로잉`, followingCount[1]];
   }
 }
