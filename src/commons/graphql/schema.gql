@@ -200,6 +200,7 @@ type Query {
   fetchAgeGroupWithGenderBoards(gender: GENDER_ENUM!, ageGroup: AGE_GROUP_ENUM!, page: Int!): [Board!]!
   fetchBoardBest(category: BOARD_SUB_CATEGORY_NAME_ENUM!): [Board!]!
   fetchLoggedInLikeBoard: Board!
+  fetchBoardsOfUser(userNickname: String!): [Board!]!
   test: String!
   fetchUser(userEmail: String!): User!
   fetchUsers: [User!]!
@@ -368,7 +369,6 @@ input CreateNoticeInput {
 }
 
 input SendMessageInput {
-  title: String!
   contents: String!
   receiveUser: String!
 }

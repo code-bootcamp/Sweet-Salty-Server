@@ -93,7 +93,6 @@ export class MessageService {
       .into(MessageInfo)
       .values([
         {
-          messageInfoTitle: sendMessageInput.title,
           messageInfoContents: sendMessageInput.contents,
         },
       ])
