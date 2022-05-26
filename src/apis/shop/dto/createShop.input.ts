@@ -33,3 +33,4 @@ export class CreateShopInput {
   @Field(() => PlaceInput)
   place: { PlaceInput: string };
 }
+
