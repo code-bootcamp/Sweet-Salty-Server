@@ -1,0 +1,399 @@
+# ------------------------------------------------------
+# THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+# ------------------------------------------------------
+
+type BoardLike {
+  boardLikeCountId: String!
+}
+
+type BoardTag {
+  boardTagId: String!
+  boardTagName: String!
+  boardTagRefName: REF_Name_ENUM!
+}
+
+enum REF_Name_ENUM {
+  MENU
+  REGION
+  MOOD
+}
+
+type BoardSide {
+  boardSideId: String!
+  boardTags: BoardTag!
+}
+
+type TopCategory {
+  topCategoryId: String!
+  topCategoryName: String!
+}
+
+type SubCategory {
+  subCategoryId: String!
+  subCategoryName: String!
+  topCategory: TopCategory!
+}
+
+type Notice {
+  noticeId: String!
+  noticeTitle: String!
+  noticeContents: String!
+  noticeHit: Int!
+  noticeSubject: String!
+  createAt: DateTime!
+  subCategory: SubCategory!
+  images: [Image!]
+}
+
+"""
+A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
+"""
+scalar DateTime
+
+type Image {
+  imageId: String!
+  url: String!
+  createAt: DateTime!
+}
+
+type Shop {
+  shopId: String!
+  shopProductName: String!
+  shopSeller: String!
+  shopDisCount: Int!
+  shopDisCountPrice: Float!
+  shopOriginalPrice: Float!
+  shopDescription: String!
+  shopStock: Int!
+  thumbnail: String
+  place: Place!
+  createAt: DateTime!
+  updateAt: DateTime!
+}
+
+type Place {
+  placeId: String!
+  placeName: String!
+  placeAddress: String!
+  placeUrl: String!
+  lat: String!
+  lng: String!
+}
+
+type Board {
+  boardId: String!
+  boardTitle: String!
+  boardSugar: String!
+  boardSalt: String!
+  boardContents: String!
+  boardWriter: String!
+  boardLikeCount: Int!
+  boardHit: Int!
+  thumbnail: String!
+  ageGroup: String!
+  gender: String!
+  boardSubject: String!
+  createAt: DateTime!
+  updateAt: DateTime!
+  subCategory: SubCategory!
+  place: Place!
+  boardLikes: [BoardLike!]!
+  boardSides: [BoardSide!]!
+  images: [Image!]!
+}
+
+type fewUser {
+  userEmail: String!
+  userCreateAt: DateTime!
+}
+
+type User {
+  userId: String!
+  userState: Boolean!
+  userEmail: String!
+  userName: String!
+  userNickname: String!
+  userImage: String!
+  userProfile: String!
+  userPhone: String!
+  userPoint: Int!
+  ageGroup: String!
+  gender: String!
+  createAt: DateTime!
+  updateAt: DateTime!
+}
+
+type Token {
+  accessToken: String!
+}
+
+type Comment {
+  commentId: String!
+  commentContents: String!
+  commentLikeCount: Int!
+  createAt: DateTime!
+  deleteAt: DateTime!
+  user: User!
+}
+
+type PointTransaction {
+  id: String!
+  impUid: String
+  amount: Int!
+  checksum: Int!
+  status: POINT_TRANSACTION_STATUS_ENUM!
+  userId: User!
+  createdAt: DateTime!
+}
+
+enum POINT_TRANSACTION_STATUS_ENUM {
+  PAYMENT
+  CANCEL
+}
+
+type MessageInfo {
+  messageInfoId: String!
+  messageInfoContents: String!
+}
+
+type SendMessage {
+  messageId: String!
+  messageReceivedUser: String!
+  messageReceivedUserImage: String!
+  messageInfo: MessageInfo!
+  sendAt: DateTime!
+}
+
+type ReceivedMessage {
+  messageId: String!
+  messageSendUser: String!
+  messageSendUserImage: String!
+  messageState: Boolean!
+  messageInfo: MessageInfo!
+  sendAt: DateTime!
+}
+
+type PaymentShopHistory {
+  paymentShopHistoryId: String!
+  historyShopProductName: String!
+  historyShopSeller: String!
+  historyShopPrice: Float!
+  historyShopStock: Float!
+  createdAt: DateTime!
+  userId: User!
+}
+
+type Query {
+  fetchTags(refName: String!): [BoardTag!]!
+  fetchBoardTitle(title: String!): JSONObject!
+  fetchBoardContents(contents: String!): JSONObject!
+  fetchBoardWithTags(tags: [String!]!): JSONObject!
+  fetchBoard(boardId: String!): Board!
+  fetchBoards: [Board!]!
+  fetchBoardCategoryPick(category: BOARD_SUB_CATEGORY_NAME_ENUM!): [Board!]!
+  fetchGenderBoards(gender: GENDER_ENUM!, page: Int!): [Board!]!
+  fetchAgeGroupBoards(ageGroup: AGE_GROUP_ENUM!, page: Int!): [Board!]!
+  fetchAgeGroupWithGenderBoards(gender: GENDER_ENUM!, ageGroup: AGE_GROUP_ENUM!, page: Int!): [Board!]!
+  fetchBoardBest(category: BOARD_SUB_CATEGORY_NAME_ENUM!): [Board!]!
+  fetchPickedBoards: Board!
+  fetchBoardsOfUser(userNickname: String!): [Board!]!
+  fetchBoardCount: String!
+  test: String!
+  follow(followerNickname: String!): String!
+  followCount(followerNickname: String!): [String!]!
+  fetchUser(userEmail: String!): User!
+  fetchUsers: [User!]!
+  findUser(phone: String!): fewUser!
+  fetchUserLoggedIn: User!
+  fetchNotice(noticeId: String!): Notice!
+  fetchNoticeSearchTitle(title: String!): JSONObject!
+  fetchNoticeSearchContents(contents: String!): JSONObject!
+  fetchNoticeAll(page: Int): [Notice!]!
+  fetchNoticeCategoryPick(page: Int, category: NOTICE_SUB_CATEGORY_NAME_ENUM!): [Notice!]!
+  fetchNoticeCount(category: NOTICE_SUB_CATEGORY_NAME_ENUM!): String!
+  fetchReceivedMessages(page: Int): [ReceivedMessage!]!
+  fetchReceivedMessage(messageInfoId: String!): ReceivedMessage!
+  fetchReceivedMessagesCount: String!
+  fetchSendMessages(page: Int): [SendMessage!]!
+  fetchSendMessage(messageInfoId: String!): SendMessage!
+  fetchSendMessagesCount: String!
+  fetchComments(boardId: String!): [JSONObject!]!
+  fetchShopTitles(title: String!): JSONObject!
+  fetchShopSeller(seller: String!): JSONObject!
+  fetchShops: [Shop!]!
+  shopHistoryFindOne: [PaymentShopHistory!]!
+}
+
+"""
+The `JSONObject` scalar type represents JSON objects as specified by [ECMA-404](http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf).
+"""
+scalar JSONObject
+
+enum BOARD_SUB_CATEGORY_NAME_ENUM {
+  REQUEST
+  VISITED
+  REVIEW
+  TASTER
+}
+
+enum GENDER_ENUM {
+  PRIVATE
+  MALE
+  FEMALE
+}
+
+enum AGE_GROUP_ENUM {
+  NONE
+  TEN
+  TWENTY
+  THIRTY
+  FORTY
+  FIFTY
+  SIXTY
+}
+
+enum NOTICE_SUB_CATEGORY_NAME_ENUM {
+  ALL
+  NOTICE
+  EVENT
+  PROMOTION
+  TASTING
+}
+
+type Mutation {
+  createTags(createTagInput: CreateTagInput!): String!
+  createTopCategory: String!
+  createSubCategory: String!
+  login(userEmail: String!, userPassword: String!): Token!
+  restoreAccessToken: Token!
+  logout: String!
+  signUpGetToken(phone: String!): String!
+  signUpCheckToken(phone: String!, token: String!): Boolean!
+  createBoard(createBoardInput: CreateBoardInput!, boardTagsInput: BoardTagsInput!): Board!
+  createBoardReq(createBoardWhitReqInput: CreateBoardWithReqInput!): Board!
+  updateBoard(boardId: String!, updateBoardInput: UpdateBoardInput!, boardTagsInput: BoardTagsInput!): Board!
+  deleteBoard(boardId: String!): Boolean!
+  createBoardLike(boardId: String!): String!
+  uploadFile(file: Upload!): String!
+  createUser(createUserInput: CreateUserInput!): User!
+  updateImage(image: String!): User!
+  updateProfile(profile: String!): User!
+  updateUser(updateUserInput: UpdateUserInput!): User!
+  updatePassword(userEmail: String!, password: String!): User!
+  deleteUser(userEmail: String!): Boolean!
+  restoreUser(userEmail: String!): Boolean!
+  createNotice(createNoticeInput: CreateNoticeInput!): Notice!
+  sendMessage(sendMessageInput: SendMessageInput!): String!
+  deleteSendMessage(messageInfoId: String!): String!
+  deleteReceivedMessage(messageInfoId: String!): String!
+  createComment(boardId: String!, contents: String!): Comment!
+  updateComment(commentId: String!, contents: String!): Comment!
+  deleteComment(commentId: String!): String!
+  createCommentLike(commentId: String!): String!
+  createShop(createShopInput: CreateShopInput!): Shop!
+  updateShop(shopId: String!, updateShopInput: updateShopInput!): Shop!
+  payShop(stock: Float!, shopId: String!): String!
+  createPointTransaction(impUid: String!, amount: Float!): PointTransaction!
+  cancelPointTransaction(impUid: String!, amount: Float!, reason: String!): PointTransaction!
+}
+
+input CreateTagInput {
+  boardTagName: [String!]!
+  boardTagRefName: REF_Name_ENUM!
+}
+
+input CreateBoardInput {
+  boardTitle: String!
+  boardSugar: String
+  boardSalt: String
+  boardContents: String!
+  subCategoryName: BOARD_SUB_CATEGORY_NAME_ENUM!
+  place: PlaceInput!
+}
+
+input PlaceInput {
+  placeName: String!
+  placeAddress: String!
+  placeUrl: String!
+  lat: String!
+  lng: String!
+}
+
+input BoardTagsInput {
+  boardTagMenu: [String!]
+  boardTagRegion: [String!]
+  boardTagMood: [String!]
+}
+
+input CreateBoardWithReqInput {
+  boardTitle: String!
+  boardSugar: String
+  boardSalt: String
+  boardContents: String!
+  subCategoryName: BOARD_SUB_CATEGORY_NAME_ENUM!
+  place: PlaceInput
+}
+
+input UpdateBoardInput {
+  boardTitle: String
+  boardSugar: String
+  boardSalt: String
+  boardContents: String
+  subCategoryName: BOARD_SUB_CATEGORY_NAME_ENUM
+  place: PlaceInput
+}
+
+"""The `Upload` scalar type represents a file upload."""
+scalar Upload
+
+input CreateUserInput {
+  userEmail: String!
+  userPassword: String!
+  userName: String!
+  userPhone: String!
+  userNickname: String!
+  gender: GENDER_ENUM!
+  ageGroup: AGE_GROUP_ENUM!
+  prefer: [String!]!
+}
+
+input UpdateUserInput {
+  userPassword: String!
+  userPhone: String!
+}
+
+input CreateNoticeInput {
+  noticeTitle: String!
+  noticeContents: String!
+  noticeCategory: NOTICE_SUB_CATEGORY_NAME_ENUM!
+  url: [String!]
+}
+
+input SendMessageInput {
+  contents: String!
+  receiveUser: String!
+}
+
+input CreateShopInput {
+  shopProductName: String!
+  shopSeller: String!
+  shopDisCount: Float!
+  shopDisCountPrice: Float!
+  shopOriginalPrice: Int!
+  shopDescription: String!
+  shopStock: Int!
+  thumbnail: String
+  shopUrl: String!
+  place: PlaceInput!
+}
+
+input updateShopInput {
+  shopProductName: String
+  shopSeller: String
+  shopDisCount: Int
+  shopDisCountPrice: Int
+  shopOriginalPrice: Int
+  shopDescription: String
+  shopStock: Int
+  shopUrl: String
+}
