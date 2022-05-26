@@ -34,20 +34,3 @@ export class CreateShopInput {
   place: { PlaceInput: string };
 }
 
-// @InputType()
-// export class PlaceInput1 {
-//   @Field(() => String)
-//   placeName: string;
-
-//   @Field(() => String)
-//   placeAddress: string;
-
-//   @Field(() => String)
-//   placeUrl: string;
-
-//   @Field(() => String)
-//   lat: string;
-
-//   @Field(() => String)
-//   lng: string;
-// }

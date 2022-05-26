@@ -39,7 +39,7 @@ export class ShopResolver {
   }
 
   @UseGuards(GqlAuthAccessGuard)
-  @Mutation(() => Shop)
+  @Mutation(() => String)
   createShop(
     @Args('createShopInput') createShopInput: CreateShopInput, //
     @CurrentUser() currentUser: ICurrentUser,
