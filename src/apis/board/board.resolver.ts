@@ -34,7 +34,7 @@ export class BoardResolver {
   }
 
   @Query(() => GraphQLJSONObject)
-  async fetchBoardTitles(@Args('title') title: string) {
+  async fetchBoardTitle(@Args('title') title: string) {
     return this.boardService.elasticsearchFindTitle({ title });
   }
 
@@ -114,13 +114,13 @@ export class BoardResolver {
 
   @UseGuards(GqlAuthAccessGuard)
   @Query(() => Board)
-  fetchLoggedInLikeBoard(@CurrentUser() currentUser: ICurrentUser) {
+  fetchPickedBoards(@CurrentUser() currentUser: ICurrentUser) {
     return this.boardService.findLikeBoard({ currentUser });
   }
 
   @Query(() => [Board])
   fetchBoardsOfUser(@Args('userNickname') userNickname: string) {
-    return this.boardService.findUser({ userNickname });
+    return this.boardService.findUserWithBoard({ userNickname });
   }
 
   @UseGuards(GqlAuthAccessGuard)
