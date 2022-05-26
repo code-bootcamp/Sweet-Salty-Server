@@ -9,6 +9,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Cache } from 'cache-manager';
 import { Connection, getConnection, Repository } from 'typeorm';
 import { PaymentShopHistory } from '../paymentShopHistory/entities/paymentShopHistory.entity';
+import { Place } from '../place/entities/place.entity';
 import { User } from '../user/entities/user.entity';
 import { Shop } from './entities/shop.entity';
 @Injectable()
@@ -16,6 +17,9 @@ export class ShopService {
   constructor(
     @InjectRepository(Shop)
     private readonly shopRepository: Repository<Shop>,
+
+    @InjectRepository(Place)
+    private readonly placeRepository: Repository<Place>,
 
     @InjectRepository(User)
     private readonly UserRepository: Repository<User>,
@@ -87,7 +91,7 @@ export class ShopService {
       ],
       query: {
         match: {
-          shopproductname: seller,
+          shopseller: seller,
         },
       },
     });
@@ -98,7 +102,13 @@ export class ShopService {
   }
 
   async findAll() {
-    return await this.shopRepository.find();
+    return await getConnection()
+      .createQueryBuilder()
+      .select('shop')
+      .from(Shop, 'shop')
+      .leftJoinAndSelect('shop.place', 'place')
+      .orderBy('createAt', 'DESC')
+      .getMany();
   }
 
   async historyFindOne({ currentUser }) {
@@ -108,21 +118,38 @@ export class ShopService {
   }
 
   async create({ createShopInput, currentUser }) {
-    console.log(createShopInput);
+    const adminCheck = await this.UserRepository.findOne({
+      where: { userId: currentUser.userId },
+    });
+    const { place, ...shop } = createShopInput;
+    console.log(place);
 
-    // const adminCheck = await this.UserRepository.findOne({
-    //   where: { userId: currentUser.userId },
-    // });
-    // if (adminCheck.userState) {
-    //   const { place, ...createShopInput } = await this.shopRepository.save({
-    //     ...createShopInput,
-    //     user: adminCheck,
-    //   });
+    if (adminCheck.userState) {
+      // 가게 이름이 없으면 넣기
+      const checkPlaceName = await this.placeRepository.findOne({
+        placeName: place.placeName,
+      });
 
-    //   return;
-    // }
+      if (!checkPlaceName) {
+        const placeId = await this.placeRepository.save({
+          ...place,
+        });
 
-    // return new ConflictException('관리자로 등록 되어있지 않습니다.');
+        await this.shopRepository.save({
+          ...shop,
+          place: placeId,
+        });
+      }
+
+      await this.shopRepository.save({
+        ...shop,
+        place: checkPlaceName,
+      });
+
+      return '등록 완료';
+    }
+
+    return new ConflictException('관리자로 등록 되어있지 않습니다.');
   }
 
   async update({ shopId, updateShopInput, currentUser }) {
