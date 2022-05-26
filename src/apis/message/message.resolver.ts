@@ -13,7 +13,7 @@ export class MessageResolver {
   @UseGuards(GqlAuthAccessGuard)
   @Query(() => [ReceivedMessage])
   fetchReceivedMessages(
-    @Args({ name: 'page', type: () => Int }) page: number,
+    @Args({ name: 'page', nullable: true, type: () => Int }) page: number,
     @CurrentUser() currentUser: ICurrentUser,
   ) {
     return this.messageService.receivedList({ page, currentUser });
@@ -41,7 +41,7 @@ export class MessageResolver {
   @Query(() => [SendMessage])
   fetchSendMessages(
     //
-    @Args({ name: 'page', type: () => Int }) page: number,
+    @Args({ name: 'page', nullable: true, type: () => Int }) page: number,
     @CurrentUser() currentUser: ICurrentUser,
   ) {
     return this.messageService.sendList({ page, currentUser });

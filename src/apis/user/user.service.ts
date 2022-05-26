@@ -124,7 +124,7 @@ export class UserService {
 
     return await this.UserRepository.save({
       ...user,
-      userprofile: profile,
+      userProfile: profile,
     });
   }
 

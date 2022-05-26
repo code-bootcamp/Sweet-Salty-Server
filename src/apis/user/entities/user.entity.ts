@@ -4,6 +4,7 @@ import {
   Board,
   GENDER_ENUM,
 } from 'src/apis/board/entities/board.entity';
+import { PreferMenu } from 'src/apis/preferMenu/entities/preferMenu.entity';
 import {
   BaseEntity,
   Column,
@@ -78,6 +79,9 @@ export class User extends BaseEntity {
   @OneToMany((type) => Board, (Board) => Board.user)
   @JoinColumn({ name: 'boardId', referencedColumnName: 'boardId' })
   boards: Board;
+
+  @OneToMany((type) => PreferMenu, (PreferMenu) => PreferMenu.user)
+  preferMenus: PreferMenu;
 
   @Column({ default: '단짠맛집' })
   userSignUpSite: string;

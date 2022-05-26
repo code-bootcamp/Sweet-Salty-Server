@@ -1,5 +1,6 @@
 import { Field, ObjectType, registerEnumType } from '@nestjs/graphql';
 import { BoardSide } from 'src/apis/boardSide/entities/boardSide.entity';
+import { PreferMenu } from 'src/apis/preferMenu/entities/preferMenu.entity';
 import {
   BaseEntity,
   Column,
@@ -35,4 +36,7 @@ export class BoardTag extends BaseEntity {
 
   @OneToMany((type) => BoardSide, (BoardSide) => BoardSide.boardTags)
   boardSide: BoardSide[];
+
+  @OneToMany((type) => PreferMenu, (PreferMenu) => PreferMenu.boardTag)
+  preferMenus: PreferMenu[];
 }
