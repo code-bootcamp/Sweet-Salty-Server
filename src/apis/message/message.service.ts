@@ -15,16 +15,29 @@ export class MessageService {
   ) {}
 
   async sendList({ page, currentUser }) {
-    return await this.messageRepository.find({
-      where: {
-        messageOwner: currentUser.userId,
-        sendReceived: 'SEND',
-      },
-      relations: ['messageInfo'],
-      skip: (page - 1) * 10,
-      take: 10,
-      order: { sendAt: 'DESC' },
-    });
+    if (!page) {
+      return await this.messageRepository.find({
+        where: {
+          messageOwner: currentUser.userId,
+          sendReceived: 'SEND',
+        },
+        relations: ['messageInfo'],
+        skip: 0,
+        take: 10,
+        order: { sendAt: 'DESC' },
+      });
+    } else {
+      return await this.messageRepository.find({
+        where: {
+          messageOwner: currentUser.userId,
+          sendReceived: 'SEND',
+        },
+        relations: ['messageInfo'],
+        skip: (page - 1) * 10,
+        take: 10,
+        order: { sendAt: 'DESC' },
+      });
+    }
   }
 
   async readSend({ messageInfoId, currentUser }) {
@@ -36,6 +49,8 @@ export class MessageService {
       },
       relations: ['messageInfo'],
     });
+
+    console.log(result);
 
     return result;
   }
@@ -49,16 +64,30 @@ export class MessageService {
   }
 
   async receivedList({ page, currentUser }) {
-    return await this.messageRepository.find({
-      where: {
-        messageOwner: currentUser.userId,
-        sendReceived: 'RECEIVED',
-      },
-      relations: ['messageInfo'],
-      skip: (page - 1) * 10,
-      take: 10,
-      order: { sendAt: 'DESC' },
-    });
+    console.log(currentUser);
+    if (!page) {
+      return await this.messageRepository.find({
+        where: {
+          messageOwner: currentUser.userId,
+          sendReceived: 'RECEIVED',
+        },
+        relations: ['messageInfo'],
+        skip: 0,
+        take: 10,
+        order: { sendAt: 'DESC' },
+      });
+    } else {
+      return await this.messageRepository.find({
+        where: {
+          messageOwner: currentUser.userId,
+          sendReceived: 'RECEIVED',
+        },
+        relations: ['messageInfo'],
+        skip: (page - 1) * 10,
+        take: 10,
+        order: { sendAt: 'DESC' },
+      });
+    }
   }
 
   async readReceived({ messageInfoId, currentUser }) {
@@ -114,15 +143,19 @@ export class MessageService {
       ])
       .execute();
 
+    // 보낸 사람 저장
     await this.messageRepository.save({
       messageReceivedUser: receive.userNickname,
+      messageReceivedUserImage: receive.userImage,
       sendReceived: 'SEND',
       messageInfo: messageData.identifiers[0].messageInfoId,
       messageOwner: currentUser.userId,
     });
 
+    //받은 사람 저장
     await this.messageRepository.save({
       messageSendUser: send.userNickname,
+      messageSendUserImage: send.userImage,
       sendReceived: 'RECEIVED',
       messageInfo: messageData.identifiers[0].messageInfoId,
       messageOwner: receive.userId,

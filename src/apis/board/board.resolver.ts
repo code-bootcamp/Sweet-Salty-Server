@@ -116,6 +116,15 @@ export class BoardResolver {
   }
 
   @UseGuards(GqlAuthAccessGuard)
+  @Query(() => String)
+  fetchBoardCount(
+    //
+    @CurrentUser() currentUser: ICurrentUser,
+  ) {
+    return this.boardService.findCount({ currentUser });
+  }
+
+  @UseGuards(GqlAuthAccessGuard)
   @Mutation(() => Board)
   createBoard(
     @CurrentUser() currentUser: ICurrentUser,

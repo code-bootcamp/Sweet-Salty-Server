@@ -29,6 +29,9 @@ export class SendMessage {
   @Field(() => String)
   messageReceivedUser: string;
 
+  @Field(() => String)
+  messageReceivedUserImage: string;
+
   @Field(() => MessageInfo)
   messageInfo: MessageInfo;
 
@@ -43,6 +46,9 @@ export class ReceivedMessage {
 
   @Field(() => String)
   messageSendUser: string;
+
+  @Field(() => String)
+  messageSendUserImage: string;
 
   @Field(() => Boolean)
   messageState: boolean;
@@ -67,7 +73,15 @@ export class Message extends BaseEntity {
 
   @Column({ nullable: true })
   @Field(() => String)
+  messageSendUserImage: string;
+
+  @Column({ nullable: true })
+  @Field(() => String)
   messageReceivedUser: string;
+
+  @Column({ nullable: true })
+  @Field(() => String)
+  messageReceivedUserImage: string;
 
   @Column({ type: 'enum', enum: SEND_RECEIVED })
   @Field(() => String)

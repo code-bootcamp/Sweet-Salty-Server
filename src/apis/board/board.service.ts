@@ -41,6 +41,14 @@ export class BoardService {
       .getMany();
   }
 
+  async findCount({ currentUser }) {
+    return await getConnection()
+      .createQueryBuilder()
+      .from(User, 'user')
+      .where({ userId: currentUser.userId })
+      .getCount();
+  }
+
   async best({ category }) {
     const end = new Date();
     end.setHours(0, 0, 0, 0);
