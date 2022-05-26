@@ -64,6 +64,6 @@ export class FollowService {
 
     console.log(followingCount[1]);
 
-    return [`팔로워`, followerCount[1], `팔로잉`, followingCount[1]];
+    return [`팔로잉`, followerCount[1], `팔로워`, followingCount[1]];
   }
 }
