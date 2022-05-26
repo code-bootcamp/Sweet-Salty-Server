@@ -44,7 +44,7 @@ export class CreateBoardWithReqInput {
 }
 
 @InputType()
-class PlaceInput {
+export class PlaceInput {
   @Field(() => String)
   placeName: string;
 

@@ -1,4 +1,6 @@
 import { Field, Float, Int, ObjectType } from '@nestjs/graphql';
+import { platform } from 'os';
+import { Place } from 'src/apis/place/entities/place.entity';
 import { User } from 'src/apis/user/entities/user.entity';
 import {
   BaseEntity,
@@ -50,9 +52,9 @@ export class Shop extends BaseEntity {
   @Field(() => String, { nullable: true })
   thumbnail: string;
 
-  @ManyToOne(() => User)
-  @Field(() => User)
-  user: User;
+  @ManyToOne((type) => Place, (Place) => Place.shops)
+  @Field(() => Place)
+  place: Place;
 
   @CreateDateColumn()
   @Field(() => Date)
@@ -64,16 +66,4 @@ export class Shop extends BaseEntity {
 
   @DeleteDateColumn()
   deleteAt: Date;
-
-  @Field(() => String)
-  shopAddress: string;
-
-  @Field(() => String)
-  shopUrl: string;
-
-  @Field(() => String)
-  lat: string;
-
-  @Field(() => String)
-  lng: string;
 }
