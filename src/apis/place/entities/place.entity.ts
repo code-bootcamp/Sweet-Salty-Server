@@ -1,5 +1,6 @@
 import { Field, ObjectType } from '@nestjs/graphql';
 import { Board } from 'src/apis/board/entities/board.entity';
+import { Shop } from 'src/apis/shop/entities/shop.entity';
 import {
   BaseEntity,
   Column,
@@ -37,4 +38,7 @@ export class Place extends BaseEntity {
 
   @OneToMany((type) => Board, (Board) => Board.place)
   boards: Board;
+
+  @OneToMany((type) => Shop, (Shop) => Shop.place)
+  shops: Shop;
 }

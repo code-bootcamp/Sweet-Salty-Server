@@ -108,20 +108,21 @@ export class ShopService {
   }
 
   async create({ createShopInput, currentUser }) {
-    const adminCheck = await this.UserRepository.findOne({
-      where: { userId: currentUser.userId },
-    });
+    console.log(createShopInput);
 
-    if (adminCheck.userState) {
-      const shopInfo = await this.shopRepository.save({
-        ...createShopInput,
-        user: adminCheck,
-      });
+    // const adminCheck = await this.UserRepository.findOne({
+    //   where: { userId: currentUser.userId },
+    // });
+    // if (adminCheck.userState) {
+    //   const { place, ...createShopInput } = await this.shopRepository.save({
+    //     ...createShopInput,
+    //     user: adminCheck,
+    //   });
 
-      return shopInfo;
-    }
+    //   return;
+    // }
 
-    return new ConflictException('관리자로 등록 되어있지 않습니다.');
+    // return new ConflictException('관리자로 등록 되어있지 않습니다.');
   }
 
   async update({ shopId, updateShopInput, currentUser }) {
