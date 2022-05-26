@@ -1,4 +1,7 @@
 import { Field, Float, InputType, Int } from '@nestjs/graphql';
+import { PlaceInput } from 'src/apis/board/dto/createBoard.input';
+import { Place } from 'src/apis/place/entities/place.entity';
+import { ManyToOne } from 'typeorm';
 
 @InputType()
 export class CreateShopInput {
@@ -28,10 +31,13 @@ export class CreateShopInput {
 
   @Field(() => String)
   shopUrl: string;
+
+  @Field(() => PlaceInput1)
+  place1: { PlaceInput1: string };
 }
 
 @InputType()
-export class PlaceInput {
+export class PlaceInput1 {
   @Field(() => String)
   placeName: string;
 
