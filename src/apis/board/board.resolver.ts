@@ -25,14 +25,6 @@ export class BoardResolver {
     private readonly boardService: BoardService,
   ) {}
 
-  @Query(() => [Board])
-  async fetchBoardTitle(
-    //
-    @Args('title') title: string,
-  ) {
-    return this.boardService.test({ title });
-  }
-
   @Query(() => GraphQLJSONObject)
   async fetchBoardTitle(@Args('title') title: string) {
     return this.boardService.elasticsearchFindTitle({ title });

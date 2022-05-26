@@ -29,6 +29,15 @@ export class MessageResolver {
   }
 
   @UseGuards(GqlAuthAccessGuard)
+  @Query(() => String)
+  fetchReceivedMessagesCount(
+    //
+    @CurrentUser() currentUser: ICurrentUser,
+  ) {
+    return this.messageService.receivedListCount({ currentUser });
+  }
+
+  @UseGuards(GqlAuthAccessGuard)
   @Query(() => [SendMessage])
   fetchSendMessages(
     //
@@ -45,6 +54,15 @@ export class MessageResolver {
     @Args('messageInfoId') messageInfoId: string,
   ) {
     return this.messageService.readSend({ currentUser, messageInfoId });
+  }
+
+  @UseGuards(GqlAuthAccessGuard)
+  @Query(() => String)
+  fetchSendMessagesCount(
+    //
+    @CurrentUser() currentUser: ICurrentUser,
+  ) {
+    return this.messageService.sendListCount({ currentUser });
   }
 
   @UseGuards(GqlAuthAccessGuard)

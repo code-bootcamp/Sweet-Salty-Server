@@ -27,17 +27,6 @@ export class UserService {
       ...createUserInput,
     });
 
-    // await getConnection()
-    //   .createQueryBuilder()
-    //   .insert()
-    //   .into(Message)
-    //   .values([
-    //     {
-    //       user: result.userId,
-    //     },
-    //   ])
-    //   .execute();
-
     return result;
   }
   //
@@ -112,6 +101,33 @@ export class UserService {
   }
   //
   //
+
+  async updateImage({ image, currentUser }) {
+    const user = await this.UserRepository.findOne({
+      where: {
+        userId: currentUser.userId,
+      },
+    });
+
+    return await this.UserRepository.save({
+      ...user,
+      userImage: image,
+    });
+  }
+
+  async updateProfile({ profile, currentUser }) {
+    const user = await this.UserRepository.findOne({
+      where: {
+        userId: currentUser.userId,
+      },
+    });
+
+    return await this.UserRepository.save({
+      ...user,
+      userprofile: profile,
+    });
+  }
+
   async ChangePW({ password, userEmail }) {
     // 인증 절차가 조금 더 필요할 것 같음. 이메일 하나만 받으면 안댐 핸폰 인증 추가 예정
     const PWLoseUser = await this.UserRepository.findOne({
