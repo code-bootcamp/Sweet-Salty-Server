@@ -73,7 +73,7 @@ import { FollowModule } from './apis/follow/follow.module';
     }),
     CacheModule.register<RedisClientOptions>({
       store: redisStore,
-      url: 'redis://XkjocNA3@10.140.0.4:6379',
+      url: 'redis://my-redis:6379',
       isGlobal: true,
     }),
   ],
