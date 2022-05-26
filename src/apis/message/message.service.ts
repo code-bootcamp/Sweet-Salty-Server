@@ -27,6 +27,27 @@ export class MessageService {
     });
   }
 
+  async readSend({ messageInfoId, currentUser }) {
+    const result = await this.messageRepository.findOne({
+      where: {
+        messageOwner: currentUser.userId,
+        sendReceived: 'SEND',
+        messageInfo: messageInfoId,
+      },
+      relations: ['messageInfo'],
+    });
+
+    return result;
+  }
+
+  async sendListCount({ currentUser }) {
+    return await getConnection()
+      .createQueryBuilder()
+      .from(Message, 'message')
+      .where({ messageOwner: currentUser.userId, sendReceived: 'SEND' })
+      .getCount();
+  }
+
   async receivedList({ page, currentUser }) {
     return await this.messageRepository.find({
       where: {
@@ -57,17 +78,12 @@ export class MessageService {
     return result;
   }
 
-  async readSend({ messageInfoId, currentUser }) {
-    const result = await this.messageRepository.findOne({
-      where: {
-        messageOwner: currentUser.userId,
-        sendReceived: 'SEND',
-        messageInfo: messageInfoId,
-      },
-      relations: ['messageInfo'],
-    });
-
-    return result;
+  async receivedListCount({ currentUser }) {
+    return await getConnection()
+      .createQueryBuilder()
+      .from(Message, 'message')
+      .where({ messageOwner: currentUser.userId, sendReceived: 'RECEIVED' })
+      .getCount();
   }
 
   async send({ currentUser, sendMessageInput }) {

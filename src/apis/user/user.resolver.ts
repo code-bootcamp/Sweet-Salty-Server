@@ -50,6 +50,25 @@ export class UserResolver {
   }
 
   // Update Api Update Api  Update Api  Update Api  Update Api  Update Api  Update Api  Update Api  Update Api  //
+
+  @UseGuards(GqlAuthAccessGuard)
+  @Mutation(() => User)
+  async updateImage(
+    @Args('image') image: string,
+    @CurrentUser() currentUser: ICurrentUser,
+  ) {
+    return this.userService.updateImage({ image, currentUser });
+  }
+
+  @UseGuards(GqlAuthAccessGuard)
+  @Mutation(() => User)
+  async updateProfile(
+    @Args('profile') profile: string,
+    @CurrentUser() currentUser: ICurrentUser,
+  ) {
+    return this.userService.updateProfile({ profile, currentUser });
+  }
+
   @UseGuards(GqlAuthAccessGuard)
   @Mutation(() => User)
   async updateUser(
