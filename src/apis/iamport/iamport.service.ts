@@ -1,10 +1,5 @@
 import { Injectable } from '@nestjs/common';
 import { HttpService } from '@nestjs/axios';
-import * as dotenv from 'dotenv';
-dotenv.config();
-
-const IMP_KEY = process.env.IMP_KEY;
-const IMP_SECRET = process.env.IMP_SECRET;
 
 @Injectable()
 export class IamPortService {
@@ -16,8 +11,8 @@ export class IamPortService {
   async getToken() {
     const token = await this.httpService
       .post('https://api.iamport.kr/users/getToken', {
-        imp_key: IMP_KEY, // REST API키
-        imp_secret: IMP_SECRET, // REST API Secret
+        imp_key: process.env.IMP_KEY, // REST API키
+        imp_secret: process.env.IMP_SECRET, // REST API Secret
       })
       .toPromise();
 

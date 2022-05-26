@@ -308,7 +308,7 @@ export class BoardService {
       .getMany();
   }
 
-  async findUser({ userNickname }) {
+  async findUserWithBoard({ userNickname }) {
     return await getConnection()
       .createQueryBuilder()
       .select('board')

@@ -17,10 +17,6 @@ export class MessageInfo extends BaseEntity {
 
   @Column()
   @Field(() => String)
-  messageInfoTitle: string;
-
-  @Column()
-  @Field(() => String)
   messageInfoContents: string;
 
   @Column({ default: 0 })
