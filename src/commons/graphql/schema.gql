@@ -202,6 +202,7 @@ type Query {
   fetchBoardsOfUser(userNickname: String!): [Board!]!
   fetchRecentBoards(category: BOARD_SUB_CATEGORY_NAME_ENUM!): [Board!]!
   fetchBoardCount: String!
+  fetchBoardTypeORMWithTags(boardTagsInput: BoardTagsInput!, category: BOARD_SUB_CATEGORY_NAME_ENUM): [Board!]!
   test: String!
   follow(followerNickname: String!): String!
   followCount(followerNickname: String!): [String!]!
@@ -226,7 +227,7 @@ type Query {
   fetchShopTitles(title: String!): JSONObject!
   fetchShopSeller(seller: String!): JSONObject!
   fetchShops: [Shop!]!
-  fetchShop(shopId: String!): [Shop!]!
+  fetchShop(shopId: String!): Shop!
   realTimeShop: [Shop!]!
   shopHistoryFindOne: [PaymentShopHistory!]!
 }
@@ -257,6 +258,12 @@ enum AGE_GROUP_ENUM {
   FORTY
   FIFTY
   SIXTY
+}
+
+input BoardTagsInput {
+  boardTagMenu: [String!]
+  boardTagRegion: [String!]
+  boardTagMood: [String!]
 }
 
 enum NOTICE_SUB_CATEGORY_NAME_ENUM {
@@ -324,12 +331,6 @@ input PlaceInput {
   placeUrl: String!
   lat: String!
   lng: String!
-}
-
-input BoardTagsInput {
-  boardTagMenu: [String!]
-  boardTagRegion: [String!]
-  boardTagMood: [String!]
 }
 
 input CreateBoardWithReqInput {
