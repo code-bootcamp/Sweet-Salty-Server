@@ -1,8 +1,10 @@
 import { ConflictException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { getConnection, Repository } from 'typeorm';
 import * as bcrypt from 'bcrypt';
 import { User } from './entities/user.entity';
+import { PreferMenu } from '../preferMenu/entities/preferMenu.entity';
+import { BoardTag } from '../boardTag/entities/boardTag.entity';
 
 @Injectable()
 export class UserService {
@@ -25,6 +27,25 @@ export class UserService {
     );
     const result = await this.UserRepository.save({
       ...createUserInput,
+    });
+
+    createUserInput.prefer.map(async (el) => {
+      const tag = await getConnection()
+        .createQueryBuilder()
+        .select('boardTag')
+        .from(BoardTag, 'boardTag')
+        .where({ boardTagName: el })
+        .getOne();
+
+      await getConnection()
+        .createQueryBuilder()
+        .insert()
+        .into(PreferMenu)
+        .values({
+          user: result,
+          boardTag: tag,
+        })
+        .execute();
     });
 
     return result;

@@ -101,7 +101,12 @@ export class BoardResolver {
     @Args({ name: 'category', type: () => BOARD_SUB_CATEGORY_NAME_ENUM })
     category: BOARD_SUB_CATEGORY_NAME_ENUM,
   ) {
-    return this.boardService.best({ category });
+    return this.boardService.categoryBest({ category });
+  }
+
+  @Query(() => [Board])
+  fetchBoardsBest() {
+    return this.boardService.best();
   }
 
   @UseGuards(GqlAuthAccessGuard)
@@ -129,7 +134,7 @@ export class BoardResolver {
     //
     @CurrentUser() currentUser: ICurrentUser,
   ) {
-    return this.boardService.findCount({ currentUser });
+    return this.boardService.countBoard({ currentUser });
   }
 
   @UseGuards(GqlAuthAccessGuard)

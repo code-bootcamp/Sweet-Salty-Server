@@ -40,46 +40,12 @@ export class BoardService {
       .getMany();
   }
 
-  async findCount({ currentUser }) {
+  async countBoard({ currentUser }) {
     return await getConnection()
       .createQueryBuilder()
-      .from(User, 'user')
-      .where({ userId: currentUser.userId })
-      .getCount();
-  }
-
-  async best({ category }) {
-    const end = new Date();
-    end.setHours(0, 0, 0, 0);
-    end.setDate(end.getDate() + 1);
-    const start = new Date(end);
-    start.setDate(end.getDate() - 30);
-
-    const qb = getConnection()
-      .createQueryBuilder()
-      .select('board')
       .from(Board, 'board')
-      .where(
-        `createAt BETWEEN '${start.toISOString()}' AND '${end.toISOString()}'`,
-      )
-      .leftJoinAndSelect('board.place', 'place');
-
-    if (category === ('VISITED' || 'REVIEW')) {
-      return qb
-        .andWhere({ boardSubject: 'VISITED' })
-        .orWhere({ boardSubject: 'REVIEW' })
-        .orderBy('boardLikeCount', 'DESC')
-        .addOrderBy('createAt', 'DESC')
-        .take(3)
-        .getMany();
-    } else {
-      return qb
-        .andWhere({ boardSubject: category })
-        .orderBy('boardLikeCount', 'DESC')
-        .addOrderBy('createAt', 'DESC')
-        .limit(3)
-        .getMany();
-    }
+      .where({ user: currentUser.userId })
+      .getCount();
   }
 
   async elasticsearchFindTags({ tags }) {
@@ -182,6 +148,53 @@ export class BoardService {
     }
   }
 
+  async categoryBest({ category }) {
+    const end = new Date();
+    end.setHours(0, 0, 0, 0);
+    end.setDate(end.getDate() + 1);
+    const start = new Date(end);
+    start.setDate(end.getDate() - 30);
+
+    const qb = getConnection()
+      .createQueryBuilder()
+      .select('board')
+      .from(Board, 'board')
+      .leftJoinAndSelect('board.place', 'place')
+      .where(
+        `board.createAt BETWEEN '${start.toISOString()}' AND '${end.toISOString()}'`,
+      );
+
+    if (category === 'VISITED' || 'REVIEW') {
+      return await qb
+        .andWhere({ boardSubject: 'VISITED' })
+        .orWhere({ boardSubject: 'REVIEW' })
+        .orderBy('boardLikeCount', 'DESC')
+        .addOrderBy('createAt', 'DESC')
+        .limit(3)
+        .getMany();
+    } else {
+      return await qb
+        .andWhere({ boardSubject: category })
+        .orderBy('boardLikeCount', 'DESC')
+        .addOrderBy('createAt', 'DESC')
+        .limit(3)
+        .getMany();
+    }
+  }
+
+  async best() {
+    return await getConnection()
+      .createQueryBuilder()
+      .select('board')
+      .from(Board, 'board')
+      .leftJoinAndSelect('board.place', 'place')
+      .leftJoinAndSelect('board.user', 'user')
+      .orderBy('boardLikeCount', 'DESC')
+      .addOrderBy('board.createAt', 'DESC')
+      .limit(3)
+      .getMany();
+  }
+
   async findAll() {
     return await getConnection()
       .createQueryBuilder()
@@ -208,6 +221,7 @@ export class BoardService {
       .leftJoinAndSelect('boardSide.boardTags', 'boardTag')
       .leftJoinAndSelect('board.images', 'image')
       .leftJoinAndSelect('board.place', 'place')
+      .leftJoinAndSelect('board.user', 'user')
       .orderBy('boardTag.boardTagRefName', 'ASC')
       .where({ boardId });
 
@@ -305,6 +319,7 @@ export class BoardService {
       .leftJoinAndSelect('board.boardSides', 'boardSide')
       .leftJoinAndSelect('boardSide.boardTags', 'boardTag')
       .leftJoinAndSelect('board.place', 'place')
+      .leftJoinAndSelect('board.user', 'user')
       .take(10)
       .orderBy('board.createAt', 'DESC');
 
@@ -368,10 +383,9 @@ export class BoardService {
       .createQueryBuilder()
       .select('board')
       .from(Board, 'board')
-      .leftJoin('board.user', 'user')
       .leftJoinAndSelect('board.place', 'place')
       .leftJoinAndSelect('board.user', 'user')
-      .where('userNickname = :data', { data: userNickname })
+      .where('user.userNickname = :data', { data: userNickname })
       .orderBy('board.createAt', 'DESC')
       .getMany();
   }
