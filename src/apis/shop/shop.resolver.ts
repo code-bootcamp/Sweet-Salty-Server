@@ -6,8 +6,9 @@ import { updateShopInput } from './dto/updateShop.input';
 import { CurrentUser, ICurrentUser } from 'src/commons/auth/gql-user-param';
 import { GqlAuthAccessGuard } from 'src/commons/auth/gql-auth.guard';
 import { UseGuards } from '@nestjs/common';
-import { PaymentShopHistory } from '../paymentShopHistory/entities/paymentShopHistory.entity';
 import { GraphQLJSONObject } from 'graphql-type-json';
+import { User } from '../user/entities/user.entity';
+import { PaymentHistory } from '../paymentHistory/entities/paymentHistory.entity';
 
 @Resolver()
 export class ShopResolver {
@@ -43,11 +44,11 @@ export class ShopResolver {
   }
 
   @UseGuards(GqlAuthAccessGuard)
-  @Query(() => [PaymentShopHistory])
-  shopHistoryFindOne(
+  @Query(() => [PaymentHistory])
+  fetchPaymentHistory(
     @CurrentUser() currentUser: ICurrentUser, //
   ) {
-    return this.shopService.historyFindOne({ currentUser });
+    return this.shopService.findHistoryAll({ currentUser });
   }
 
   @UseGuards(GqlAuthAccessGuard)
@@ -75,15 +76,10 @@ export class ShopResolver {
   @UseGuards(GqlAuthAccessGuard)
   @Mutation(() => String)
   payShop(
-    @Args(`stock`) stock: number,
+    @Args({ name: 'stock', type: () => Int }) stock: number,
     @Args('shopId') shopId: string,
     @CurrentUser() currentUser: ICurrentUser,
   ) {
     return this.shopService.paymentShop({ shopId, currentUser, stock });
   }
-
-  //   @Mutation(() => Boolean)
-  //   restoreOne(@Args('productId') productId: string) {
-  //     return this.productService.restoreOne({ productId });
-  //   }
 }
