@@ -226,6 +226,7 @@ type Query {
   fetchShopSeller(seller: String!): JSONObject!
   fetchShops: [Shop!]!
   fetchShop(shopId: String!): [Shop!]!
+  realTimeShop: [Shop!]!
   shopHistoryFindOne: [PaymentShopHistory!]!
 }
 

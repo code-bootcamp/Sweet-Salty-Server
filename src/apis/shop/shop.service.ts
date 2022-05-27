@@ -126,6 +126,16 @@ export class ShopService {
       .getMany();
   }
 
+  async findRealTime({}) {
+    return await getConnection()
+      .createQueryBuilder()
+      .select('shop')
+      .from(Shop, 'shop')
+      .take(10)
+      .orderBy('shop.createAt', 'DESC')
+      .getMany();
+  }
+
   async historyFindOne({ currentUser }) {
     return this.PaymentHistoryRepository.find({
       userId: currentUser.userId,
