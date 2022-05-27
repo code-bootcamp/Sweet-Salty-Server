@@ -185,4 +185,17 @@ export class BoardResolver {
   ) {
     return this.boardService.delete({ boardId, currentUser });
   }
+
+  @Query(() => [Board])
+  fetchBoardTypeORMWithTags(
+    @Args('boardTagsInput') boardTagsInput: BoardTagsInput,
+    @Args({
+      name: 'category',
+      nullable: true,
+      type: () => BOARD_SUB_CATEGORY_NAME_ENUM,
+    })
+    category: BOARD_SUB_CATEGORY_NAME_ENUM,
+  ) {
+    return this.boardService.searchTags({ boardTagsInput, category });
+  }
 }

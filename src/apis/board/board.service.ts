@@ -5,7 +5,7 @@ import {
   ConflictException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { getConnection, Repository } from 'typeorm';
+import { Brackets, getConnection, Repository } from 'typeorm';
 import { ElasticsearchService } from '@nestjs/elasticsearch';
 import { Cache } from 'cache-manager';
 import { BoardSide } from '../boardSide/entities/boardSide.entity';
@@ -618,10 +618,10 @@ export class BoardService {
       userData.userId === boardData.user.userId ||
       userData.userState === true
     ) {
-      // await this.elasticsearchService.delete({
-      //   index: 'board',
-      //   id: boardId,
-      // });
+      await this.elasticsearchService.delete({
+        index: 'board',
+        id: boardId,
+      });
 
       const relationsData = await this.boardRepository.findOne({
         where: {
@@ -636,6 +636,61 @@ export class BoardService {
     } else {
       throw new ConflictException('작성자가 아닙니다!');
     }
+  }
+
+  async searchTags({ boardTagsInput, category }) {
+    // 리팩토링 필요함 원하는데로 로직이 돌아가지 않음
+    const { boardTagMenu, boardTagRegion, boardTagMood } = boardTagsInput;
+
+    console.log(boardTagMenu);
+
+    let Ids;
+    Ids = getConnection()
+      .createQueryBuilder()
+      .select('board')
+      .from(Board, 'board')
+      .leftJoinAndSelect('board.boardSides', 'boardSide')
+      .leftJoinAndSelect('boardSide.boardTags', 'boardTag')
+      .leftJoinAndSelect('board.place', 'place')
+      .leftJoinAndSelect('board.user', 'user')
+      .where('1 = 1')
+      .orderBy('board.createAt', 'DESC');
+
+    if (!boardTagRegion && !boardTagMood) {
+      await Ids.andWhere('boardTag.boardTagName = :menu', {
+        menu: boardTagMenu[0],
+      });
+    } else if (!boardTagRegion) {
+      await Ids.andWhere(
+        new Brackets((qb) => {
+          qb.where('boardTag.boardTagName = :menu', {
+            menu: boardTagMenu[0],
+          }).where('boardTag.boardTagName = :mood', {
+            mood: boardTagMood[0],
+          });
+        }),
+      );
+    } else if (!boardTagMood) {
+      await Ids.andWhere(
+        new Brackets((qb) => {
+          qb.where('boardTag.boardTagName = :menu', {
+            menu: boardTagMenu[0],
+          }).where('boardTag.boardTagName = :region', {
+            region: boardTagRegion[0],
+          });
+        }),
+      );
+    }
+
+    if (category) {
+      await Ids.andWhere('board.boardSubject = : subject', {
+        subject: category,
+      });
+    }
+
+    Ids = await Ids.getManyAndCount();
+    console.log(Ids);
+    return Ids[0];
   }
 }
 
