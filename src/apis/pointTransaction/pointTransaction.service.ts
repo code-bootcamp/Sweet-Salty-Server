@@ -73,15 +73,13 @@ export class PointTransactionService {
           userId: currentUser.userId,
         },
       );
-      console.log(currentUser);
-      console.log(pointTransaction);
 
       const user = await queryRunner.manager.findOne(
         User,
         { userEmail: currentUser.userEmail },
         { lock: { mode: 'pessimistic_write' } },
       );
-      console.log(user);
+
       await queryRunner.manager.update(
         User,
         { userEmail: currentUser.userEmail },

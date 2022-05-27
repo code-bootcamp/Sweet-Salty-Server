@@ -120,6 +120,7 @@ export class Board extends BaseEntity {
   deleteAt: Date;
 
   @ManyToOne((type) => User, (User) => User.boards)
+  @Field(() => User)
   @JoinColumn({ name: 'userId', referencedColumnName: 'userId' })
   user: User;
 
