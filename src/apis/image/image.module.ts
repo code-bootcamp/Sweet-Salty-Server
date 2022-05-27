@@ -4,6 +4,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { ImageResolver } from './image.resolver';
 import { ImageService } from './image.service';
 import { Image } from './entities/image.entity';
+import { ImageSubscriber } from './entities/image.subscriber';
 
 @Module({
   //
@@ -14,6 +15,6 @@ import { Image } from './entities/image.entity';
       maxRedirects: 5,
     }),
   ],
-  providers: [ImageResolver, ImageService],
+  providers: [ImageResolver, ImageService, ImageSubscriber],
 })
 export class ImageModule {}

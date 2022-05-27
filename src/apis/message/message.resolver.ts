@@ -58,6 +58,12 @@ export class MessageResolver {
 
   @UseGuards(GqlAuthAccessGuard)
   @Query(() => String)
+  fetchUnreadMessageCount(@CurrentUser() currentUser: ICurrentUser) {
+    return this.messageService.unreadCount({ currentUser });
+  }
+
+  @UseGuards(GqlAuthAccessGuard)
+  @Query(() => String)
   fetchSendMessagesCount(
     //
     @CurrentUser() currentUser: ICurrentUser,

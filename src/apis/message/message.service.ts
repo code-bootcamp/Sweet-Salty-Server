@@ -90,6 +90,22 @@ export class MessageService {
     }
   }
 
+  async unreadCount({ currentUser }) {
+    return await getConnection()
+      .createQueryBuilder()
+      .from(Message, 'message')
+      .where('message.messageOwner = :owner', {
+        owner: currentUser.userId,
+      })
+      .andWhere('message.messageState = :state', {
+        state: 'false',
+      })
+      .andWhere('message.sendReceived = :type', {
+        type: 'RECEIVED',
+      })
+      .getCount();
+  }
+
   async readReceived({ messageInfoId, currentUser }) {
     const result = await this.messageRepository.findOne({
       where: {

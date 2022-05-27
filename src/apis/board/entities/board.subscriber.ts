@@ -2,9 +2,6 @@ import {
   EventSubscriber,
   EntitySubscriberInterface,
   Connection,
-  UpdateEvent,
-  getConnection,
-  createQueryBuilder,
   InsertEvent,
 } from 'typeorm';
 import { SoftRemoveEvent } from 'typeorm/subscriber/event/SoftRemoveEvent';

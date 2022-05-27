@@ -105,7 +105,7 @@ export class BoardResolver {
   }
 
   @UseGuards(GqlAuthAccessGuard)
-  @Query(() => Board)
+  @Query(() => [Board])
   fetchPickedBoards(@CurrentUser() currentUser: ICurrentUser) {
     return this.boardService.findLikeBoard({ currentUser });
   }
@@ -113,6 +113,14 @@ export class BoardResolver {
   @Query(() => [Board])
   fetchBoardsOfUser(@Args('userNickname') userNickname: string) {
     return this.boardService.findUserWithBoard({ userNickname });
+  }
+
+  @Query(() => [Board])
+  fetchRecentBoards(
+    @Args({ name: 'category', type: () => BOARD_SUB_CATEGORY_NAME_ENUM })
+    category: BOARD_SUB_CATEGORY_NAME_ENUM,
+  ) {
+    return this.boardService.findRecent({ category });
   }
 
   @UseGuards(GqlAuthAccessGuard)
@@ -138,12 +146,17 @@ export class BoardResolver {
     });
   }
 
+  @UseGuards(GqlAuthAccessGuard)
   @Mutation(() => Board)
   createBoardReq(
     @Args('createBoardWhitReqInput')
     createBoardWhitReqInput: CreateBoardWithReqInput,
+    @CurrentUser() currentUser: ICurrentUser,
   ) {
-    return;
+    return this.boardService.createReq({
+      createBoardWhitReqInput,
+      currentUser,
+    });
   }
 
   @Mutation(() => Board)

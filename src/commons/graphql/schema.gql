@@ -96,6 +96,7 @@ type Board {
   boardSubject: String!
   createAt: DateTime!
   updateAt: DateTime!
+  user: User!
   subCategory: SubCategory!
   place: Place!
   boardLikes: [BoardLike!]!
@@ -196,8 +197,9 @@ type Query {
   fetchAgeGroupBoards(ageGroup: AGE_GROUP_ENUM!, page: Int!): [Board!]!
   fetchAgeGroupWithGenderBoards(gender: GENDER_ENUM!, ageGroup: AGE_GROUP_ENUM!, page: Int!): [Board!]!
   fetchBoardBest(category: BOARD_SUB_CATEGORY_NAME_ENUM!): [Board!]!
-  fetchPickedBoards: Board!
+  fetchPickedBoards: [Board!]!
   fetchBoardsOfUser(userNickname: String!): [Board!]!
+  fetchRecentBoards(category: BOARD_SUB_CATEGORY_NAME_ENUM!): [Board!]!
   fetchBoardCount: String!
   test: String!
   follow(followerNickname: String!): String!
@@ -217,6 +219,7 @@ type Query {
   fetchReceivedMessagesCount: String!
   fetchSendMessages(page: Int): [SendMessage!]!
   fetchSendMessage(messageInfoId: String!): SendMessage!
+  fetchUnreadMessageCount: String!
   fetchSendMessagesCount: String!
   fetchComments(boardId: String!): [JSONObject!]!
   fetchShopTitles(title: String!): JSONObject!
@@ -329,11 +332,8 @@ input BoardTagsInput {
 
 input CreateBoardWithReqInput {
   boardTitle: String!
-  boardSugar: String
-  boardSalt: String
   boardContents: String!
   subCategoryName: BOARD_SUB_CATEGORY_NAME_ENUM!
-  place: PlaceInput
 }
 
 input UpdateBoardInput {

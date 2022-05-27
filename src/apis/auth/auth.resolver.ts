@@ -80,7 +80,6 @@ export class AuthResolver {
 
     const access_time = new Date(access_decoded['exp'] * 1000);
 
-    console.log(access_decoded);
     const access_end = Math.floor(
       (access_time.getTime() - now.getTime()) / 1000,
     );
@@ -88,14 +87,11 @@ export class AuthResolver {
     const refresh = context.req.headers.cookie.replace('refreshToken=', '');
 
     const refresh_decoded = this.jwtService.decode(refresh);
-    console.log(refresh_decoded);
+
     const refresh_time = new Date(refresh_decoded['exp'] * 1000);
     const refresh_end = Math.floor(
       (refresh_time.getTime() - now.getTime()) / 1000,
     );
-
-    console.log(access_end);
-    console.log(refresh_end);
 
     try {
       jwt.verify(access, this.config.get('ACCESS'));

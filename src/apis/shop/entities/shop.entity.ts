@@ -56,6 +56,7 @@ export class Shop extends BaseEntity {
   thumbnail: string;
 
   @ManyToOne((type) => Place, (Place) => Place.shops)
+  @JoinColumn({ name: 'placeId', referencedColumnName: 'placeId' })
   @Field(() => Place)
   place: Place;
 
