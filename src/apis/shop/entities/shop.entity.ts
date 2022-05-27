@@ -1,5 +1,6 @@
 import { Field, Float, Int, ObjectType } from '@nestjs/graphql';
 import { platform } from 'os';
+import { Image } from 'src/apis/image/entities/image.entity';
 import { Place } from 'src/apis/place/entities/place.entity';
 import { User } from 'src/apis/user/entities/user.entity';
 import {
@@ -10,6 +11,7 @@ import {
   Entity,
   JoinColumn,
   ManyToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
@@ -67,4 +69,8 @@ export class Shop extends BaseEntity {
 
   @DeleteDateColumn()
   deleteAt: Date;
+
+  @OneToMany((type) => Image, (Image) => Image.shop)
+  @Field(() => Image)
+  image: Image;
 }

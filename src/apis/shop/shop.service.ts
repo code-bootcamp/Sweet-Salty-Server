@@ -8,6 +8,7 @@ import { ElasticsearchService } from '@nestjs/elasticsearch';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Cache } from 'cache-manager';
 import { Connection, getConnection, Repository } from 'typeorm';
+import { Image } from '../image/entities/image.entity';
 import { PaymentShopHistory } from '../paymentShopHistory/entities/paymentShopHistory.entity';
 import { Place } from '../place/entities/place.entity';
 import { User } from '../user/entities/user.entity';
@@ -26,6 +27,9 @@ export class ShopService {
 
     @InjectRepository(PaymentShopHistory)
     private readonly PaymentHistoryRepository: Repository<PaymentShopHistory>,
+
+    @InjectRepository(Image)
+    private readonly ImageRepository: Repository<Image>,
 
     @Inject(CACHE_MANAGER)
     private readonly cacheManager: Cache,
@@ -111,6 +115,17 @@ export class ShopService {
       .getMany();
   }
 
+  async findOne({ shopId }) {
+    return await getConnection()
+      .createQueryBuilder()
+      .select('shop')
+      .from(Shop, 'shop')
+      .leftJoinAndSelect('shop.place', 'place')
+      .where({ shopId })
+      .orderBy('createAt', 'DESC')
+      .getMany();
+  }
+
   async historyFindOne({ currentUser }) {
     return this.PaymentHistoryRepository.find({
       userId: currentUser.userId,
@@ -144,6 +159,11 @@ export class ShopService {
       await this.shopRepository.save({
         ...shop,
         place: checkPlaceName,
+      });
+
+      await this.ImageRepository.save({
+        url: shop.thumbnail,
+        shopId: shop.shopId,
       });
 
       return '등록 완료';
