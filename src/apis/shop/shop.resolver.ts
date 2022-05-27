@@ -30,6 +30,13 @@ export class ShopResolver {
     return this.shopService.findAll();
   }
 
+  @Query(() => [Shop])
+  fetchShop(
+    @Args('shopId') shopId: string, //
+  ) {
+    return this.shopService.findOne({ shopId });
+  }
+
   @UseGuards(GqlAuthAccessGuard)
   @Query(() => [PaymentShopHistory])
   shopHistoryFindOne(

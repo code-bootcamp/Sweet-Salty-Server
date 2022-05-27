@@ -1,6 +1,7 @@
 import { Field, ObjectType } from '@nestjs/graphql';
 import { Board } from 'src/apis/board/entities/board.entity';
 import { Notice } from 'src/apis/notice/entities/notice.entity';
+import { Shop } from 'src/apis/shop/entities/shop.entity';
 import {
   Column,
   CreateDateColumn,
@@ -36,4 +37,8 @@ export class Image {
   @ManyToOne((type) => Notice, (Notice) => Notice.images)
   @JoinColumn({ name: 'noticeId', referencedColumnName: 'noticeId' })
   notice: Notice;
+
+  @ManyToOne((type) => Shop, (Shop) => Shop.image)
+  @JoinColumn({ name: 'shopId', referencedColumnName: 'shopId' })
+  shop: Shop;
 }

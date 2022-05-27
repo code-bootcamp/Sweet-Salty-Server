@@ -50,10 +50,13 @@ A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date
 """
 scalar DateTime
 
-type Image {
-  imageId: String!
-  url: String!
-  createAt: DateTime!
+type Place {
+  placeId: String!
+  placeName: String!
+  placeAddress: String!
+  placeUrl: String!
+  lat: String!
+  lng: String!
 }
 
 type Shop {
@@ -69,15 +72,13 @@ type Shop {
   place: Place!
   createAt: DateTime!
   updateAt: DateTime!
+  image: Image!
 }
 
-type Place {
-  placeId: String!
-  placeName: String!
-  placeAddress: String!
-  placeUrl: String!
-  lat: String!
-  lng: String!
+type Image {
+  imageId: String!
+  url: String!
+  createAt: DateTime!
 }
 
 type Board {
@@ -221,6 +222,7 @@ type Query {
   fetchShopTitles(title: String!): JSONObject!
   fetchShopSeller(seller: String!): JSONObject!
   fetchShops: [Shop!]!
+  fetchShop(shopId: String!): [Shop!]!
   shopHistoryFindOne: [PaymentShopHistory!]!
 }
 
