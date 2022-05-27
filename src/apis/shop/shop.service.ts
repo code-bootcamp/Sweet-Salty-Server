@@ -7,9 +7,14 @@ import {
 import { ElasticsearchService } from '@nestjs/elasticsearch';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Cache } from 'cache-manager';
-import { Connection, getConnection, Repository } from 'typeorm';
+import {
+  Connection,
+  getConnection,
+  Repository,
+  TransactionRepository,
+} from 'typeorm';
 import { Image } from '../image/entities/image.entity';
-import { PaymentShopHistory } from '../paymentShopHistory/entities/paymentShopHistory.entity';
+import { PaymentHistory } from '../paymentHistory/entities/paymentHistory.entity';
 import { Place } from '../place/entities/place.entity';
 import { User } from '../user/entities/user.entity';
 import { Shop } from './entities/shop.entity';
@@ -24,9 +29,6 @@ export class ShopService {
 
     @InjectRepository(User)
     private readonly UserRepository: Repository<User>,
-
-    @InjectRepository(PaymentShopHistory)
-    private readonly PaymentHistoryRepository: Repository<PaymentShopHistory>,
 
     @InjectRepository(Image)
     private readonly ImageRepository: Repository<Image>,
@@ -115,6 +117,16 @@ export class ShopService {
       .getMany();
   }
 
+  async findHistoryAll({ currentUser }) {
+    return await getConnection()
+      .createQueryBuilder()
+      .select('paymentHistory')
+      .from(PaymentHistory, 'paymentHistory')
+      .where({ userId: currentUser.userId })
+      .orderBy('createdAt', 'DESC')
+      .getMany();
+  }
+
   async findOne({ shopId }) {
     return await getConnection()
       .createQueryBuilder()
@@ -134,12 +146,6 @@ export class ShopService {
       .take(10)
       .orderBy('shop.createAt', 'DESC')
       .getMany();
-  }
-
-  async historyFindOne({ currentUser }) {
-    return this.PaymentHistoryRepository.find({
-      userId: currentUser.userId,
-    });
   }
 
   async create({ createShopInput, currentUser }) {
@@ -227,29 +233,59 @@ export class ShopService {
     const queryRunner = await this.connection.createQueryRunner();
     await queryRunner.connect();
 
+    // await this.PaymentHistoryRepository.save({
+    //   historyShopPrice: price,
+    //   historyShopProductName: productName.shopProductName,
+    //   historyShopSeller: productName.shopSeller,
+    //   historyShopStock: stock,
+    //   userId: currentUser.userId,
+    // });
+
+    const currentPrice = userPoint.userPoint - price;
+    const currentStock = productName.shopStock - stock;
+
     await queryRunner.startTransaction('SERIALIZABLE');
     try {
-      await getConnection()
-        .createQueryBuilder()
-        .update(User)
-        .set({ userPoint: () => `userPoint - ${price}` })
-        .where({ userId: currentUser.userId });
+      await queryRunner.manager.update(
+        User,
+        { userId: currentUser.userId },
+        { userPoint: currentPrice },
+      );
 
-      await getConnection()
-        .createQueryBuilder()
-        .update(Shop)
-        .set({ shopStock: () => `shopStock - ${stock}` })
-        .where({ shopId });
+      await queryRunner.manager.update(
+        Shop,
+        { shopId: productName.shopId },
+        { shopStock: currentStock },
+      );
 
-      await this.PaymentHistoryRepository.save({
-        historyShopPrice: price,
-        historyShopProductName: productName.shopProductName,
-        historyShopSeller: productName.shopSeller,
-        historyShopStock: stock,
+      const result = await queryRunner.manager.save(PaymentHistory, {
+        payStatus: '상품 결제',
         userId: currentUser.userId,
+        paymentAmount: currentPrice,
+        stock,
+        productStatus: productName.shopProductName,
+        supplier: productName.shopSeller,
       });
 
+      //   )
+      // await getConnection()
+      //   .createQueryBuilder()
+      //   .update(User)
+      //   .set({ userPoint: () => `userPoint - ${price}` })
+      //   .where({ userId: currentUser.userId })
+      //   .execute();
+
+      // await getConnection()
+      //   .createQueryBuilder()
+      //   .update(Shop)
+      //   .set({ shopStock: () => `shopStock - ${stock}` })
+      //   .where({ shopId })
+      //   .execute();
+
+      // await queryRunner.manager.save(currentHistory);
+
       await queryRunner.commitTransaction();
+      return result.paymentHistoryId;
     } catch (error) {
       await queryRunner.rollbackTransaction();
     } finally {

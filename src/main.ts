@@ -25,7 +25,6 @@ import { CommentLike } from './apis/commentLike/entities/commentLike.entity';
 import { Message } from './apis/message/entitis/message.entity';
 import { MessageInfo } from './apis/messageInfo/entities/messageInfo.entity';
 import { PaymentHistory } from './apis/paymentHistory/entities/paymentHistory.entity';
-import { PaymentShopHistory } from './apis/paymentShopHistory/entities/paymentShopHistory.entity';
 import { Shop } from './apis/shop/entities/shop.entity';
 
 import { SubCategory } from './apis/subCategory/entities/subCategory.entity';
@@ -62,7 +61,6 @@ async function bootstrap() {
       MessageInfo,
       Notice,
       PaymentHistory,
-      PaymentShopHistory,
       Shop,
       Place,
       SubCategory,

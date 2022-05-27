@@ -16,17 +16,32 @@ export class PaymentHistory extends BaseEntity {
   @Field(() => String)
   paymentHistoryId: string;
 
-  @Column()
-  @Field(() => Int)
-  agoPaymentAmount: number;
+  @Column({ default: '' })
+  @Field(() => String)
+  payStatus: string;
 
-  @Column()
-  @Field(() => Int)
-  afterPaymentAmount: number;
+  @Column({ default: '' })
+  @Field(() => String)
+  productStatus: string;
+
+  @Column({ default: '카카오페이' })
+  @Field(() => String)
+  supplier: string;
 
   @Column()
   @Field(() => Int)
   paymentAmount: number;
+
+  @Column({ default: '' })
+  impUid: string;
+
+  @Column({ default: 0 })
+  @Field(() => Int)
+  stock: number;
+
+  @Column({ default: '' })
+  @Field(() => String)
+  barcode: string;
 
   @CreateDateColumn()
   @Field(() => Date)

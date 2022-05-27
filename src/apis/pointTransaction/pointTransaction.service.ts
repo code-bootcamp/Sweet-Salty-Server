@@ -87,10 +87,10 @@ export class PointTransactionService {
       );
 
       await queryRunner.manager.save(PaymentHistory, {
+        payStatus: '포인트 충전',
         userId: currentUser.userId,
-        agoPaymentAmount: user.userPoint,
-        afterPaymentAmount: user.userPoint + amount,
         paymentAmount: amount,
+        impUid,
       });
 
       await queryRunner.commitTransaction();
@@ -170,7 +170,6 @@ export class PointTransactionService {
           { userEmail: currentUser.userEmail },
           { userPoint: userdata.userPoint - Payment_data.checksum },
         );
-        console.log('aaa');
         await queryRunner.manager.save(PointTransaction, {
           impUid,
           amount: -Payment_data.checksum,
@@ -204,10 +203,10 @@ export class PointTransactionService {
       }
 
       await queryRunner.manager.save(PaymentHistory, {
+        payStatus: '포인트 환불',
         userId: currentUser.userId,
-        agoPaymentAmount: userdata.userPoint,
-        afterPaymentAmount: userdata.userPoint - Payment_data.checksum,
-        paymentAmount: Payment_data.checksum,
+        paymentAmount: amount,
+        impUid,
       });
 
       await queryRunner.commitTransaction();

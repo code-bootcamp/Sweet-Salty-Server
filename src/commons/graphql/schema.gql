@@ -138,6 +138,18 @@ type Comment {
   user: User!
 }
 
+type PaymentHistory {
+  paymentHistoryId: String!
+  payStatus: String!
+  productStatus: String!
+  supplier: String!
+  paymentAmount: Int!
+  stock: Int!
+  barcode: String!
+  createdAt: DateTime!
+  userId: User!
+}
+
 type PointTransaction {
   id: String!
   impUid: String
@@ -173,16 +185,6 @@ type ReceivedMessage {
   messageState: Boolean!
   messageInfo: MessageInfo!
   sendAt: DateTime!
-}
-
-type PaymentShopHistory {
-  paymentShopHistoryId: String!
-  historyShopProductName: String!
-  historyShopSeller: String!
-  historyShopPrice: Float!
-  historyShopStock: Float!
-  createdAt: DateTime!
-  userId: User!
 }
 
 type Query {
@@ -226,9 +228,9 @@ type Query {
   fetchShopTitles(title: String!): JSONObject!
   fetchShopSeller(seller: String!): JSONObject!
   fetchShops: [Shop!]!
-  fetchShop(shopId: String!): [Shop!]!
+  fetchShop(shopId: String!): Shop!
   realTimeShop: [Shop!]!
-  shopHistoryFindOne: [PaymentShopHistory!]!
+  fetchPaymentHistory: [PaymentHistory!]!
 }
 
 """
@@ -299,9 +301,9 @@ type Mutation {
   createCommentLike(commentId: String!): String!
   createShop(createShopInput: CreateShopInput!): String!
   updateShop(shopId: String!, updateShopInput: updateShopInput!): Shop!
-  payShop(stock: Float!, shopId: String!): String!
-  createPointTransaction(impUid: String!, amount: Float!): PointTransaction!
-  cancelPointTransaction(impUid: String!, amount: Float!, reason: String!): PointTransaction!
+  payShop(stock: Int!, shopId: String!): String!
+  createPointTransaction(impUid: String!, amount: Int!): PointTransaction!
+  cancelPointTransaction(impUid: String!, amount: Int!, reason: String!): PointTransaction!
 }
 
 input CreateTagInput {
