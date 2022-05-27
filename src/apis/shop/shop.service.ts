@@ -123,7 +123,7 @@ export class ShopService {
       .leftJoinAndSelect('shop.place', 'place')
       .where({ shopId })
       .orderBy('createAt', 'DESC')
-      .getMany();
+      .getOne();
   }
 
   async findRealTime({}) {

@@ -30,7 +30,7 @@ export class ShopResolver {
     return this.shopService.findAll();
   }
 
-  @Query(() => [Shop])
+  @Query(() => Shop)
   fetchShop(
     @Args('shopId') shopId: string, //
   ) {
