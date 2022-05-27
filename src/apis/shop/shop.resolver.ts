@@ -37,6 +37,11 @@ export class ShopResolver {
     return this.shopService.findOne({ shopId });
   }
 
+  @Query(() => [Shop])
+  realTimeShop() {
+    return this.shopService.findRealTime({});
+  }
+
   @UseGuards(GqlAuthAccessGuard)
   @Query(() => [PaymentShopHistory])
   shopHistoryFindOne(
