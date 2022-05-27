@@ -15,6 +15,6 @@ import { ImageSubscriber } from './entities/image.subscriber';
       maxRedirects: 5,
     }),
   ],
-  providers: [ImageResolver, ImageService, ImageSubscriber],
+  providers: [ImageResolver, ImageService],
 })
 export class ImageModule {}
