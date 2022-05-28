@@ -30,6 +30,15 @@ export class BoardService {
     private readonly cacheManager: Cache,
   ) {}
 
+  // qb = getConnection()
+  //   .createQueryBuilder()
+  //   .select('board')
+  //   .from(Board, 'board')
+  //   .leftJoinAndSelect('board.subCategory', 'subCategory')
+  //   .leftJoinAndSelect('subCategory.topCategory', 'topCategory')
+  //   .leftJoinAndSelect('board.place', 'place')
+  //   .leftJoinAndSelect('board.user', 'user');
+
   async test({ title }) {
     return await getConnection()
       .createQueryBuilder()
@@ -161,40 +170,41 @@ export class BoardService {
       .select('board')
       .from(Board, 'board')
       .leftJoinAndSelect('board.place', 'place')
+      .leftJoinAndSelect('board.user', 'user')
       .where(
         `board.createAt BETWEEN '${start.toISOString()}' AND '${end.toISOString()}'`,
       );
 
-    if (category === 'VISITED' || 'REVIEW') {
+    if (category === ('VISITED' || 'REVIEW')) {
       return await qb
         .andWhere({ boardSubject: 'VISITED' })
         .orWhere({ boardSubject: 'REVIEW' })
         .orderBy('boardLikeCount', 'DESC')
-        .addOrderBy('createAt', 'DESC')
-        .limit(3)
-        .getMany();
-    } else {
-      return await qb
-        .andWhere({ boardSubject: category })
-        .orderBy('boardLikeCount', 'DESC')
-        .addOrderBy('createAt', 'DESC')
+        .addOrderBy('board.createAt', 'DESC')
         .limit(3)
         .getMany();
     }
-  }
 
-  async best() {
-    return await getConnection()
-      .createQueryBuilder()
-      .select('board')
-      .from(Board, 'board')
-      .leftJoinAndSelect('board.place', 'place')
-      .leftJoinAndSelect('board.user', 'user')
+    return await qb
+      .andWhere({ boardSubject: category })
       .orderBy('boardLikeCount', 'DESC')
       .addOrderBy('board.createAt', 'DESC')
       .limit(3)
       .getMany();
   }
+
+  // async best() {
+  //   return await getConnection()
+  //     .createQueryBuilder()
+  //     .select('board')
+  //     .from(Board, 'board')
+  //     .leftJoinAndSelect('board.place', 'place')
+  //     .leftJoinAndSelect('board.user', 'user')
+  //     .orderBy('boardLikeCount', 'DESC')
+  //     .addOrderBy('board.createAt', 'DESC')
+  //     .limit(3)
+  //     .getMany();
+  // }
 
   async findAll() {
     return await getConnection()
@@ -205,6 +215,7 @@ export class BoardService {
       .leftJoinAndSelect('board.boardSides', 'boardSide')
       .leftJoinAndSelect('boardSide.boardTags', 'boardTag')
       .leftJoinAndSelect('board.place', 'place')
+      .leftJoinAndSelect('board.user', 'user')
       .orderBy('board.createAt', 'DESC')
       .getMany();
   }
@@ -267,7 +278,7 @@ export class BoardService {
   }
 
   async findPreferList({ currentUser }) {
-    const tag = await getConnection()
+    const data = await getConnection()
       .createQueryBuilder()
       .select('preferMenu')
       .from(PreferMenu, 'preferMenu')
@@ -275,18 +286,52 @@ export class BoardService {
       .where({ user: currentUser.userId })
       .getMany();
 
-    return await getConnection()
+    const tag = data.reduce((acc, cur) => {
+      return [...acc, cur.boardTag.boardTagName];
+    }, []);
+
+    const qb = getConnection()
       .createQueryBuilder()
       .select('board')
       .from(Board, 'board')
-      .leftJoinAndSelect('board.boardSides', 'boardSide')
-      .leftJoinAndSelect('boardSide.boardTags', 'boardTag')
+      .leftJoin('board.boardSides', 'boardSide')
+      .leftJoin('boardSide.boardTags', 'boardTag')
+      .leftJoinAndSelect('board.place', 'place')
+      .leftJoinAndSelect('board.user', 'user')
+      .take(10)
+      .orderBy('board.boardLikeCount', 'DESC')
+      .addOrderBy('board.createAt', 'DESC');
+
+    if (tag.length === 1) {
+      return await qb
+        .where('boardTag.boardTagName = :data', {
+          data: tag[0],
+        })
+        .getMany();
+    }
+
+    if (tag.length === 2) {
+      return await qb
+        .where('boardTag.boardTagName = :data', {
+          data: tag[0],
+        })
+        .orWhere('boardTag.boardTagName = :data1', {
+          data1: tag[1],
+        })
+        .getMany();
+    }
+
+    return await qb
       .where('boardTag.boardTagName = :data', {
-        data: '한식',
+        data: tag[0],
+      })
+      .orWhere('boardTag.boardTagName = :data1', {
+        data1: tag[1],
+      })
+      .orWhere('boardTag.boardTagName = :data2', {
+        data2: tag[2],
       })
       .getMany();
-
-    console.log(tag);
   }
 
   async findPickList({ category }) {
@@ -297,6 +342,7 @@ export class BoardService {
       .leftJoinAndSelect('board.subCategory', 'subCategory')
       .leftJoinAndSelect('board.boardSides', 'boardSide')
       .leftJoinAndSelect('boardSide.boardTags', 'boardTag')
+      .leftJoinAndSelect('board.user', 'user')
       .leftJoinAndSelect('board.place', 'place');
 
     if (category === 'REVIEW') {
@@ -315,7 +361,7 @@ export class BoardService {
         .orWhere('subCategoryName = :category2', {
           category2: 'VISITED',
         })
-        .orderBy('createAt', 'DESC')
+        .orderBy('board.createAt', 'DESC')
         .getMany();
     }
     // return await getConnection()
@@ -330,7 +376,7 @@ export class BoardService {
       .where('subCategoryName = :category', {
         category: category,
       })
-      .orderBy('createAt', 'DESC')
+      .orderBy('board.createAt', 'DESC')
       .getMany();
   }
 
@@ -349,11 +395,17 @@ export class BoardService {
 
     if (category === 'REVIEW') {
       return await qb.where({ boardSubject: 'REVIEW' }).getMany();
-    } else if ((category = 'VISITED')) {
+    }
+
+    if (category === 'VISITED') {
       return await qb.where({ boardSubject: 'VISITED' }).getMany();
-    } else if ((category = 'REQUEST')) {
+    }
+
+    if (category === 'REQUEST') {
       return await qb.where({ boardSubject: 'REQUEST' }).getMany();
-    } else {
+    }
+
+    if (category === 'TASTER') {
       return await qb.where({ boardSubject: 'TASTER' }).getMany();
     }
   }
@@ -420,7 +472,7 @@ export class BoardService {
   //     .createQueryBuilder()
   //     .select('board')
   //     .from(Board, 'board')
-  //     .leftJoinAndSelect('board.boardSides', 'boardSide')
+  //     .leftJoinAndSelect('board.this', 'boardSide')
   //     .leftJoinAndSelect('boardSide.boardTags', 'boardTag')
   //     .where('boardTag.boardTagName = :boardTagName1', {
   //       boardTagName1: '닭고기',

@@ -34,12 +34,10 @@ export class AuthController {
     });
 
     if (user) {
-      this.authService.social_login({ user, res });
-
-      console.log(res);
+      return this.authService.social_login({ user, res });
     } else {
       const newUser = await this.userService.socialCreate({ user: req.user });
-      this.authService.social_login({ user: newUser, res });
+      return this.authService.social_login({ user: newUser, res });
     }
   }
 

@@ -104,19 +104,25 @@ export class BoardResolver {
     return this.boardService.categoryBest({ category });
   }
 
-  @Query(() => [Board])
-  fetchBoardsBest() {
-    return this.boardService.best();
-  }
+  // @Query(() => [Board])
+  // fetchBoardsBest() {
+  //   return this.boardService.best();
+  // }
 
   @UseGuards(GqlAuthAccessGuard)
   @Query(() => [Board])
-  fetchPickedBoards(@CurrentUser() currentUser: ICurrentUser) {
+  fetchPickedBoards(
+    //
+    @CurrentUser() currentUser: ICurrentUser,
+  ) {
     return this.boardService.findLikeBoard({ currentUser });
   }
 
   @Query(() => [Board])
-  fetchBoardsOfUser(@Args('userNickname') userNickname: string) {
+  fetchBoardsOfUser(
+    //
+    @Args('userNickname') userNickname: string,
+  ) {
     return this.boardService.findUserWithBoard({ userNickname });
   }
 
