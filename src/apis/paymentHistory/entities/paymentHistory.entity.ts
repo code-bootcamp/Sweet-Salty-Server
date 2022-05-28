@@ -28,7 +28,7 @@ export class PaymentHistory extends BaseEntity {
   @Field(() => String)
   supplier: string;
 
-  @Column()
+  @Column({ default: 0 })
   @Field(() => Int)
   paymentAmount: number;
 
@@ -42,6 +42,10 @@ export class PaymentHistory extends BaseEntity {
   @Column({ default: '' })
   @Field(() => String)
   barcode: string;
+
+  @Column({ default: false })
+  @Field(() => Boolean)
+  status: boolean;
 
   @CreateDateColumn()
   @Field(() => Date)

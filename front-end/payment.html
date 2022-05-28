@@ -21,14 +21,14 @@
         const reason = document.getElementById('reason').value;
 
         const data = await axios.post(
-          'http://localhost:3000/graphql',
+          'https://project08.site/graphql',
           {
             query: `mutation {cancelPointTransaction(impUid: "${impUid}", amount: ${amount}, reason:"${reason}") {id}}`,
           },
           {
             headers: {
               authorization:
-                'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyRW1haWwiOiJiQGEuY29tIiwiaWF0IjoxNjUzNjU0NDU3LCJleHAiOjE2NTQ4NjQwNTd9.Pr0qqqr1aLOZ4hwBvJdKyQHM2UInaz8FodQ5gEtvPRQ',
+                'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyRW1haWwiOiJybGFxaGRsc0B0ZXN0LmNvbSIsImlhdCI6MTY1MzcyNTI5NCwiZXhwIjoxNjU0OTM0ODk0fQ.1XevjKkZLYPzO2Y0VR4dnpeYb11SrcVR-Qp412FwJ-4',
             },
           },
         );
@@ -54,7 +54,7 @@
           async function (rsp) {
             if (rsp.success) {
               const data = await axios.post(
-                'http://localhost:3000/graphql',
+                'https://project08.site/graphql',
                 {
                   query: `
                           mutation {
@@ -67,7 +67,7 @@
                 {
                   headers: {
                     Authorization:
-                      'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyRW1haWwiOiJiQGEuY29tIiwiaWF0IjoxNjUzNjU0NDU3LCJleHAiOjE2NTQ4NjQwNTd9.Pr0qqqr1aLOZ4hwBvJdKyQHM2UInaz8FodQ5gEtvPRQ',
+                      'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyRW1haWwiOiJybGFxaGRsc0B0ZXN0LmNvbSIsImlhdCI6MTY1MzcyNDg5MiwiZXhwIjoxNjU0OTM0NDkyfQ.0_7cg4YKHKGRptSdyMA-St0ZI9PifJvrhSufYyZSFWo',
                   },
                 },
               );
