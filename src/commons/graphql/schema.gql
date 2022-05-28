@@ -189,6 +189,9 @@ type ReceivedMessage {
 
 type Query {
   fetchTags(refName: String!): [BoardTag!]!
+  overlapEmail(email: String!): Boolean!
+  overlapNickname(nickname: String!): Boolean!
+  overlapPassword(password: String!): Boolean!
   fetchBoardTitle(title: String!): JSONObject!
   fetchBoardContents(contents: String!): JSONObject!
   fetchBoardWithTags(tags: [String!]!): JSONObject!
@@ -203,9 +206,10 @@ type Query {
   fetchPickedBoards: [Board!]!
   fetchBoardsOfUser(userNickname: String!): [Board!]!
   fetchRecentBoards(category: BOARD_SUB_CATEGORY_NAME_ENUM!): [Board!]!
+  fetchPreferBoards: [Board!]!
   fetchBoardCount: String!
   fetchBoardTypeORMWithTags(boardTagsInput: BoardTagsInput!, category: BOARD_SUB_CATEGORY_NAME_ENUM): [Board!]!
-  test: String!
+  getBarcode: String!
   follow(followerNickname: String!): String!
   followCount(followerNickname: String!): [String!]!
   fetchUser(userEmail: String!): User!

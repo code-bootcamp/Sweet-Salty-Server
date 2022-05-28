@@ -76,22 +76,38 @@ export class ImageService {
       projectId: this.config.get('STORAGE_PROJECT_ID'),
     }).bucket(this.config.get('STORAGE_BUCKET'));
 
+    const random = String(Math.floor(Math.random() * 10 ** 12)).padStart(
+      12,
+      '0',
+    );
+    const textNumber = random.toString().replace(/\B(?=(\d{4})+(?!\d))/g, ' ');
+
     const barcodeImg = await this.httpService
       .get('https://bwipjs-api.metafloor.com/', {
         params: {
           bcid: 'code128',
-          text: '12612 2385 12358 123 ',
+          text: textNumber,
           scale: 3,
           includetext: true,
           textxalign: 'center',
-          paddingbottom: '20',
           backgroundcolor: 'FFFFFF',
         },
       })
       .toPromise();
 
     const url = barcodeImg.request.res.responseUrl;
-    got.stream(url).pipe(storage.file('.webp').createWriteStream());
+
+    const data = await new Promise((resolve) => {
+      const uuid = uuidv4();
+      got
+        .stream(url)
+        .pipe(storage.file(uuid + '.jpg').createWriteStream())
+        .on('finish', () =>
+          resolve(`${process.env.STORAGE_BUCKET}/${uuid}.jpg`),
+        );
+    });
+
+    return data;
   }
 
   // async delete({ bucketName, fileName }) {

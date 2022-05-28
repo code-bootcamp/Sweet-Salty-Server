@@ -16,6 +16,7 @@ import { Board } from './entities/board.entity';
 
 import { Place } from '../place/entities/place.entity';
 import { Image } from '../image/entities/image.entity';
+import { PreferMenu } from '../preferMenu/entities/preferMenu.entity';
 
 @Injectable()
 export class BoardService {
@@ -263,6 +264,29 @@ export class BoardService {
       //   .where({ boardId })
       return await qb.getOne();
     }
+  }
+
+  async findPreferList({ currentUser }) {
+    const tag = await getConnection()
+      .createQueryBuilder()
+      .select('preferMenu')
+      .from(PreferMenu, 'preferMenu')
+      .leftJoinAndSelect('preferMenu.boardTag', 'boardTag')
+      .where({ user: currentUser.userId })
+      .getMany();
+
+    return await getConnection()
+      .createQueryBuilder()
+      .select('board')
+      .from(Board, 'board')
+      .leftJoinAndSelect('board.boardSides', 'boardSide')
+      .leftJoinAndSelect('boardSide.boardTags', 'boardTag')
+      .where('boardTag.boardTagName = :data', {
+        data: '한식',
+      })
+      .getMany();
+
+    console.log(tag);
   }
 
   async findPickList({ category }) {

@@ -1,9 +1,18 @@
-import { Injectable } from '@nestjs/common';
+import {
+  Injectable,
+  UnauthorizedException,
+  UnprocessableEntityException,
+} from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import { HttpService } from '@nestjs/axios';
 import { Cache } from 'cache-manager';
 import { CACHE_MANAGER, Inject } from '@nestjs/common';
+import { User } from '../user/entities/user.entity';
+import { getConnection, Repository } from 'typeorm';
+import { InjectRepository } from '@nestjs/typeorm';
+import * as bcrypt from 'bcrypt';
+import * as jwt from 'jsonwebtoken';
 
 @Injectable()
 export class AuthService {
@@ -15,7 +24,67 @@ export class AuthService {
     @Inject(CACHE_MANAGER)
     private readonly cacheManager: Cache,
     private readonly httpService: HttpService,
+    @InjectRepository(User)
+    private readonly userRepository: Repository<User>,
   ) {}
+
+  async isUser({ userEmail, userPassword }) {
+    const user = await getConnection()
+      .createQueryBuilder()
+      .select('user')
+      .from(User, 'user')
+      .where({ userEmail })
+      .getOne();
+
+    if (!user)
+      throw new UnprocessableEntityException(
+        '아이디 혹은 비밀번호가 다릅니다.',
+      );
+
+    const isAuth = await bcrypt.compare(userPassword, user.userPassword);
+
+    if (!isAuth)
+      throw new UnprocessableEntityException(
+        '아이디 혹은 비밀번호가 다릅니다.',
+      );
+
+    return user;
+  }
+
+  async blackList({ context }) {
+    const now = new Date();
+    const access = context.req.headers.authorization.replace('Bearer ', '');
+
+    const access_decoded = this.jwtService.decode(access);
+
+    const access_time = new Date(access_decoded['exp'] * 1000);
+
+    const access_end = Math.floor(
+      (access_time.getTime() - now.getTime()) / 1000,
+    );
+
+    const refresh = context.req.headers.cookie.replace('refreshToken=', '');
+
+    const refresh_decoded = this.jwtService.decode(refresh);
+
+    const refresh_time = new Date(refresh_decoded['exp'] * 1000);
+    const refresh_end = Math.floor(
+      (refresh_time.getTime() - now.getTime()) / 1000,
+    );
+
+    try {
+      jwt.verify(access, this.config.get('ACCESS'));
+      jwt.verify(refresh, this.config.get('REFRESH'));
+      await this.cacheManager.set(access, 'accessToken', { ttl: access_end });
+      await this.cacheManager.set(refresh, 'refreshToken', {
+        ttl: refresh_end,
+      });
+
+      return '로그아웃에 성공했습니다';
+    } catch {
+      throw new UnauthorizedException();
+    }
+  }
 
   async getAccessToken({ user }) {
     const Access = this.jwtService.sign(
@@ -50,9 +119,45 @@ export class AuthService {
     // });
   }
 
-  social_login({ user, res }) {
-    this.setRefreshToken({ user, res });
-    res.redirect('http://localhost:5501/front-end/login/index.html');
+  async social_login({ user, res }) {
+    await this.setRefreshToken({ user, res });
+    res.redirect('http://localhost:3000/reviews');
+  }
+
+  async isEmail({ email }) {
+    const isEmail = await this.userRepository.findOne({ userEmail: email });
+
+    if (!isEmail) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  async isNickname({ nickname }) {
+    const isEmail = await this.userRepository.findOne({
+      userNickname: nickname,
+    });
+
+    if (!isEmail) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  async isPassword({ password, currentUser }) {
+    const user = await this.userRepository.findOne({
+      where: { userEmail: currentUser.userEmail },
+    });
+
+    const isAuth = await bcrypt.compare(password, user.userPassword);
+
+    if (!isAuth) {
+      return false;
+    } else {
+      return true;
+    }
   }
 
   async sendTokenToPhone({ phone }) {
