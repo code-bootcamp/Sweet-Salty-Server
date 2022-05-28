@@ -25,7 +25,7 @@ export class ImageResolver {
   // }
 
   @Query(() => String)
-  async test() {
+  async getBarcode() {
     return await this.imageService.getBarcode();
   }
 }

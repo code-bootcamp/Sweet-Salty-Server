@@ -129,6 +129,12 @@ export class BoardResolver {
   }
 
   @UseGuards(GqlAuthAccessGuard)
+  @Query(() => [Board])
+  fetchPreferBoards(@CurrentUser() currentUser: ICurrentUser) {
+    return this.boardService.findPreferList({ currentUser });
+  }
+
+  @UseGuards(GqlAuthAccessGuard)
   @Query(() => String)
   fetchBoardCount(
     //
