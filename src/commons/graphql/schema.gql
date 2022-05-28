@@ -101,7 +101,6 @@ type Board {
   place: Place!
   boardLikes: [BoardLike!]!
   boardSides: [BoardSide!]!
-  images: [Image!]!
 }
 
 type fewUser {
@@ -202,7 +201,6 @@ type Query {
   fetchAgeGroupBoards(ageGroup: AGE_GROUP_ENUM!, page: Int!): [Board!]!
   fetchAgeGroupWithGenderBoards(gender: GENDER_ENUM!, ageGroup: AGE_GROUP_ENUM!, page: Int!): [Board!]!
   fetchBoardBest(category: BOARD_SUB_CATEGORY_NAME_ENUM!): [Board!]!
-  fetchBoardsBest: [Board!]!
   fetchPickedBoards: [Board!]!
   fetchBoardsOfUser(userNickname: String!): [Board!]!
   fetchRecentBoards(category: BOARD_SUB_CATEGORY_NAME_ENUM!): [Board!]!

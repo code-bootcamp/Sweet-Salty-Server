@@ -148,6 +148,5 @@ export class Board extends BaseEntity {
   boardSides: BoardSide[];
 
   @OneToMany((type) => Image, (Image) => Image.board, { cascade: true })
-  @Field(() => [Image])
   images: Image;
 }
