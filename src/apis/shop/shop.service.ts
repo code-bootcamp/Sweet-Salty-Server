@@ -14,6 +14,7 @@ import {
   TransactionRepository,
 } from 'typeorm';
 import { Image } from '../image/entities/image.entity';
+import { ImageService } from '../image/image.service';
 import { PaymentHistory } from '../paymentHistory/entities/paymentHistory.entity';
 import { Place } from '../place/entities/place.entity';
 import { User } from '../user/entities/user.entity';
@@ -33,6 +34,11 @@ export class ShopService {
     @InjectRepository(Image)
     private readonly ImageRepository: Repository<Image>,
 
+    @InjectRepository(PaymentHistory)
+    private readonly PaymentHistory: Repository<PaymentHistory>,
+
+    private readonly imageService: ImageService,
+
     @Inject(CACHE_MANAGER)
     private readonly cacheManager: Cache,
 
@@ -40,6 +46,8 @@ export class ShopService {
 
     private readonly elasticsearchService: ElasticsearchService,
   ) {}
+
+  data;
 
   async elasticsearchFindTitle({ title }) {
     const redisData = await this.cacheManager.get(title);
@@ -105,6 +113,24 @@ export class ShopService {
     await this.cacheManager.set(seller, data, { ttl: 10 });
 
     return data;
+  }
+
+  async findBarcode({ paymentHistoryId }) {
+    const barcode = await getConnection()
+      .createQueryBuilder()
+      .select('paymentHistory')
+      .from(PaymentHistory, 'paymentHistory')
+      .where({ paymentHistoryId })
+      .getOne();
+
+    const aaa = await getConnection()
+      .createQueryBuilder()
+      .update(PaymentHistory)
+      .set({ status: true })
+      .where({ paymentHistoryId })
+      .execute();
+
+    return barcode.barcode;
   }
 
   async findAll() {
@@ -209,6 +235,10 @@ export class ShopService {
     return new ConflictException('관리자로 등록 되어 있지 않습니다.');
   }
 
+  // async cancelShop({}) {
+
+  // }
+
   async paymentShop({ shopId, currentUser, stock }) {
     const productName = await this.shopRepository.findOne({
       shopId,
@@ -240,7 +270,7 @@ export class ShopService {
     //   historyShopStock: stock,
     //   userId: currentUser.userId,
     // });
-
+    let result;
     const currentPrice = userPoint.userPoint - price;
     const currentStock = productName.shopStock - stock;
 
@@ -258,10 +288,10 @@ export class ShopService {
         { shopStock: currentStock },
       );
 
-      const result = await queryRunner.manager.save(PaymentHistory, {
+      result = await queryRunner.manager.save(PaymentHistory, {
         payStatus: '상품 결제',
         userId: currentUser.userId,
-        paymentAmount: currentPrice,
+        paymentAmount: price,
         stock,
         productStatus: productName.shopProductName,
         supplier: productName.shopSeller,
@@ -283,12 +313,19 @@ export class ShopService {
       //   .execute();
 
       // await queryRunner.manager.save(currentHistory);
-
       await queryRunner.commitTransaction();
       return result.paymentHistoryId;
     } catch (error) {
+      console.log(error);
       await queryRunner.rollbackTransaction();
     } finally {
+      const barCodeNumber: any = await this.imageService.getBarcode();
+      await getConnection()
+        .createQueryBuilder()
+        .update(PaymentHistory)
+        .set({ barcode: barCodeNumber })
+        .where({ paymentHistoryId: result.paymentHistoryId })
+        .execute();
       await queryRunner.release();
     }
   }

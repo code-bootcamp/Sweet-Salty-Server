@@ -146,6 +146,7 @@ type PaymentHistory {
   paymentAmount: Int!
   stock: Int!
   barcode: String!
+  status: Boolean!
   createdAt: DateTime!
   userId: User!
 }
@@ -235,6 +236,7 @@ type Query {
   fetchShops: [Shop!]!
   fetchShop(shopId: String!): Shop!
   realTimeShop: [Shop!]!
+  fetchBarcode(paymentHistoryId: String!): String!
   fetchPaymentHistory: [PaymentHistory!]!
 }
 

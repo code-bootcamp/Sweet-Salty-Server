@@ -98,6 +98,7 @@ export class ImageService {
     const url = barcodeImg.request.res.responseUrl;
 
     const data = await new Promise((resolve) => {
+      console.log('11');
       const uuid = uuidv4();
       got
         .stream(url)

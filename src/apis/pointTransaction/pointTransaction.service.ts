@@ -203,7 +203,7 @@ export class PointTransactionService {
       }
 
       await queryRunner.manager.save(PaymentHistory, {
-        payStatus: '포인트 환불',
+        payStatus: '충전 취소',
         userId: currentUser.userId,
         paymentAmount: amount,
         impUid,

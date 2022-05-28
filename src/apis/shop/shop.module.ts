@@ -1,7 +1,9 @@
+import { HttpModule } from '@nestjs/axios';
 import { Module } from '@nestjs/common';
 import { ElasticsearchModule } from '@nestjs/elasticsearch';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Image } from '../image/entities/image.entity';
+import { ImageService } from '../image/image.service';
 import { PaymentHistory } from '../paymentHistory/entities/paymentHistory.entity';
 import { Place } from '../place/entities/place.entity';
 import { User } from '../user/entities/user.entity';
@@ -16,12 +18,17 @@ import { ShopService } from './shop.service';
     ElasticsearchModule.register({
       node: 'http://147.47.209.114:9200',
     }),
+    HttpModule.register({
+      timeout: 5000,
+      maxRedirects: 5,
+    }),
   ],
 
   providers: [
     ShopResolver, //
     ShopService,
     UserService,
+    ImageService,
   ],
 })
 export class ShopModule {}

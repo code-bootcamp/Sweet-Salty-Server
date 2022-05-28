@@ -43,6 +43,13 @@ export class ShopResolver {
     return this.shopService.findRealTime({});
   }
 
+  @Query(() => String)
+  fetchBarcode(
+    @Args('paymentHistoryId') paymentHistoryId: string, //
+  ) {
+    return this.shopService.findBarcode({ paymentHistoryId });
+  }
+
   @UseGuards(GqlAuthAccessGuard)
   @Query(() => [PaymentHistory])
   fetchPaymentHistory(
@@ -82,4 +89,13 @@ export class ShopResolver {
   ) {
     return this.shopService.paymentShop({ shopId, currentUser, stock });
   }
+
+  // @UseGuards(GqlAuthAccessGuard)
+  // @Mutation(() => String)
+  // cancelShop(
+  //   @Args('shopId') shopId: string,
+  //   @CurrentUser() currentUser: ICurrentUser,
+  // ) {
+  //   return this.shopService.paymentShop({ shopId, currentUser, stock });
+  // }
 }
