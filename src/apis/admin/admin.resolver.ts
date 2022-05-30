@@ -6,17 +6,11 @@ import { BoardTag } from '../boardTag/entities/boardTag.entity';
 
 @Resolver()
 export class AdminResolver {
-  constructor(
-    //
-    private readonly adminService: AdminService,
-  ) {}
+  constructor(private readonly adminService: AdminService) {}
 
   @Mutation(() => String)
-  createTags(
-    //
-    @Args('createTagInput') createTagInput: CreateTagInput,
-  ) {
-    console.log(11);
+  createTags(@Args('createTagInput') createTagInput: CreateTagInput) {
+    11;
     return this.adminService.createTag({ createTagInput });
   }
 

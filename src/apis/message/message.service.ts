@@ -50,7 +50,7 @@ export class MessageService {
       relations: ['messageInfo'],
     });
 
-    console.log(result);
+    result;
 
     return result;
   }
@@ -64,7 +64,7 @@ export class MessageService {
   }
 
   async receivedList({ page, currentUser }) {
-    console.log(currentUser);
+    currentUser;
     if (!page) {
       return await this.messageRepository.find({
         where: {

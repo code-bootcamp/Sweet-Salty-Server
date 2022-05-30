@@ -33,6 +33,7 @@ export class PaymentHistory extends BaseEntity {
   paymentAmount: number;
 
   @Column({ default: '' })
+  @Field(() => String)
   impUid: string;
 
   @Column({ default: 0 })

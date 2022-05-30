@@ -62,7 +62,7 @@ export class UserService {
   //
   //
   async socialCreate({ user }) {
-    console.log(user);
+    user;
     const social_user = await this.UserRepository.findOne({
       where: { userEmail: user.userEmail },
     });

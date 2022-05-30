@@ -22,9 +22,8 @@ export class JwtGoogleStrategy extends PassportStrategy(Strategy, 'google') {
     refreshToken: string,
     profile: Profile,
   ) {
-    console.log(profile);
+    profile;
     return {
-      userImage: profile.photos[0].value,
       userEmail: profile.emails[0].value,
       userNickname: profile.name.familyName + profile.name.givenName,
       userSignUpSite: profile.provider,

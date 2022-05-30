@@ -42,19 +42,3 @@ export class JwtAccessStrategy extends PassportStrategy(Strategy, 'access') {
     };
   }
 }
-
-// 쿼리가 실행이 되기 전에 검증
-// guard 라는 나만의 전략을 검증이 되야만 쿼리문이 실행된다
-// 토큰방식으로 인증을 하게 된다
-// 컨스트럭터가 1번, 검증부
-// 검증이 완료가 되면 2번, validate가 실행된다
-// payload는 복호화된 정보를 받아온다
-// const redisAccessToken = await this.cacheManager.get('accessToken');
-// const headersInAccessToken = req.headers.authorization.split(' ')[1];
-// if (!(await this.cacheManager.get(headersInAccessToken)))
-//   throw new UnauthorizedException();
-// if (redisAccessToken === headersInAccessToken)
-//   throw new UnauthorizedException();
-
-// console.log(headersInAccessToken);
-// console.log(redisAccessToken);
