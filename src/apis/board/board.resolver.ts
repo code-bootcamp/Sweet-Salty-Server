@@ -5,10 +5,7 @@ import { GqlAuthAccessGuard } from 'src/commons/auth/gql-auth.guard';
 import { CurrentUser, ICurrentUser } from 'src/commons/auth/gql-user-param';
 import { BoardService } from './board.service';
 import { BoardTagsInput } from './dto/boardTags.input';
-import {
-  CreateBoardInput,
-  CreateBoardWithReqInput,
-} from './dto/createBoard.input';
+import { CreateBoardInput, CreateBoardReqInput } from './dto/createBoard.input';
 import { UpdateBoardInput } from './dto/updateBoard.input';
 import {
   AGE_GROUP_ENUM,
@@ -165,13 +162,29 @@ export class BoardResolver {
 
   @UseGuards(GqlAuthAccessGuard)
   @Mutation(() => Board)
+  createBoardRes(
+    @Args('reqBoardId') reqBoardId: string,
+    @CurrentUser() currentUser: ICurrentUser,
+    @Args('createBoardInput') createBoardInput: CreateBoardInput,
+    @Args('boardTagsInput') boardTagsInput: BoardTagsInput,
+  ) {
+    return this.boardService.createRes({
+      reqBoardId,
+      createBoardInput,
+      boardTagsInput,
+      currentUser,
+    });
+  }
+
+  @UseGuards(GqlAuthAccessGuard)
+  @Mutation(() => Board)
   createBoardReq(
-    @Args('createBoardWhitReqInput')
-    createBoardWhitReqInput: CreateBoardWithReqInput,
+    @Args('createBoardReqInput')
+    createBoardReqInput: CreateBoardReqInput,
     @CurrentUser() currentUser: ICurrentUser,
   ) {
     return this.boardService.createReq({
-      createBoardWhitReqInput,
+      createBoardReqInput,
       currentUser,
     });
   }

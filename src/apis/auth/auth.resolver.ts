@@ -42,18 +42,18 @@ export class AuthResolver {
     return await this.authService.blackList({ context });
   }
 
-  @Query(() => Boolean)
+  @Mutation(() => Boolean)
   async overlapEmail(@Args('email') email: string) {
     return this.authService.isEmail({ email });
   }
 
-  @Query(() => Boolean)
+  @Mutation(() => Boolean)
   async overlapNickname(@Args('nickname') nickname: string) {
     return this.authService.isNickname({ nickname });
   }
 
   @UseGuards(GqlAuthAccessGuard)
-  @Query(() => Boolean)
+  @Mutation(() => Boolean)
   async overlapPassword(
     @CurrentUser() currentUser: ICurrentUser,
     @Args('password') password: string,

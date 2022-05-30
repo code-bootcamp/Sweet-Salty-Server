@@ -122,8 +122,6 @@ export class AuthService {
   async social_login({ user, res }) {
     await this.setRefreshToken({ user, res });
     res.redirect('http://localhost:3000');
-
-    return await this.getAccessToken({ user });
   }
 
   async isEmail({ email }) {

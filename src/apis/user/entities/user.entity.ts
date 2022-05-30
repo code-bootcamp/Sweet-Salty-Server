@@ -44,10 +44,6 @@ export class User extends BaseEntity {
   @Column()
   userPassword: string;
 
-  @Column({ nullable: true })
-  @Field(() => String)
-  userName: string;
-
   @Column({ nullable: true, unique: true })
   @Field(() => String)
   userNickname: string;

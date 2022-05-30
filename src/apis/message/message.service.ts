@@ -23,7 +23,7 @@ export class MessageService {
         },
         relations: ['messageInfo'],
         skip: 0,
-        take: 10,
+        take: 8,
         order: { sendAt: 'DESC' },
       });
     } else {
@@ -33,8 +33,8 @@ export class MessageService {
           sendReceived: 'SEND',
         },
         relations: ['messageInfo'],
-        skip: (page - 1) * 10,
-        take: 10,
+        skip: (page - 1) * 8,
+        take: 8,
         order: { sendAt: 'DESC' },
       });
     }
@@ -73,7 +73,7 @@ export class MessageService {
         },
         relations: ['messageInfo'],
         skip: 0,
-        take: 10,
+        take: 8,
         order: { sendAt: 'DESC' },
       });
     } else {
@@ -83,8 +83,8 @@ export class MessageService {
           sendReceived: 'RECEIVED',
         },
         relations: ['messageInfo'],
-        skip: (page - 1) * 10,
-        take: 10,
+        skip: (page - 1) * 8,
+        take: 8,
         order: { sendAt: 'DESC' },
       });
     }

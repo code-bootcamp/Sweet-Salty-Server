@@ -33,7 +33,7 @@ import { JwtNaverStrategy } from 'src/commons/auth/jwt-social-naver.strategy';
     AuthService,
     JwtGoogleStrategy,
     JwtKakaoStrategy,
-    // JwtNaverStrategy,
+    JwtNaverStrategy,
     UserService,
   ],
 })

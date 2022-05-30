@@ -112,7 +112,6 @@ type User {
   userId: String!
   userState: Boolean!
   userEmail: String!
-  userName: String!
   userNickname: String!
   userImage: String!
   userProfile: String!
@@ -126,6 +125,28 @@ type User {
 
 type Token {
   accessToken: String!
+}
+
+type MessageInfo {
+  messageInfoId: String!
+  messageInfoContents: String!
+}
+
+type SendMessage {
+  messageId: String!
+  messageReceivedUser: String!
+  messageReceivedUserImage: String!
+  messageInfo: MessageInfo!
+  sendAt: DateTime!
+}
+
+type ReceivedMessage {
+  messageId: String!
+  messageSendUser: String!
+  messageSendUserImage: String!
+  messageState: Boolean!
+  messageInfo: MessageInfo!
+  sendAt: DateTime!
 }
 
 type Comment {
@@ -165,33 +186,8 @@ enum POINT_TRANSACTION_STATUS_ENUM {
   CANCEL
 }
 
-type MessageInfo {
-  messageInfoId: String!
-  messageInfoContents: String!
-}
-
-type SendMessage {
-  messageId: String!
-  messageReceivedUser: String!
-  messageReceivedUserImage: String!
-  messageInfo: MessageInfo!
-  sendAt: DateTime!
-}
-
-type ReceivedMessage {
-  messageId: String!
-  messageSendUser: String!
-  messageSendUserImage: String!
-  messageState: Boolean!
-  messageInfo: MessageInfo!
-  sendAt: DateTime!
-}
-
 type Query {
   fetchTags(refName: String!): [BoardTag!]!
-  overlapEmail(email: String!): Boolean!
-  overlapNickname(nickname: String!): Boolean!
-  overlapPassword(password: String!): Boolean!
   fetchBoardTitle(title: String!): JSONObject!
   fetchBoardContents(contents: String!): JSONObject!
   fetchBoardWithTags(tags: [String!]!): JSONObject!
@@ -212,7 +208,6 @@ type Query {
   follow(followerNickname: String!): String!
   followCount(followerNickname: String!): [String!]!
   fetchUser(userEmail: String!): User!
-  fetchUsers: [User!]!
   findUser(phone: String!): fewUser!
   fetchUserLoggedIn: User!
   fetchNotice(noticeId: String!): Notice!
@@ -287,10 +282,14 @@ type Mutation {
   login(userEmail: String!, userPassword: String!): Token!
   restoreAccessToken: Token!
   logout: String!
+  overlapEmail(email: String!): Boolean!
+  overlapNickname(nickname: String!): Boolean!
+  overlapPassword(password: String!): Boolean!
   signUpGetToken(phone: String!): String!
   signUpCheckToken(phone: String!, token: String!): Boolean!
   createBoard(createBoardInput: CreateBoardInput!, boardTagsInput: BoardTagsInput!): Board!
-  createBoardReq(createBoardWhitReqInput: CreateBoardWithReqInput!): Board!
+  createBoardRes(reqBoardId: String!, createBoardInput: CreateBoardInput!, boardTagsInput: BoardTagsInput!): Board!
+  createBoardReq(createBoardReqInput: CreateBoardReqInput!): Board!
   updateBoard(boardId: String!, updateBoardInput: UpdateBoardInput!, boardTagsInput: BoardTagsInput!): Board!
   deleteBoard(boardId: String!): Boolean!
   createBoardLike(boardId: String!): String!
@@ -339,10 +338,11 @@ input PlaceInput {
   lng: String!
 }
 
-input CreateBoardWithReqInput {
+input CreateBoardReqInput {
   boardTitle: String!
   boardContents: String!
   subCategoryName: BOARD_SUB_CATEGORY_NAME_ENUM!
+  place: PlaceInput
 }
 
 input UpdateBoardInput {
@@ -360,7 +360,6 @@ scalar Upload
 input CreateUserInput {
   userEmail: String!
   userPassword: String!
-  userName: String!
   userPhone: String!
   userNickname: String!
   gender: GENDER_ENUM!
@@ -369,8 +368,13 @@ input CreateUserInput {
 }
 
 input UpdateUserInput {
-  userPassword: String!
-  userPhone: String!
+  userEmail: String
+  userPassword: String
+  userPhone: String
+  userNickname: String
+  gender: GENDER_ENUM
+  ageGroup: AGE_GROUP_ENUM
+  prefer: [String!]
 }
 
 input CreateNoticeInput {
