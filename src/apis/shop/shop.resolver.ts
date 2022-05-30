@@ -39,6 +39,11 @@ export class ShopResolver {
   }
 
   @Query(() => [Shop])
+  fetchTopShop() {
+    return this.shopService.findTop({});
+  }
+
+  @Query(() => [Shop])
   realTimeShop() {
     return this.shopService.findRealTime({});
   }

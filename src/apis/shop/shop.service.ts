@@ -148,7 +148,9 @@ export class ShopService {
       .createQueryBuilder()
       .select('paymentHistory')
       .from(PaymentHistory, 'paymentHistory')
-      .where({ userId: currentUser.userId })
+      .where({
+        userId: currentUser.userId, //
+      })
       .orderBy('createdAt', 'DESC')
       .getMany();
   }
@@ -212,6 +214,27 @@ export class ShopService {
     }
 
     return new ConflictException('관리자로 등록 되어있지 않습니다.');
+  }
+
+  async findTop({}) {
+    const end = new Date();
+    end.setHours(0, 0, 0, 0);
+
+    end.setDate(end.getDate() + 1);
+
+    const start = new Date(end);
+    start.setDate(end.getDate() - 30);
+
+    return getConnection()
+      .createQueryBuilder()
+      .select('shop')
+      .from(Shop, 'shop')
+      .where(
+        `createAt BETWEEN '${start.toISOString()}' AND '${end.toISOString()}'`,
+      )
+      .orderBy(`createAt`, `DESC`)
+      .limit(3)
+      .getMany();
   }
 
   async update({ shopId, updateShopInput, currentUser }) {
@@ -326,6 +349,7 @@ export class ShopService {
         .set({ barcode: barCodeNumber })
         .where({ paymentHistoryId: result.paymentHistoryId })
         .execute();
+
       await queryRunner.release();
     }
   }
