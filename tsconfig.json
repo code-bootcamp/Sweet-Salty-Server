@@ -20,12 +20,3 @@
     "noFallthroughCasesInSwitch": false
   }
 }
-// 타입스크립트 설정파일
-
-// nestjs는 노드몬이 자동적으로 깔려있다
-// 개발을 할 때는 start:dev 명령어를 사용한다
-// 실제로 서비스를 배포할때는 start:prod를 사용한다
-
-// 실질적으로 서비스를 사용할 때 필요한 것들을 dependencies에 넣어놓고
-// devDependencies는 개발을 할 때 필요한 것들을 넣어놓았다.
-//

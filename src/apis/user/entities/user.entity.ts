@@ -48,7 +48,7 @@ export class User extends BaseEntity {
   @Field(() => String)
   userNickname: string;
 
-  @Column({ default: 'image__data/22a3478f-7d85-4156-8080-a91f52ab3002.webp' })
+  @Column({ default: 'image__data/f81517a2-c910-4cc2-8fbd-4d263f222a71.webp' })
   @Field(() => String)
   userImage: string;
 
@@ -56,7 +56,7 @@ export class User extends BaseEntity {
   @Field(() => String)
   userProfile: string;
 
-  @Column({ nullable: true })
+  @Column({ default: '01012345678' })
   @Field(() => String)
   userPhone: string;
 

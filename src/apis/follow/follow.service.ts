@@ -56,13 +56,13 @@ export class FollowService {
       followerId: checkNickname.userId,
     });
 
-    console.log(followerCount[1]);
+    followerCount[1];
 
     const followingCount = await this.followRepository.findAndCount({
       followingId: followingUserId,
     });
 
-    console.log(followingCount[1]);
+    followingCount[1];
 
     return [`팔로잉`, followerCount[1], `팔로워`, followingCount[1]];
   }

@@ -16,7 +16,7 @@ export class AdminService {
         .from(BoardTag, 'boardTag')
         .where({ boardTagName: cur })
         .getOne();
-      console.log(data);
+      data;
 
       if (data === undefined) {
         await getConnection()
@@ -51,7 +51,7 @@ export class AdminService {
       .from(TopCategory, 'topCategory')
       .getMany();
 
-    console.log(checkData.length);
+    checkData.length;
 
     if (checkData.length !== 0)
       throw new ConflictException('이미 생성되었습니다.');

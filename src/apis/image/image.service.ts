@@ -24,7 +24,7 @@ export class ImageService {
     private readonly httpService: HttpService,
   ) {}
   async upload({ file }: IFile) {
-    console.log(file);
+    file;
     const storage = new Storage({
       keyFilename: this.config.get('STORAGE_KEY_FILENAME'),
       projectId: this.config.get('STORAGE_PROJECT_ID'),
@@ -46,7 +46,7 @@ export class ImageService {
     return url;
 
     // const waitedFiles = await Promise.all(files);
-    // console.log(waitedFiles);
+    // (waitedFiles);
 
     // const results = await Promise.all(
     //   waitedFiles.map((el) => {
@@ -65,7 +65,7 @@ export class ImageService {
     //     });
     //   }),
     // );
-    console.log(url);
+    url;
 
     return url;
   }
@@ -98,7 +98,7 @@ export class ImageService {
     const url = barcodeImg.request.res.responseUrl;
 
     const data = await new Promise((resolve) => {
-      console.log('11');
+      ('11');
       const uuid = uuidv4();
       got
         .stream(url)
@@ -119,7 +119,7 @@ export class ImageService {
 
   //   async function deleteFile() {
   //     await storage.file(fileName).delete();
-  //     console.log(`gs://${bucketName}/${fileName} deleted`);
+  //     (`gs://${bucketName}/${fileName} deleted`);
   //   }
   //   deleteFile().catch(console.error);
   // }

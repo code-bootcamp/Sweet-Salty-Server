@@ -16,11 +16,7 @@ import {
 
 @Resolver()
 export class BoardResolver {
-  constructor(
-    //
-
-    private readonly boardService: BoardService,
-  ) {}
+  constructor(private readonly boardService: BoardService) {}
 
   @Query(() => GraphQLJSONObject)
   async fetchBoardTitle(@Args('title') title: string) {

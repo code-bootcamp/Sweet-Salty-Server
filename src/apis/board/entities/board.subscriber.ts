@@ -23,9 +23,9 @@ export class BoardSubscriber implements EntitySubscriberInterface<Board> {
       /(image__data)\/[a-zA-Z0-9\-\.]+\.[a-zA-Z]{2,4}(\/\S*)?/,
     );
     const thumbnail111 = data[0];
-    console.log(event.entity.boardId);
+    event.entity.boardId;
 
-    //  console.log(thumbnail);
+    //  (thumbnail);
     // await getConnection()
     //   .createQueryBuilder()
     //   .update(Board)

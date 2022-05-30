@@ -181,7 +181,7 @@ export class ShopService {
       where: { userId: currentUser.userId },
     });
     const { place, ...shop } = createShopInput;
-    console.log(place);
+    place;
 
     if (adminCheck.userState) {
       // 가게 이름이 없으면 넣기
@@ -339,7 +339,7 @@ export class ShopService {
       await queryRunner.commitTransaction();
       return result.paymentHistoryId;
     } catch (error) {
-      console.log(error);
+      error;
       await queryRunner.rollbackTransaction();
     } finally {
       const barCodeNumber: any = await this.imageService.getBarcode();

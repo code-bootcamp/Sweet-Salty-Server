@@ -47,7 +47,7 @@
 //       .where({ userId: currentUser.userId })
 //       .getOne();
 
-//     console.log(board_Tags);
+//     (board_Tags);
 
 //     const result = await this.boardRepository.save({
 //       ...createBoardInput,
@@ -97,4 +97,4 @@
 //   .of('Board')
 //   .loadMany();
 
-// console.log(rr);
+// (rr);

@@ -164,6 +164,7 @@ type PaymentHistory {
   productStatus: String!
   supplier: String!
   paymentAmount: Int!
+  impUid: String!
   stock: Int!
   barcode: String!
   status: Boolean!

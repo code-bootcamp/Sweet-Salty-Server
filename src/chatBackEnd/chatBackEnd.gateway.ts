@@ -26,7 +26,7 @@ export class ChatBackEndGateway
 
   //소켓 연결시 유저목록에 추가
   public handleConnection(client: Socket): void {
-    console.log('connected', client.id);
+    // 'connected', client.id;
     client.leave(client.id);
     client.data.roomId = `room:lobby`;
     client.join('room:lobby');
@@ -45,7 +45,7 @@ export class ChatBackEndGateway
         this.ChatRoomService.getChatRoomList(),
       );
     }
-    console.log('disonnected', client.id);
+    //'disonnected', client.id;
   }
 
   //메시지가 전송되면 모든 유저에게 메시지 전송

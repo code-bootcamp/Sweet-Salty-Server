@@ -37,6 +37,6 @@ export class MessageInfoSubscriber
     //   .getRepository(MessageInfo)
     //   .findOne({ where: { messageInfoId: event.entity.messageInfoId } });
 
-    //console.log(data);
+    //(data);
   }
 }
