@@ -10,7 +10,6 @@ export class AdminResolver {
 
   @Mutation(() => String)
   createTags(@Args('createTagInput') createTagInput: CreateTagInput) {
-    11;
     return this.adminService.createTag({ createTagInput });
   }
 

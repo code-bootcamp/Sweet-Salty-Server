@@ -64,16 +64,15 @@ export class User extends BaseEntity {
   @Field(() => Int)
   userPoint: number;
 
-  @Column({ type: 'enum', enum: AGE_GROUP_ENUM })
+  @Column({ default: 'NONE' })
   @Field(() => String)
   ageGroup: string;
 
-  @Column({ type: 'enum', enum: GENDER_ENUM })
+  @Column({ default: 'PRIVATE' })
   @Field(() => String)
   gender: string;
 
   @OneToMany((type) => Board, (Board) => Board.user)
-  @JoinColumn({ name: 'boardId', referencedColumnName: 'boardId' })
   boards: Board;
 
   @OneToMany((type) => PreferMenu, (PreferMenu) => PreferMenu.user)

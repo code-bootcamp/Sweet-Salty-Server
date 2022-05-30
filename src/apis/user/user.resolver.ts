@@ -32,6 +32,16 @@ export class UserResolver {
   ) {
     return this.userService.fewFind({ phone });
   }
+
+  @Query(() => User)
+  fetchUserNickname(@Args('userNickname') userNickname: string) {
+    return this.userService.findNickname({ userNickname });
+  }
+
+  @Query(() => User)
+  fetchUserId(@Args('userId') userId: string) {
+    return this.userService.findId({ userId });
+  }
   //
   //
   @UseGuards(GqlAuthAccessGuard)

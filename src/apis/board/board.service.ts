@@ -871,7 +871,14 @@ export class BoardService {
     return board;
   }
 
-  async update({ boardId, updateBoardInput, boardTagsInput }) {
+  async update({ boardId, updateBoardInput }) {
+    const pattern = new RegExp(
+      /(image__data)\/[a-zA-Z0-9\-\.]+\.[a-zA-Z]{2,4}(\/\S*)?/,
+      'gi',
+    );
+
+    const imageData = [...updateBoardInput.boardContents.matchAll(pattern)];
+
     const board = await this.boardRepository.findOne({
       where: { boardId },
     });
@@ -879,7 +886,9 @@ export class BoardService {
     const newBoard = {
       ...board,
       ...updateBoardInput,
+      thumbnail: imageData[0][0],
     };
+
     return await this.boardRepository.save(newBoard);
   }
 
