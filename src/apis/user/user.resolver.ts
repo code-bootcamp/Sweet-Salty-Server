@@ -11,27 +11,18 @@ import { UserService } from './user.service';
 
 @Resolver()
 export class UserResolver {
-  constructor(private readonly userService: UserService) {} // 이렇게 쓰면 서비스 ts에 있는 클래스를 가져다가 쓸 수 있음
-
-  // Create Api Create Api Create Api Create Api Create Api Create Api Create Api Create Api Create Api //
+  constructor(private readonly userService: UserService) {}
   @Mutation(() => User)
-  createUser(
-    @Args('createUserInput') createUserInput: CreateUserInput, // args == 주는쪽
-  ) {
+  createUser(@Args('createUserInput') createUserInput: CreateUserInput) {
     return this.userService.create({ createUserInput });
   }
 
-  // Read Api Read Api Read Api Read Api Read Api Read Api Read Api Read Api Read Api Read Api Read Api  //
   @Query(() => User)
   fetchUser(
     //
     @Args('userEmail') userEmail: string,
   ) {
     return this.userService.findOne({ userEmail });
-  }
-  @Query(() => [User])
-  fetchUsers() {
-    return this.userService.findAll();
   }
 
   @Query(() => fewUser)
@@ -48,8 +39,6 @@ export class UserResolver {
   fetchUserLoggedIn(@CurrentUser() currentUser: ICurrentUser) {
     return this.userService.findLoggedIn({ currentUser });
   }
-
-  // Update Api Update Api  Update Api  Update Api  Update Api  Update Api  Update Api  Update Api  Update Api  //
 
   @UseGuards(GqlAuthAccessGuard)
   @Mutation(() => User)
@@ -78,10 +67,9 @@ export class UserResolver {
     return await this.userService.update({
       userEmail: currentUser.userEmail,
       updateUserInput,
-    }); // <- 이거 지워도 댐 로그인 안한 상태로 정보 바꾼다는거는 비번찾기만 가능
+    });
   }
-  //
-  //
+
   @Mutation(() => User)
   async updatePassword(
     @Args('userEmail') userEmail: string,
@@ -89,16 +77,7 @@ export class UserResolver {
   ) {
     return await this.userService.ChangePW({ userEmail, password });
   }
-  //
-  //
 
-  //
-  //
-
-  // Delete Api Delete Api Delete Api Delete Api Delete Api Delete Api Delete Api Delete Api Delete Api Delete Api //
-
-  //
-  //
   @Mutation(() => Boolean)
   deleteUser(
     @Args('userEmail') userEmail: string, //

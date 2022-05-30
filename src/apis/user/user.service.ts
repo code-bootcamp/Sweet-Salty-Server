@@ -14,13 +14,22 @@ export class UserService {
   ) {}
   // Create Api Create Api Create Api Create Api Create Api Create Api Create Api Create Api Create Api //
   async create({ createUserInput }) {
-    const overlap = await this.UserRepository.findOne({
+    const overlapEmail = await this.UserRepository.findOne({
       where: {
         userEmail: createUserInput.userEmail,
       },
     });
-    if (overlap)
+    if (overlapEmail)
       throw new ConflictException('동일한 이메일로 생성된 계정이 존재합니다.');
+
+    const overlapNickName = await this.UserRepository.findOne({
+      where: {
+        userNickname: createUserInput.userNickname,
+      },
+    });
+    if (overlapNickName)
+      throw new ConflictException('이미 사용중인 닉네임입니다.');
+
     createUserInput.userPassword = await bcrypt.hash(
       createUserInput.userPassword,
       10,
@@ -53,6 +62,7 @@ export class UserService {
   //
   //
   async socialCreate({ user }) {
+    console.log(user);
     const social_user = await this.UserRepository.findOne({
       where: { userEmail: user.userEmail },
     });
@@ -94,9 +104,7 @@ export class UserService {
     });
   }
   //
-  async findAll() {
-    return await this.UserRepository.find({});
-  }
+
   //
   async findLoggedIn({ currentUser }) {
     return await this.UserRepository.findOne({
@@ -113,11 +121,41 @@ export class UserService {
   //
   // Update Api Update Api  Update Api  Update Api  Update Api  Update Api  Update Api  Update Api  Update Api  //
   async update({ userEmail, updateUserInput }) {
+    const { prefer, ...update } = updateUserInput;
     const user = await this.UserRepository.findOne({ where: { userEmail } });
     const updateData = {
       ...user,
-      ...updateUserInput,
+      ...update,
     };
+
+    await getConnection()
+      .createQueryBuilder()
+      .delete()
+      .from(PreferMenu)
+      .where({ user })
+      .execute();
+
+    if (prefer) {
+      prefer.map(async (el) => {
+        const tag = await getConnection()
+          .createQueryBuilder()
+          .select('boardTag')
+          .from(BoardTag, 'boardTag')
+          .where({ boardTagName: el })
+          .getOne();
+
+        await getConnection()
+          .createQueryBuilder()
+          .insert()
+          .into(PreferMenu)
+          .values({
+            user,
+            boardTag: tag,
+          })
+          .execute();
+      });
+    }
+
     return await this.UserRepository.save(updateData);
   }
   //

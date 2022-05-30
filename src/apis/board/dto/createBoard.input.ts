@@ -23,7 +23,7 @@ export class CreateBoardInput {
 }
 
 @InputType()
-export class CreateBoardWithReqInput {
+export class CreateBoardReqInput {
   @Field(() => String)
   boardTitle: string;
 
@@ -32,6 +32,9 @@ export class CreateBoardWithReqInput {
 
   @Field(() => BOARD_SUB_CATEGORY_NAME_ENUM)
   subCategoryName: string;
+
+  @Field(() => PlaceInput, { nullable: true })
+  place: { PlaceInput: string };
 }
 
 @InputType()

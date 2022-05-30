@@ -17,6 +17,8 @@ import { Board } from './entities/board.entity';
 import { Place } from '../place/entities/place.entity';
 import { Image } from '../image/entities/image.entity';
 import { PreferMenu } from '../preferMenu/entities/preferMenu.entity';
+import { MessageInfo } from '../messageInfo/entities/messageInfo.entity';
+import { Message } from '../message/entitis/message.entity';
 
 @Injectable()
 export class BoardService {
@@ -73,6 +75,8 @@ export class BoardService {
         size: 10000,
         sort: 'createat:desc',
         _source: [
+          'placename',
+          'placeaddress',
           'boardtitle',
           'boardwriter',
           'boardlikecount',
@@ -107,6 +111,8 @@ export class BoardService {
         size: 10000,
         sort: 'createat:desc',
         _source: [
+          'placename',
+          'placeaddress',
           'boardtitle',
           'boardwriter',
           'boardlikecount',
@@ -137,6 +143,8 @@ export class BoardService {
         size: 10000,
         sort: 'createat:desc',
         _source: [
+          'placename',
+          'placeaddress',
           'boardtitle',
           'boardwriter',
           'boardlikecount',
@@ -614,15 +622,53 @@ export class BoardService {
     return board;
   }
 
-  async createReq({ createBoardWhitReqInput, currentUser }) {
+  async createRes({
+    createBoardInput,
+    boardTagsInput,
+    currentUser,
+    reqBoardId,
+  }) {
+    const { boardTagMenu, boardTagRegion, boardTagMood } = boardTagsInput;
+    const { subCategoryName, place, ...inputData } = createBoardInput;
+
     const pattern = new RegExp(
       /(image__data)\/[a-zA-Z0-9\-\.]+\.[a-zA-Z]{2,4}(\/\S*)?/,
       'gi',
     );
 
-    const imageData = [
-      ...createBoardWhitReqInput.boardContents.matchAll(pattern),
-    ];
+    const imageData = [...inputData.boardContents.matchAll(pattern)];
+
+    const subCategory = await getConnection()
+      .createQueryBuilder()
+      .select('subCategory')
+      .from(SubCategory, 'subCategory')
+      .where({ subCategoryName })
+      .getOne();
+
+    const isPlace = await getConnection()
+      .createQueryBuilder()
+      .select('place')
+      .from(Place, 'place')
+      .where({ placeName: place.placeName })
+      .getOne();
+
+    if (!isPlace) {
+      await getConnection()
+        .createQueryBuilder()
+        .insert()
+        .into(Place)
+        .values({
+          ...place,
+        })
+        .execute();
+    }
+
+    const placeData = await getConnection()
+      .createQueryBuilder()
+      .select('place')
+      .from(Place, 'place')
+      .where({ placeName: place.placeName })
+      .getOne();
 
     const userData = await getConnection()
       .createQueryBuilder()
@@ -637,13 +683,195 @@ export class BoardService {
       .getOne();
 
     const board = await this.boardRepository.save({
-      ...createBoardWhitReqInput,
+      ...inputData,
+      subCategory,
       ageGroup: userData.ageGroup,
       gender: userData.gender,
       boardWriter: userData.userNickname,
       user: { userId: userData.userId },
       thumbnail: imageData[0][0],
-      boardSubject: createBoardWhitReqInput.subCategoryName,
+      place: placeData,
+      boardSubject: subCategory.subCategoryName,
+    });
+
+    await Promise.all([
+      boardTagMenu.reduce(async (acc, cur) => {
+        const menuData = await this.boardTagRepository.findOne({
+          boardTagName: cur,
+        });
+        await getConnection()
+          .createQueryBuilder()
+          .insert()
+          .into(BoardSide)
+          .values({
+            boards: board.boardId,
+            boardTags: menuData,
+          })
+          .execute();
+      }, ''),
+
+      boardTagRegion.reduce(async (acc, cur) => {
+        const regionData = await this.boardTagRepository.findOne({
+          boardTagName: cur,
+        });
+        await getConnection()
+          .createQueryBuilder()
+          .insert()
+          .into(BoardSide)
+          .values({
+            boards: board.boardId,
+            boardTags: regionData,
+          })
+          .execute();
+      }, ''),
+      boardTagMood.reduce(async (acc, cur) => {
+        const moodData = await this.boardTagRepository.findOne({
+          boardTagName: cur,
+        });
+        await getConnection()
+          .createQueryBuilder()
+          .insert()
+          .into(BoardSide)
+          .values({
+            boards: board.boardId,
+            boardTags: moodData,
+          })
+          .execute();
+      }, ''),
+      imageData.reduce(async (acc, cur) => {
+        await getConnection()
+          .createQueryBuilder()
+          .insert()
+          .into(Image)
+          .values({
+            board: board.boardId,
+            url: cur[0],
+          })
+          .execute();
+      }, ''),
+    ]);
+
+    const reqBoard = await getConnection()
+      .createQueryBuilder()
+      .select('board')
+      .from(Board, 'board')
+      .leftJoinAndSelect('board.user', 'user')
+      .where({ boardId: reqBoardId })
+      .getOne();
+
+    const messageData = await getConnection()
+      .createQueryBuilder()
+      .insert()
+      .into(MessageInfo)
+      .values([
+        {
+          messageInfoContents: `${reqBoard.boardWriter}단짝님께서 가보시길 원하셨던 매장을 ${board.boardId}단짝님께서 방문해주셨습니다. 작성된 글은 > < 여기에서 보실 수 있습니다.`,
+        },
+      ])
+      .execute();
+
+    await getConnection()
+      .createQueryBuilder()
+      .insert()
+      .into(Message)
+      .values([
+        {
+          messageSendUser: '단짠맛집',
+          messageSendUserImage: 'image',
+          sendReceived: 'RECEIVED',
+          messageInfo: messageData.identifiers[0].messageInfoId,
+          messageOwner: reqBoard.user.userId,
+        },
+      ])
+      .execute();
+
+    return board;
+  }
+
+  async createReq({ createBoardReqInput, currentUser }) {
+    const pattern = new RegExp(
+      /(image__data)\/[a-zA-Z0-9\-\.]+\.[a-zA-Z]{2,4}(\/\S*)?/,
+      'gi',
+    );
+    const { subCategoryName, place, ...inputData } = createBoardReqInput;
+
+    const imageData = [...createBoardReqInput.boardContents.matchAll(pattern)];
+
+    // const userData = await getConnection()
+    //   .createQueryBuilder()
+    //   .select([
+    //     'user.userId',
+    //     'user.userNickname',
+    //     'user.ageGroup',
+    //     'user.gender',
+    //   ])
+    //   .from(User, 'user')
+    //   .where({ userId: currentUser.userId })
+    //   .getOne();
+
+    // const board = await this.boardRepository.save({
+    //   ...createBoardReqInput,
+    //   ageGroup: userData.ageGroup,
+    //   gender: userData.gender,
+    //   boardWriter: userData.userNickname,
+    //   user: { userId: userData.userId },
+    //   thumbnail: imageData[0][0],
+    //   boardSubject: createBoardReqInput.subCategoryName,
+    // });
+    const subCategory = await getConnection()
+      .createQueryBuilder()
+      .select('subCategory')
+      .from(SubCategory, 'subCategory')
+      .where({ subCategoryName })
+      .getOne();
+
+    const isPlace = await getConnection()
+      .createQueryBuilder()
+      .select('place')
+      .from(Place, 'place')
+      .where({ placeName: place.placeName })
+      .getOne();
+
+    if (!isPlace) {
+      await getConnection()
+        .createQueryBuilder()
+        .insert()
+        .into(Place)
+        .values({
+          ...place,
+        })
+        .execute();
+    }
+
+    const placeData = await getConnection()
+      .createQueryBuilder()
+      .select('place')
+      .from(Place, 'place')
+      .where({ placeName: place.placeName })
+      .getOne();
+
+    const userData = await getConnection()
+      .createQueryBuilder()
+      .select([
+        'user.userId',
+        'user.userNickname',
+        'user.ageGroup',
+        'user.gender',
+      ])
+      .from(User, 'user')
+      .where({ userId: currentUser.userId })
+      .getOne();
+
+    const board = await this.boardRepository.save({
+      ...inputData,
+      subCategory,
+      ageGroup: userData.ageGroup,
+      gender: userData.gender,
+      boardWriter: userData.userNickname,
+      user: { userId: userData.userId },
+      thumbnail: imageData[0][0],
+      place: placeData,
+      boardSubject: subCategory.subCategoryName,
     });
 
     Promise.all(
@@ -717,8 +945,6 @@ export class BoardService {
   async searchTags({ boardTagsInput, category }) {
     // 리팩토링 필요함 원하는데로 로직이 돌아가지 않음
     const { boardTagMenu, boardTagRegion, boardTagMood } = boardTagsInput;
-
-    console.log(boardTagMenu);
 
     let Ids;
     Ids = getConnection()

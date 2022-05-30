@@ -68,11 +68,11 @@ export class Board extends BaseEntity {
   @Field(() => String)
   boardTitle: string;
 
-  @Column({ nullable: true })
+  @Column({ default: '' })
   @Field(() => String)
   boardSugar: string;
 
-  @Column({ nullable: true })
+  @Column({ default: '' })
   @Field(() => String)
   boardSalt: string;
 
@@ -80,7 +80,7 @@ export class Board extends BaseEntity {
   @Field(() => String)
   boardContents: string;
 
-  @Column({ nullable: true })
+  @Column()
   @Field(() => String)
   boardWriter: string;
 
@@ -92,7 +92,7 @@ export class Board extends BaseEntity {
   @Field(() => Int)
   boardHit: number;
 
-  @Column({ nullable: true })
+  @Column({ default: '' })
   @Field(() => String)
   thumbnail: string;
 

@@ -2631,6 +2631,14 @@
     "@types/jsonwebtoken" "*"
     "@types/passport-strategy" "*"
 
+"@types/passport-kakao@^0.2.1":
+  version "0.2.1"
+  resolved "https://registry.yarnpkg.com/@types/passport-kakao/-/passport-kakao-0.2.1.tgz#e3aa906caa9355c51d66fe5fe743c897add7fdd1"
+  integrity sha512-BezdDVFW0KrP7CJGtQzMfxw9RgmgKZe9TPhd5nBGoPCAmakFhO8p6Numn1oYU5kwjvK3gS8pqDLWmLBhBBERwQ==
+  dependencies:
+    "@types/express" "*"
+    "@types/passport" "*"
+
 "@types/passport-oauth2@*":
   version "1.4.11"
   resolved "https://registry.yarnpkg.com/@types/passport-oauth2/-/passport-oauth2-1.4.11.tgz#fbca527ecb44258774d17bcb251630c321515fa9"
