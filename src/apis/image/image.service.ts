@@ -9,6 +9,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { HttpService } from '@nestjs/axios';
 import * as sharp from 'sharp';
 import got from 'got';
+import { rejects } from 'assert';
 
 interface IFile {
   file: FileUpload;
@@ -24,7 +25,6 @@ export class ImageService {
     private readonly httpService: HttpService,
   ) {}
   async upload({ file }: IFile) {
-    file;
     const storage = new Storage({
       keyFilename: this.config.get('STORAGE_KEY_FILENAME'),
       projectId: this.config.get('STORAGE_PROJECT_ID'),
@@ -65,10 +65,23 @@ export class ImageService {
     //     });
     //   }),
     // );
-    url;
 
     return url;
   }
+
+  // async signed({ file }: IFile) {
+  //   const options = {
+  //     version: 'v4',
+  //     action: 'read',
+  //     expires: 15 * 60 * 1000,
+  //   };
+  //   const storage = new Storage();
+
+  //   const [url] = await storage
+  //   .bucket(bucketName)
+  //   .file(fileName)
+  //   .getSignedUrl(options);
+  // }
 
   async getBarcode() {
     const storage = new Storage({

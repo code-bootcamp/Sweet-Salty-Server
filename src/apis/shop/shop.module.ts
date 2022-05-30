@@ -16,7 +16,7 @@ import { ShopService } from './shop.service';
   imports: [
     TypeOrmModule.forFeature([User, Shop, Place, Image, PaymentHistory]),
     ElasticsearchModule.register({
-      node: 'http://147.47.209.114:9200',
+      node: `http://${process.env.ELK_URL}`,
     }),
     HttpModule.register({
       timeout: 5000,

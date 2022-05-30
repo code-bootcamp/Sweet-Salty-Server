@@ -1,8 +1,7 @@
 import { UseGuards } from '@nestjs/common';
-import { Args, Field, Int, Mutation, Query, Resolver } from '@nestjs/graphql';
+import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { GqlAuthAccessGuard } from 'src/commons/auth/gql-auth.guard';
 import { CurrentUser, ICurrentUser } from 'src/commons/auth/gql-user-param';
-import { Follow } from './entities/follow.entity';
 import { FollowService } from './follow.service';
 
 @Resolver()
@@ -10,7 +9,7 @@ export class FollowResolver {
   constructor(private readonly followService: FollowService) {}
 
   @UseGuards(GqlAuthAccessGuard)
-  @Query(() => String)
+  @Mutation(() => String)
   async follow(
     @CurrentUser() followingUserId: ICurrentUser, //
     @Args('followerNickname') followerNickname: string,

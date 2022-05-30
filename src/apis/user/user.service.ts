@@ -97,6 +97,22 @@ export class UserService {
   async findOne({ userEmail }) {
     return await this.UserRepository.findOne({ where: { userEmail } }); // 마이페이지 읽어올때 사용할거임 조건 댓글같은거 보려면 조건 더 달아야함
   }
+
+  async findId({ userId }) {
+    return await this.UserRepository.findOne({
+      where: {
+        userId,
+      },
+    });
+  }
+
+  async findNickname({ userNickname }) {
+    return await this.UserRepository.findOne({
+      where: {
+        userNickname,
+      },
+    });
+  }
   //
   async findCheck({ userEmail, userSignUpSite }) {
     return await this.UserRepository.findOne({

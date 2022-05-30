@@ -1,4 +1,4 @@
-import { Ip, UseGuards } from '@nestjs/common';
+import { UseGuards } from '@nestjs/common';
 import { Args, Context, Int, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { GraphQLJSONObject } from 'graphql-type-json';
 import { GqlAuthAccessGuard } from 'src/commons/auth/gql-auth.guard';
@@ -185,16 +185,15 @@ export class BoardResolver {
     });
   }
 
+  @UseGuards(GqlAuthAccessGuard)
   @Mutation(() => Board)
   async updateBoard(
     @Args('boardId') boardId: string,
     @Args('updateBoardInput') updateBoardInput: UpdateBoardInput,
-    @Args('boardTagsInput') boardTagsInput: BoardTagsInput,
   ) {
     return await this.boardService.update({
       boardId,
       updateBoardInput,
-      boardTagsInput,
     });
   }
 

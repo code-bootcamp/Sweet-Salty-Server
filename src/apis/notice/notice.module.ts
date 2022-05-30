@@ -9,7 +9,7 @@ import { NoticeService } from './notice.service';
   imports: [
     TypeOrmModule.forFeature([Notice]),
     ElasticsearchModule.register({
-      node: 'http://147.47.209.114:9200',
+      node: `http://${process.env.ELK_URL}`,
     }),
   ],
   providers: [NoticeResolver, NoticeService],
