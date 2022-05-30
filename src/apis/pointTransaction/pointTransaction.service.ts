@@ -155,6 +155,8 @@ export class PointTransactionService {
           `소유한 포인트가 부족하여 환불이 불가능합니다. 최대 환불 포인트는 ${userdata.userPoint} 입니다.`,
         );
 
+      let point;
+
       if (amount === 0) {
         // 전액 환불
         await this.iamportService.CancelPayment({
@@ -170,7 +172,8 @@ export class PointTransactionService {
           { userEmail: currentUser.userEmail },
           { userPoint: userdata.userPoint - Payment_data.checksum },
         );
-        await queryRunner.manager.save(PointTransaction, {
+
+        point = await queryRunner.manager.save(PointTransaction, {
           impUid,
           amount: -Payment_data.checksum,
           checksum: Payment_data.checksum - Payment_data.checksum,
@@ -187,7 +190,7 @@ export class PointTransactionService {
           amount,
         });
 
-        await queryRunner.manager.save(PointTransaction, {
+        point = await queryRunner.manager.save(PointTransaction, {
           impUid,
           amount: -amount,
           checksum: Payment_data.checksum - amount,
@@ -210,6 +213,8 @@ export class PointTransactionService {
       });
 
       await queryRunner.commitTransaction();
+
+      return point;
     } catch (error) {
       await queryRunner.rollbackTransaction();
     } finally {
