@@ -205,11 +205,13 @@ type Query {
   fetchPreferBoards: [Board!]!
   fetchBoardCount: String!
   fetchBoardTypeORMWithTags(boardTagsInput: BoardTagsInput!, category: BOARD_SUB_CATEGORY_NAME_ENUM): [Board!]!
+  test(file: Upload!): String!
   getBarcode: String!
-  follow(followerNickname: String!): String!
   followCount(followerNickname: String!): [String!]!
   fetchUser(userEmail: String!): User!
   findUser(phone: String!): fewUser!
+  fetchUserNickname(userNickname: String!): User!
+  fetchUserId(userId: String!): User!
   fetchUserLoggedIn: User!
   fetchNotice(noticeId: String!): Notice!
   fetchNoticeSearchTitle(title: String!): JSONObject!
@@ -269,6 +271,9 @@ input BoardTagsInput {
   boardTagMood: [String!]
 }
 
+"""The `Upload` scalar type represents a file upload."""
+scalar Upload
+
 enum NOTICE_SUB_CATEGORY_NAME_ENUM {
   ALL
   NOTICE
@@ -292,10 +297,11 @@ type Mutation {
   createBoard(createBoardInput: CreateBoardInput!, boardTagsInput: BoardTagsInput!): Board!
   createBoardRes(reqBoardId: String!, createBoardInput: CreateBoardInput!, boardTagsInput: BoardTagsInput!): Board!
   createBoardReq(createBoardReqInput: CreateBoardReqInput!): Board!
-  updateBoard(boardId: String!, updateBoardInput: UpdateBoardInput!, boardTagsInput: BoardTagsInput!): Board!
+  updateBoard(boardId: String!, updateBoardInput: UpdateBoardInput!): Board!
   deleteBoard(boardId: String!): Boolean!
   createBoardLike(boardId: String!): String!
   uploadFile(file: Upload!): String!
+  follow(followerNickname: String!): String!
   createUser(createUserInput: CreateUserInput!): User!
   updateImage(image: String!): User!
   updateProfile(profile: String!): User!
@@ -355,9 +361,6 @@ input UpdateBoardInput {
   subCategoryName: BOARD_SUB_CATEGORY_NAME_ENUM
   place: PlaceInput
 }
-
-"""The `Upload` scalar type represents a file upload."""
-scalar Upload
 
 input CreateUserInput {
   userEmail: String!

@@ -29,6 +29,7 @@ import { ChatBackEndModule } from './chatBackEnd/chatBackEnd.module';
 import { ChatFrontEndModule } from './chatFrontEnd/chatFrontEnd.module';
 import { AppController } from './app.controller';
 import { FollowModule } from './apis/follow/follow.module';
+
 @Module({
   imports: [
     AdminModule,
@@ -63,7 +64,12 @@ import { FollowModule } from './apis/follow/follow.module';
           'Content-Type',
           'Accept',
         ],
-        origin: ['http://localhost:3000'],
+        origin: [
+          'http://localhost:3000',
+          'https://nextjs-m3jgp6bewq-an.a.run.app',
+          'http://34.64.45.98:3000',
+          'https://sweetsalty.shop',
+        ],
       },
     }),
     TypeOrmModule.forRoot({

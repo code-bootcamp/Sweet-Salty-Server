@@ -117,7 +117,13 @@ async function bootstrap() {
 
   app.use(cookieParser());
   app.enableCors({
-    origin: ['http://localhost:3000', 'http://localhost:5501'],
+    origin: [
+      'http://localhost:3000',
+      'http://localhost:5501',
+      'https://nextjs-m3jgp6bewq-an.a.run.app',
+      'http://34.64.45.98:3000',
+      'https://sweetsalty.shop',
+    ],
     methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'],
     allowedHeaders: [
       'Access-Control-Allow-Headers',
