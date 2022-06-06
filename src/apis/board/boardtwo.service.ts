@@ -32,14 +32,14 @@ export class BoardTwoService {
     private readonly cacheManager: Cache,
   ) {}
 
-  // qb = getConnection()
-  //   .createQueryBuilder()
-  //   .select('board')
-  //   .from(Board, 'board')
-  //   .leftJoinAndSelect('board.subCategory', 'subCategory')
-  //   .leftJoinAndSelect('subCategory.topCategory', 'topCategory')
-  //   .leftJoinAndSelect('board.place', 'place')
-  //   .leftJoinAndSelect('board.user', 'user');
+  qb = getConnection()
+    .createQueryBuilder()
+    .select('board')
+    .from(Board, 'board')
+    .leftJoinAndSelect('board.subCategory', 'subCategory')
+    .leftJoinAndSelect('subCategory.topCategory', 'topCategory')
+    .leftJoinAndSelect('board.place', 'place')
+    .leftJoinAndSelect('board.user', 'user');
 
   async test({ title }) {
     return await getConnection()
@@ -173,15 +173,9 @@ export class BoardTwoService {
     const start = new Date(end);
     start.setDate(end.getDate() - 30);
 
-    const qb = getConnection()
-      .createQueryBuilder()
-      .select('board')
-      .from(Board, 'board')
-      .leftJoinAndSelect('board.place', 'place')
-      .leftJoinAndSelect('board.user', 'user')
-      .where(
-        `board.createAt BETWEEN '${start.toISOString()}' AND '${end.toISOString()}'`,
-      );
+    const qb = this.qb.where(
+      `board.createAt BETWEEN '${start.toISOString()}' AND '${end.toISOString()}'`,
+    );
 
     if (category === ('VISITED' || 'REVIEW')) {
       return await qb
@@ -215,33 +209,16 @@ export class BoardTwoService {
   // }
 
   async findAll() {
-    return await getConnection()
-      .createQueryBuilder()
-      .select('board')
-      .from(Board, 'board')
-      .leftJoinAndSelect('board.subCategory', 'subCategory')
-      .leftJoinAndSelect('board.boardSides', 'boardSide')
-      .leftJoinAndSelect('boardSide.boardTags', 'boardTag')
-      .leftJoinAndSelect('board.place', 'place')
-      .leftJoinAndSelect('board.user', 'user')
-      .orderBy('board.createAt', 'DESC')
-      .getMany();
+    //this.boardRepository.find({relations:'place',''})
+    return await this.qb.orderBy('board.createAt', 'DESC').getMany();
   }
 
   async findOne({ boardId, ip }) {
     const isIp = await this.cacheManager.get(boardId);
 
-    const qb = getConnection()
-      .createQueryBuilder()
-      .select('board')
-      .from(Board, 'board')
-      .leftJoinAndSelect('board.subCategory', 'subCategory')
-      .leftJoinAndSelect('subCategory.topCategory', 'topCategory')
+    const qb = this.qb
       .leftJoinAndSelect('board.boardSides', 'boardSide')
       .leftJoinAndSelect('boardSide.boardTags', 'boardTag')
-      .leftJoinAndSelect('board.images', 'image')
-      .leftJoinAndSelect('board.place', 'place')
-      .leftJoinAndSelect('board.user', 'user')
       .orderBy('boardTag.boardTagRefName', 'ASC')
       .where({ boardId });
 
@@ -255,32 +232,8 @@ export class BoardTwoService {
         .where({ boardId })
         .execute();
 
-      // return await getConnection()
-      //   .createQueryBuilder()
-      //   .select('board')
-      //   .from(Board, 'board')
-      //   .leftJoinAndSelect('board.subCategory', 'subCategory')
-      //   .leftJoinAndSelect('subCategory.topCategory', 'topCategory')
-      //   .leftJoinAndSelect('board.boardSides', 'boardSide')
-      //   .leftJoinAndSelect('boardSide.boardTags', 'boardTag')
-      //   .leftJoinAndSelect('board.images', 'image')
-      //   .leftJoinAndSelect('board.place', 'place')
-      //   .orderBy('boardTag.boardTagRefName', 'ASC')
-      //   .where({ boardId })
       return await qb.getOne();
     } else {
-      // return await getConnection()
-      //   .createQueryBuilder()
-      //   .select('board')
-      //   .from(Board, 'board')
-      //   .leftJoinAndSelect('board.subCategory', 'subCategory')
-      //   .leftJoinAndSelect('subCategory.topCategory', 'topCategory')
-      //   .leftJoinAndSelect('board.boardSides', 'boardSide')
-      //   .leftJoinAndSelect('boardSide.boardTags', 'boardTag')
-      //   .leftJoinAndSelect('board.images', 'image')
-      //   .leftJoinAndSelect('board.place', 'place')
-      //   .orderBy('boardTag.boardTagRefName', 'ASC')
-      //   .where({ boardId })
       return await qb.getOne();
     }
   }
@@ -343,26 +296,8 @@ export class BoardTwoService {
   }
 
   async findPickList({ category }) {
-    const qb = getConnection()
-      .createQueryBuilder()
-      .select('board')
-      .from(Board, 'board')
-      .leftJoinAndSelect('board.subCategory', 'subCategory')
-      .leftJoinAndSelect('board.boardSides', 'boardSide')
-      .leftJoinAndSelect('boardSide.boardTags', 'boardTag')
-      .leftJoinAndSelect('board.user', 'user')
-      .leftJoinAndSelect('board.place', 'place');
-
     if (category === 'REVIEW') {
-      // return await getConnection()
-      //   .createQueryBuilder()
-      //   .select('board')
-      //   .from(Board, 'board')
-      //   .leftJoinAndSelect('board.subCategory', 'subCategory')
-      //   .leftJoinAndSelect('board.boardSides', 'boardSide')
-      //   .leftJoinAndSelect('boardSide.boardTags', 'boardTag')
-      //   .leftJoinAndSelect('board.place', 'place')
-      return await qb
+      return await this.qb
         .where('subCategoryName = :category1', {
           category1: 'REVIEW',
         })
@@ -372,15 +307,8 @@ export class BoardTwoService {
         .orderBy('board.createAt', 'DESC')
         .getMany();
     }
-    // return await getConnection()
-    //   .createQueryBuilder()
-    //   .select('board')
-    //   .from(Board, 'board')
-    //   .leftJoinAndSelect('board.subCategory', 'subCategory')
-    //   .leftJoinAndSelect('board.boardSides', 'boardSide')
-    //   .leftJoinAndSelect('boardSide.boardTags', 'boardTag')
-    //   .leftJoinAndSelect('board.place', 'place')
-    return await qb
+
+    return await this.qb
       .where('subCategoryName = :category', {
         category: category,
       })
@@ -417,6 +345,28 @@ export class BoardTwoService {
       return await qb.where({ boardSubject: 'TASTER' }).getMany();
     }
   }
+  // async findRecent({ category }) {
+  //   const qb = await this.qb
+  //     .where({ boardSubject: category })
+  //     .take(10)
+  //     .orderBy('board.createAt', 'DESC')
+  //     .getMany();
+  //   if (category === 'REVIEW') {
+  //     return qb;
+  //   }
+
+  //   if (category === 'VISITED') {
+  //     return qb;
+  //   }
+
+  //   if (category === 'REQUEST') {
+  //     return qb;
+  //   }
+
+  //   if (category === 'TASTER') {
+  //     return qb;
+  //   }
+  // }
 
   async findGender({ gender, page }) {
     return await this.boardRepository.find({
@@ -451,24 +401,14 @@ export class BoardTwoService {
   }
 
   async findLikeBoard({ currentUser }) {
-    return await getConnection()
-      .createQueryBuilder()
-      .select('board')
-      .from(Board, 'board')
+    return await this.qb
       .leftJoinAndSelect('board.boardLikes', 'boardLike')
-      .leftJoinAndSelect('board.place', 'place')
-      .leftJoinAndSelect('board.user', 'user')
       .where('boardLike.user = :data', { data: currentUser.userId })
       .getMany();
   }
 
   async findUserWithBoard({ userNickname }) {
-    return await getConnection()
-      .createQueryBuilder()
-      .select('board')
-      .from(Board, 'board')
-      .leftJoinAndSelect('board.place', 'place')
-      .leftJoinAndSelect('board.user', 'user')
+    return await this.qb
       .where('user.userNickname = :data', { data: userNickname })
       .orderBy('board.createAt', 'DESC')
       .getMany();

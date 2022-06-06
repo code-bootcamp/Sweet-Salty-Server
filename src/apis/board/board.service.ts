@@ -32,14 +32,14 @@ export class BoardService {
     private readonly cacheManager: Cache,
   ) {}
 
-  // qb = getConnection()
-  //   .createQueryBuilder()
-  //   .select('board')
-  //   .from(Board, 'board')
-  //   .leftJoinAndSelect('board.subCategory', 'subCategory')
-  //   .leftJoinAndSelect('subCategory.topCategory', 'topCategory')
-  //   .leftJoinAndSelect('board.place', 'place')
-  //   .leftJoinAndSelect('board.user', 'user');
+  qb = getConnection()
+    .createQueryBuilder()
+    .select('board')
+    .from(Board, 'board')
+    .leftJoinAndSelect('board.subCategory', 'subCategory')
+    .leftJoinAndSelect('subCategory.topCategory', 'topCategory')
+    .leftJoinAndSelect('board.place', 'place')
+    .leftJoinAndSelect('board.user', 'user');
 
   async test({ title }) {
     return await getConnection()
@@ -161,7 +161,6 @@ export class BoardService {
         },
       });
       await this.cacheManager.set(contents, data, { ttl: 10 });
-
       return data;
     }
   }
@@ -177,6 +176,8 @@ export class BoardService {
       .createQueryBuilder()
       .select('board')
       .from(Board, 'board')
+      .leftJoinAndSelect('board.subCategory', 'subCategory')
+      .leftJoinAndSelect('subCategory.topCategory', 'topCategory')
       .leftJoinAndSelect('board.place', 'place')
       .leftJoinAndSelect('board.user', 'user')
       .where(
@@ -201,27 +202,13 @@ export class BoardService {
       .getMany();
   }
 
-  // async best() {
-  //   return await getConnection()
-  //     .createQueryBuilder()
-  //     .select('board')
-  //     .from(Board, 'board')
-  //     .leftJoinAndSelect('board.place', 'place')
-  //     .leftJoinAndSelect('board.user', 'user')
-  //     .orderBy('boardLikeCount', 'DESC')
-  //     .addOrderBy('board.createAt', 'DESC')
-  //     .limit(3)
-  //     .getMany();
-  // }
-
   async findAll() {
     return await getConnection()
       .createQueryBuilder()
       .select('board')
       .from(Board, 'board')
       .leftJoinAndSelect('board.subCategory', 'subCategory')
-      .leftJoinAndSelect('board.boardSides', 'boardSide')
-      .leftJoinAndSelect('boardSide.boardTags', 'boardTag')
+      .leftJoinAndSelect('subCategory.topCategory', 'topCategory')
       .leftJoinAndSelect('board.place', 'place')
       .leftJoinAndSelect('board.user', 'user')
       .orderBy('board.createAt', 'DESC')
@@ -237,11 +224,10 @@ export class BoardService {
       .from(Board, 'board')
       .leftJoinAndSelect('board.subCategory', 'subCategory')
       .leftJoinAndSelect('subCategory.topCategory', 'topCategory')
-      .leftJoinAndSelect('board.boardSides', 'boardSide')
-      .leftJoinAndSelect('boardSide.boardTags', 'boardTag')
-      .leftJoinAndSelect('board.images', 'image')
       .leftJoinAndSelect('board.place', 'place')
       .leftJoinAndSelect('board.user', 'user')
+      .leftJoinAndSelect('board.boardSides', 'boardSide')
+      .leftJoinAndSelect('boardSide.boardTags', 'boardTag')
       .orderBy('boardTag.boardTagRefName', 'ASC')
       .where({ boardId });
 
@@ -255,32 +241,8 @@ export class BoardService {
         .where({ boardId })
         .execute();
 
-      // return await getConnection()
-      //   .createQueryBuilder()
-      //   .select('board')
-      //   .from(Board, 'board')
-      //   .leftJoinAndSelect('board.subCategory', 'subCategory')
-      //   .leftJoinAndSelect('subCategory.topCategory', 'topCategory')
-      //   .leftJoinAndSelect('board.boardSides', 'boardSide')
-      //   .leftJoinAndSelect('boardSide.boardTags', 'boardTag')
-      //   .leftJoinAndSelect('board.images', 'image')
-      //   .leftJoinAndSelect('board.place', 'place')
-      //   .orderBy('boardTag.boardTagRefName', 'ASC')
-      //   .where({ boardId })
       return await qb.getOne();
     } else {
-      // return await getConnection()
-      //   .createQueryBuilder()
-      //   .select('board')
-      //   .from(Board, 'board')
-      //   .leftJoinAndSelect('board.subCategory', 'subCategory')
-      //   .leftJoinAndSelect('subCategory.topCategory', 'topCategory')
-      //   .leftJoinAndSelect('board.boardSides', 'boardSide')
-      //   .leftJoinAndSelect('boardSide.boardTags', 'boardTag')
-      //   .leftJoinAndSelect('board.images', 'image')
-      //   .leftJoinAndSelect('board.place', 'place')
-      //   .orderBy('boardTag.boardTagRefName', 'ASC')
-      //   .where({ boardId })
       return await qb.getOne();
     }
   }
@@ -348,20 +310,10 @@ export class BoardService {
       .select('board')
       .from(Board, 'board')
       .leftJoinAndSelect('board.subCategory', 'subCategory')
-      .leftJoinAndSelect('board.boardSides', 'boardSide')
-      .leftJoinAndSelect('boardSide.boardTags', 'boardTag')
-      .leftJoinAndSelect('board.user', 'user')
-      .leftJoinAndSelect('board.place', 'place');
-
+      .leftJoinAndSelect('subCategory.topCategory', 'topCategory')
+      .leftJoinAndSelect('board.place', 'place')
+      .leftJoinAndSelect('board.user', 'user');
     if (category === 'REVIEW') {
-      // return await getConnection()
-      //   .createQueryBuilder()
-      //   .select('board')
-      //   .from(Board, 'board')
-      //   .leftJoinAndSelect('board.subCategory', 'subCategory')
-      //   .leftJoinAndSelect('board.boardSides', 'boardSide')
-      //   .leftJoinAndSelect('boardSide.boardTags', 'boardTag')
-      //   .leftJoinAndSelect('board.place', 'place')
       return await qb
         .where('subCategoryName = :category1', {
           category1: 'REVIEW',
@@ -372,14 +324,7 @@ export class BoardService {
         .orderBy('board.createAt', 'DESC')
         .getMany();
     }
-    // return await getConnection()
-    //   .createQueryBuilder()
-    //   .select('board')
-    //   .from(Board, 'board')
-    //   .leftJoinAndSelect('board.subCategory', 'subCategory')
-    //   .leftJoinAndSelect('board.boardSides', 'boardSide')
-    //   .leftJoinAndSelect('boardSide.boardTags', 'boardTag')
-    //   .leftJoinAndSelect('board.place', 'place')
+
     return await qb
       .where('subCategoryName = :category', {
         category: category,
@@ -417,6 +362,28 @@ export class BoardService {
       return await qb.where({ boardSubject: 'TASTER' }).getMany();
     }
   }
+  // async findRecent({ category }) {
+  //   const qb = await this.qb
+  //     .where({ boardSubject: category })
+  //     .take(10)
+  //     .orderBy('board.createAt', 'DESC')
+  //     .getMany();
+  //   if (category === 'REVIEW') {
+  //     return qb;
+  //   }
+
+  //   if (category === 'VISITED') {
+  //     return qb;
+  //   }
+
+  //   if (category === 'REQUEST') {
+  //     return qb;
+  //   }
+
+  //   if (category === 'TASTER') {
+  //     return qb;
+  //   }
+  // }
 
   async findGender({ gender, page }) {
     return await this.boardRepository.find({
@@ -455,9 +422,11 @@ export class BoardService {
       .createQueryBuilder()
       .select('board')
       .from(Board, 'board')
-      .leftJoinAndSelect('board.boardLikes', 'boardLike')
+      .leftJoinAndSelect('board.subCategory', 'subCategory')
+      .leftJoinAndSelect('subCategory.topCategory', 'topCategory')
       .leftJoinAndSelect('board.place', 'place')
       .leftJoinAndSelect('board.user', 'user')
+      .leftJoinAndSelect('board.boardLikes', 'boardLike')
       .where('boardLike.user = :data', { data: currentUser.userId })
       .getMany();
   }
@@ -467,6 +436,8 @@ export class BoardService {
       .createQueryBuilder()
       .select('board')
       .from(Board, 'board')
+      .leftJoinAndSelect('board.subCategory', 'subCategory')
+      .leftJoinAndSelect('subCategory.topCategory', 'topCategory')
       .leftJoinAndSelect('board.place', 'place')
       .leftJoinAndSelect('board.user', 'user')
       .where('user.userNickname = :data', { data: userNickname })

@@ -103,11 +103,6 @@ type Board {
   boardSides: [BoardSide!]!
 }
 
-type fewUser {
-  userEmail: String!
-  userCreateAt: DateTime!
-}
-
 type User {
   userId: String!
   userState: Boolean!
@@ -208,8 +203,7 @@ type Query {
   test(file: Upload!): String!
   getBarcode: String!
   followCount(followerNickname: String!): [String!]!
-  fetchUser(userEmail: String!): User!
-  findUser(phone: String!): fewUser!
+  fetchUser(userEmail: String, userId: String, userNickname: String): User!
   fetchUserNickname(userNickname: String!): User!
   fetchUserId(userId: String!): User!
   fetchUserLoggedIn: User!
