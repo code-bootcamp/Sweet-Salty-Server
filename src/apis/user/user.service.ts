@@ -1,4 +1,8 @@
-import { ConflictException, Injectable } from '@nestjs/common';
+import {
+  ConflictException,
+  Injectable,
+  InternalServerErrorException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { getConnection, Repository } from 'typeorm';
 import * as bcrypt from 'bcrypt';
@@ -92,6 +96,29 @@ export class UserService {
     fewData['createAt'] = userData.createAt;
 
     return fewData;
+  }
+
+  async find({ userEmail, userId, userNickname }) {
+    console.log(userEmail);
+    if (!userEmail && !userId && !userNickname)
+      throw new InternalServerErrorException('검색어를 입력해주세요.');
+    if (userEmail) {
+      const data = await this.UserRepository.findOne({ where: { userEmail } });
+      if (data) return data;
+      throw new InternalServerErrorException('데이터가 존재하지 않습니다.');
+    }
+    if (userId) {
+      const data = await this.UserRepository.findOne({ where: { userId } });
+      if (data) return data;
+      throw new InternalServerErrorException('데이터가 존재하지 않습니다.');
+    }
+    if (userNickname) {
+      const data = await this.UserRepository.findOne({
+        where: { userNickname },
+      });
+      if (data) return data;
+      throw new InternalServerErrorException('데이터가 존재하지 않습니다.');
+    }
   }
 
   async findOne({ userEmail }) {

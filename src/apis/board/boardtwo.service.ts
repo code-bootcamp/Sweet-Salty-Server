@@ -21,7 +21,7 @@ import { MessageInfo } from '../messageInfo/entities/messageInfo.entity';
 import { Message } from '../message/entitis/message.entity';
 
 @Injectable()
-export class BoardService {
+export class BoardTwoService {
   constructor(
     @InjectRepository(Board)
     private readonly boardRepository: Repository<Board>,
@@ -161,6 +161,7 @@ export class BoardService {
         },
       });
       await this.cacheManager.set(contents, data, { ttl: 10 });
+
       return data;
     }
   }
@@ -172,17 +173,9 @@ export class BoardService {
     const start = new Date(end);
     start.setDate(end.getDate() - 30);
 
-    const qb = getConnection()
-      .createQueryBuilder()
-      .select('board')
-      .from(Board, 'board')
-      .leftJoinAndSelect('board.subCategory', 'subCategory')
-      .leftJoinAndSelect('subCategory.topCategory', 'topCategory')
-      .leftJoinAndSelect('board.place', 'place')
-      .leftJoinAndSelect('board.user', 'user')
-      .where(
-        `board.createAt BETWEEN '${start.toISOString()}' AND '${end.toISOString()}'`,
-      );
+    const qb = this.qb.where(
+      `board.createAt BETWEEN '${start.toISOString()}' AND '${end.toISOString()}'`,
+    );
 
     if (category === ('VISITED' || 'REVIEW')) {
       return await qb
@@ -202,30 +195,28 @@ export class BoardService {
       .getMany();
   }
 
+  // async best() {
+  //   return await getConnection()
+  //     .createQueryBuilder()
+  //     .select('board')
+  //     .from(Board, 'board')
+  //     .leftJoinAndSelect('board.place', 'place')
+  //     .leftJoinAndSelect('board.user', 'user')
+  //     .orderBy('boardLikeCount', 'DESC')
+  //     .addOrderBy('board.createAt', 'DESC')
+  //     .limit(3)
+  //     .getMany();
+  // }
+
   async findAll() {
-    return await getConnection()
-      .createQueryBuilder()
-      .select('board')
-      .from(Board, 'board')
-      .leftJoinAndSelect('board.subCategory', 'subCategory')
-      .leftJoinAndSelect('subCategory.topCategory', 'topCategory')
-      .leftJoinAndSelect('board.place', 'place')
-      .leftJoinAndSelect('board.user', 'user')
-      .orderBy('board.createAt', 'DESC')
-      .getMany();
+    //this.boardRepository.find({relations:'place',''})
+    return await this.qb.orderBy('board.createAt', 'DESC').getMany();
   }
 
   async findOne({ boardId, ip }) {
     const isIp = await this.cacheManager.get(boardId);
 
-    const qb = getConnection()
-      .createQueryBuilder()
-      .select('board')
-      .from(Board, 'board')
-      .leftJoinAndSelect('board.subCategory', 'subCategory')
-      .leftJoinAndSelect('subCategory.topCategory', 'topCategory')
-      .leftJoinAndSelect('board.place', 'place')
-      .leftJoinAndSelect('board.user', 'user')
+    const qb = this.qb
       .leftJoinAndSelect('board.boardSides', 'boardSide')
       .leftJoinAndSelect('boardSide.boardTags', 'boardTag')
       .orderBy('boardTag.boardTagRefName', 'ASC')
@@ -305,16 +296,8 @@ export class BoardService {
   }
 
   async findPickList({ category }) {
-    const qb = getConnection()
-      .createQueryBuilder()
-      .select('board')
-      .from(Board, 'board')
-      .leftJoinAndSelect('board.subCategory', 'subCategory')
-      .leftJoinAndSelect('subCategory.topCategory', 'topCategory')
-      .leftJoinAndSelect('board.place', 'place')
-      .leftJoinAndSelect('board.user', 'user');
     if (category === 'REVIEW') {
-      return await qb
+      return await this.qb
         .where('subCategoryName = :category1', {
           category1: 'REVIEW',
         })
@@ -325,7 +308,7 @@ export class BoardService {
         .getMany();
     }
 
-    return await qb
+    return await this.qb
       .where('subCategoryName = :category', {
         category: category,
       })
@@ -418,28 +401,14 @@ export class BoardService {
   }
 
   async findLikeBoard({ currentUser }) {
-    return await getConnection()
-      .createQueryBuilder()
-      .select('board')
-      .from(Board, 'board')
-      .leftJoinAndSelect('board.subCategory', 'subCategory')
-      .leftJoinAndSelect('subCategory.topCategory', 'topCategory')
-      .leftJoinAndSelect('board.place', 'place')
-      .leftJoinAndSelect('board.user', 'user')
+    return await this.qb
       .leftJoinAndSelect('board.boardLikes', 'boardLike')
       .where('boardLike.user = :data', { data: currentUser.userId })
       .getMany();
   }
 
   async findUserWithBoard({ userNickname }) {
-    return await getConnection()
-      .createQueryBuilder()
-      .select('board')
-      .from(Board, 'board')
-      .leftJoinAndSelect('board.subCategory', 'subCategory')
-      .leftJoinAndSelect('subCategory.topCategory', 'topCategory')
-      .leftJoinAndSelect('board.place', 'place')
-      .leftJoinAndSelect('board.user', 'user')
+    return await this.qb
       .where('user.userNickname = :data', { data: userNickname })
       .orderBy('board.createAt', 'DESC')
       .getMany();

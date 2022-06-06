@@ -9,7 +9,6 @@ import { v4 as uuidv4 } from 'uuid';
 import { HttpService } from '@nestjs/axios';
 import * as sharp from 'sharp';
 import got from 'got';
-import { rejects } from 'assert';
 
 interface IFile {
   file: FileUpload;
@@ -30,6 +29,15 @@ export class ImageService {
       projectId: this.config.get('STORAGE_PROJECT_ID'),
     }).bucket(this.config.get('STORAGE_BUCKET'));
 
+    // const aa = await storage
+    //   .file('00397853-ffad-4eb7-a2eb-ea72eb411e77.webp')
+    //   .getSignedUrl({
+    //     version: 'v4',
+    //     action: 'read',
+    //     expires: Date.now() + 15 * 60 * 1000,
+    //     contentType: 'application/octet-stream',
+    //   });
+
     const url = await new Promise((resolve, reject) => {
       const uuid = uuidv4();
       file
@@ -42,9 +50,9 @@ export class ImageService {
         .on('error', (error) => reject(error));
     });
 
-    //const extension = file.filename.substring(file.filename.lastIndexOf('.'));
     return url;
 
+    //const extension = file.filename.substring(file.filename.lastIndexOf('.'));
     // const waitedFiles = await Promise.all(files);
     // (waitedFiles);
 
@@ -66,22 +74,30 @@ export class ImageService {
     //   }),
     // );
 
-    return url;
+    //return url;
   }
 
-  // async signed({ file }: IFile) {
-  //   const options = {
-  //     version: 'v4',
-  //     action: 'read',
-  //     expires: 15 * 60 * 1000,
-  //   };
-  //   const storage = new Storage();
+  async signed({ file }: IFile) {
+    const storage = new Storage({
+      keyFilename: this.config.get('STORAGE_KEY_FILENAME'),
+      projectId: this.config.get('STORAGE_PROJECT_ID'),
+    }).bucket(this.config.get('STORAGE_BUCKET'));
 
-  //   const [url] = await storage
-  //   .bucket(bucketName)
-  //   .file(fileName)
-  //   .getSignedUrl(options);
-  // }
+    const data = storage.file(file.filename);
+
+    const url = await data.getSignedUrl({
+      version: 'v4',
+      action: 'write',
+      expires: Date.now() + 15 * 60 * 1000,
+      contentType: 'application/octet-stream',
+    });
+
+    const publicUrl = `https://storage.googleapis.com/${this.config.get(
+      'STORAGE_BUCKET',
+    )}/${file.filename}`;
+
+    console.log(url, publicUrl);
+  }
 
   async getBarcode() {
     const storage = new Storage({

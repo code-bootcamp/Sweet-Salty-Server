@@ -20,13 +20,15 @@ export class UserResolver {
   @Query(() => User)
   fetchUser(
     //
-    @Args('userEmail') userEmail: string,
+    @Args({ name: 'userEmail', nullable: true }) userEmail: string,
+    @Args({ name: 'userId', nullable: true }) userId: string,
+    @Args({ name: 'userNickname', nullable: true }) userNickname: string,
   ) {
-    return this.userService.findOne({ userEmail });
+    return this.userService.find({ userEmail, userId, userNickname });
   }
 
   @Query(() => fewUser)
-  findUser(
+  findUserId(
     //
     @Args('phone') phone: string,
   ) {
