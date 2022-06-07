@@ -61,35 +61,6 @@ export class BoardResolver {
   }
 
   @Query(() => [Board])
-  fetchGenderBoards(
-    @Args({ name: 'gender', type: () => GENDER_ENUM })
-    gender: GENDER_ENUM,
-    @Args({ name: 'page', type: () => Int }) page: number,
-  ) {
-    return this.boardService.findGender({ gender, page });
-  }
-
-  @Query(() => [Board])
-  fetchAgeGroupBoards(
-    @Args({ name: 'ageGroup', type: () => AGE_GROUP_ENUM })
-    ageGroup: AGE_GROUP_ENUM,
-    @Args({ name: 'page', type: () => Int }) page: number,
-  ) {
-    return this.boardService.findAgeGroup({ ageGroup, page });
-  }
-
-  @Query(() => [Board])
-  fetchAgeGroupWithGenderBoards(
-    @Args({ name: 'gender', type: () => GENDER_ENUM })
-    gender: GENDER_ENUM,
-    @Args({ name: 'ageGroup', type: () => AGE_GROUP_ENUM })
-    ageGroup: AGE_GROUP_ENUM,
-    @Args({ name: 'page', type: () => Int }) page: number,
-  ) {
-    return this.boardService.findGenderWithAgeGroup({ gender, ageGroup, page });
-  }
-
-  @Query(() => [Board])
   fetchBoardBest(
     @Args({ name: 'category', type: () => BOARD_SUB_CATEGORY_NAME_ENUM })
     category: BOARD_SUB_CATEGORY_NAME_ENUM,
@@ -109,6 +80,11 @@ export class BoardResolver {
     @CurrentUser() currentUser: ICurrentUser,
   ) {
     return this.boardService.findLikeBoard({ currentUser });
+  }
+
+  @Query(() => [Board])
+  fetchLikedBoards(@Args('userNickname') userNickname: string) {
+    return this.boardService.findLiked({ userNickname });
   }
 
   @Query(() => [Board])
