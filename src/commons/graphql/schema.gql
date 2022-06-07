@@ -103,6 +103,11 @@ type Board {
   boardSides: [BoardSide!]!
 }
 
+type fewUser {
+  userEmail: String!
+  userCreateAt: DateTime!
+}
+
 type User {
   userId: String!
   userState: Boolean!
@@ -190,11 +195,9 @@ type Query {
   fetchBoard(boardId: String!): Board!
   fetchBoards: [Board!]!
   fetchBoardCategoryPick(category: BOARD_SUB_CATEGORY_NAME_ENUM!): [Board!]!
-  fetchGenderBoards(gender: GENDER_ENUM!, page: Int!): [Board!]!
-  fetchAgeGroupBoards(ageGroup: AGE_GROUP_ENUM!, page: Int!): [Board!]!
-  fetchAgeGroupWithGenderBoards(gender: GENDER_ENUM!, ageGroup: AGE_GROUP_ENUM!, page: Int!): [Board!]!
   fetchBoardBest(category: BOARD_SUB_CATEGORY_NAME_ENUM!): [Board!]!
   fetchPickedBoards: [Board!]!
+  fetchLikedBoards(userNickname: String!): [Board!]!
   fetchBoardsOfUser(userNickname: String!): [Board!]!
   fetchRecentBoards(category: BOARD_SUB_CATEGORY_NAME_ENUM!): [Board!]!
   fetchPreferBoards: [Board!]!
@@ -204,6 +207,7 @@ type Query {
   getBarcode: String!
   followCount(followerNickname: String!): [String!]!
   fetchUser(userEmail: String, userId: String, userNickname: String): User!
+  findUserId(phone: String!): fewUser!
   fetchUserNickname(userNickname: String!): User!
   fetchUserId(userId: String!): User!
   fetchUserLoggedIn: User!
@@ -241,22 +245,6 @@ enum BOARD_SUB_CATEGORY_NAME_ENUM {
   VISITED
   REVIEW
   TASTER
-}
-
-enum GENDER_ENUM {
-  PRIVATE
-  MALE
-  FEMALE
-}
-
-enum AGE_GROUP_ENUM {
-  NONE
-  TEN
-  TWENTY
-  THIRTY
-  FORTY
-  FIFTY
-  SIXTY
 }
 
 input BoardTagsInput {
@@ -364,6 +352,22 @@ input CreateUserInput {
   gender: GENDER_ENUM!
   ageGroup: AGE_GROUP_ENUM!
   prefer: [String!]!
+}
+
+enum GENDER_ENUM {
+  PRIVATE
+  MALE
+  FEMALE
+}
+
+enum AGE_GROUP_ENUM {
+  NONE
+  TEN
+  TWENTY
+  THIRTY
+  FORTY
+  FIFTY
+  SIXTY
 }
 
 input UpdateUserInput {

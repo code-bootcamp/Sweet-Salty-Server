@@ -11,8 +11,12 @@ import { rateLimit } from 'express-rate-limit';
 import * as requestIp from 'request-ip';
 
 import { Database, Resource } from '@admin-bro/typeorm';
+
 const AdminBroExpress = require('@admin-bro/express');
-const AdminBro = require('admin-bro');
+import AdminBro from 'admin-bro';
+
+//const AdminBro = require('admin-bro');
+//import AdminBroExpress from '@admin-bro/express';
 
 import { HttpExceptionFilter } from './commons/filter/http-exception.filter';
 import { User } from './apis/user/entities/user.entity';
@@ -36,6 +40,7 @@ import { BoardLike } from './apis/boardLike/entities/boardLike.entity';
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
+
   app.useGlobalFilters(new HttpExceptionFilter());
   app.useWebSocketAdapter(new SocketIoAdapter(app));
   app.useStaticAssets(join(__dirname, '..', 'public'));

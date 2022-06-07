@@ -385,38 +385,6 @@ export class BoardService {
   //   }
   // }
 
-  async findGender({ gender, page }) {
-    return await this.boardRepository.find({
-      where: { gender },
-      skip: (page - 1) * 10,
-      take: 10,
-      order: { createAt: 'DESC' },
-    });
-  }
-
-  async findAgeGroup({ ageGroup, page }) {
-    return await this.boardRepository.find({
-      where: {
-        ageGroup,
-      },
-      skip: (page - 1) * 10,
-      take: 10,
-      order: { createAt: 'DESC' },
-    });
-  }
-
-  async findGenderWithAgeGroup({ gender, ageGroup, page }) {
-    return await this.boardRepository.find({
-      where: {
-        gender,
-        ageGroup,
-      },
-      skip: (page - 1) * 10,
-      take: 10,
-      order: { createAt: 'DESC' },
-    });
-  }
-
   async findLikeBoard({ currentUser }) {
     return await getConnection()
       .createQueryBuilder()
@@ -428,6 +396,27 @@ export class BoardService {
       .leftJoinAndSelect('board.user', 'user')
       .leftJoinAndSelect('board.boardLikes', 'boardLike')
       .where('boardLike.user = :data', { data: currentUser.userId })
+      .getMany();
+  }
+
+  async findLiked({ userNickname }) {
+    const user = await getConnection()
+      .createQueryBuilder()
+      .select('user.userId')
+      .from(User, 'user')
+      .where({ userNickname })
+      .getOne();
+
+    return await getConnection()
+      .createQueryBuilder()
+      .select('board')
+      .from(Board, 'board')
+      .leftJoinAndSelect('board.subCategory', 'subCategory')
+      .leftJoinAndSelect('subCategory.topCategory', 'topCategory')
+      .leftJoinAndSelect('board.place', 'place')
+      .leftJoinAndSelect('board.user', 'user')
+      .leftJoinAndSelect('board.boardLikes', 'boardLike')
+      .where('boardLike.user = :data', { data: user.userId })
       .getMany();
   }
 
