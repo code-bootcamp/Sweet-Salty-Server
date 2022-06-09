@@ -58,3 +58,47 @@
 //       order: { createAt: 'DESC' },
 //     });
 //   }
+
+// boardTagMenu.reduce(async (acc, cur) => {
+//     const menuData = await this.boardTagRepository.findOne({
+//       boardTagName: cur,
+//     });
+//     await getConnection()
+//       .createQueryBuilder()
+//       .insert()
+//       .into(BoardSide)
+//       .values({
+//         boards: board.boardId,
+//         boardTags: menuData,
+//       })
+//       .execute();
+//   }, ''),
+
+//   boardTagRegion.reduce(async (acc, cur) => {
+//     const regionData = await this.boardTagRepository.findOne({
+//       boardTagName: cur,
+//     });
+//     await getConnection()
+//       .createQueryBuilder()
+//       .insert()
+//       .into(BoardSide)
+//       .values({
+//         boards: board.boardId,
+//         boardTags: regionData,
+//       })
+//       .execute();
+//   }, ''),
+//   boardTagMood.reduce(async (acc, cur) => {
+//     const moodData = await this.boardTagRepository.findOne({
+//       boardTagName: cur,
+//     });
+//     await getConnection()
+//       .createQueryBuilder()
+//       .insert()
+//       .into(BoardSide)
+//       .values({
+//         boards: board.boardId,
+//         boardTags: moodData,
+//       })
+//       .execute();
+//   }, ''),

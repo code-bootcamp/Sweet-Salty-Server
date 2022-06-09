@@ -103,11 +103,12 @@ async function bootstrap() {
 
   app.use(adminBro.options.rootPath, router);
   /// 사이트 간 위조 요청 방지 라이브러리
-  // app.use(csurf());
+  app.use(cookieParser());
+  //app.use(csurf({ cookie: true }));
 
   // http 통신 보안 라이브러리
   // contentSecurityPolicy : XSS 공격 방지 및 데이터 삽입 공격 방지 옵션
-  // hidePoweredBy : 웹서버가 무엇으로 개발이 되었는지 숨기는 옵션
+  //hidePoweredBy : 웹서버가 무엇으로 개발이 되었는지 숨기는 옵션
   // app.use(
   //   Helmet({
   //     contentSecurityPolicy: {
@@ -120,15 +121,19 @@ async function bootstrap() {
   // 과부화 방지 라이브러리
   app.use(rateLimit({ windowMs: 5 * 60 * 1000, max: 100 }));
 
-  app.use(cookieParser());
   app.enableCors({
     origin: [
-      'http://localhost:3000',
-      'http://localhost:5501',
-      'https://nextjs-m3jgp6bewq-an.a.run.app',
-      'http://34.64.45.98:3000',
-      'https://sweetsalty.shop',
+      process.env.CORS_ORIGIN_DEV,
+      process.env.CORS_ORIGIN_TEST,
+      process.env.CORS_ORIGIN_PROD,
     ],
+    // origin: [
+    //   'http://localhost:3000',
+    //   'http://localhost:5501',
+    //   'https://nextjs-m3jgp6bewq-an.a.run.app',
+    //   'http://34.64.45.98:3000',
+    //   'https://sweetsalty.shop',
+    // ],
     methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'],
     allowedHeaders: [
       'Access-Control-Allow-Headers',

@@ -7,12 +7,7 @@ import { BoardService } from './board.service';
 import { BoardTagsInput } from './dto/boardTags.input';
 import { CreateBoardInput, CreateBoardReqInput } from './dto/createBoard.input';
 import { UpdateBoardInput } from './dto/updateBoard.input';
-import {
-  AGE_GROUP_ENUM,
-  Board,
-  GENDER_ENUM,
-  BOARD_SUB_CATEGORY_NAME_ENUM,
-} from './entities/board.entity';
+import { Board, BOARD_SUB_CATEGORY_NAME_ENUM } from './entities/board.entity';
 
 @Resolver()
 export class BoardResolver {
@@ -26,6 +21,15 @@ export class BoardResolver {
   @Query(() => GraphQLJSONObject)
   async fetchBoardContents(@Args('contents') contents: string) {
     return this.boardService.elasticsearchFindContents({ contents });
+  }
+
+  @Query(() => GraphQLJSONObject)
+  async searchBoards(
+    //
+    @Args('title') title: string,
+    @Args('contents') contents: string,
+  ) {
+    return this.boardService.elasticsearch({ title, contents });
   }
 
   @Query(() => GraphQLJSONObject)
@@ -73,18 +77,9 @@ export class BoardResolver {
   //   return this.boardService.best();
   // }
 
-  @UseGuards(GqlAuthAccessGuard)
   @Query(() => [Board])
-  fetchPickedBoards(
-    //
-    @CurrentUser() currentUser: ICurrentUser,
-  ) {
-    return this.boardService.findLikeBoard({ currentUser });
-  }
-
-  @Query(() => [Board])
-  fetchLikedBoards(@Args('userNickname') userNickname: string) {
-    return this.boardService.findLiked({ userNickname });
+  fetchPickedBoards(@Args('userNickname') userNickname: string) {
+    return this.boardService.findLikeBoard({ userNickname });
   }
 
   @Query(() => [Board])
@@ -123,11 +118,10 @@ export class BoardResolver {
   createBoard(
     @CurrentUser() currentUser: ICurrentUser,
     @Args('createBoardInput') createBoardInput: CreateBoardInput,
-    @Args('boardTagsInput') boardTagsInput: BoardTagsInput,
   ) {
     return this.boardService.create({
       createBoardInput,
-      boardTagsInput,
+
       currentUser,
     });
   }
@@ -164,10 +158,12 @@ export class BoardResolver {
   @UseGuards(GqlAuthAccessGuard)
   @Mutation(() => Board)
   async updateBoard(
+    @CurrentUser() currentUser: ICurrentUser,
     @Args('boardId') boardId: string,
     @Args('updateBoardInput') updateBoardInput: UpdateBoardInput,
   ) {
     return await this.boardService.update({
+      currentUser,
       boardId,
       updateBoardInput,
     });

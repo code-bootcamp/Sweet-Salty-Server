@@ -6,10 +6,10 @@ export class CreateBoardInput {
   @Field(() => String)
   boardTitle: string;
 
-  @Field(() => String, { nullable: true })
+  @Field(() => String)
   boardSugar: string;
 
-  @Field(() => String, { nullable: true })
+  @Field(() => String)
   boardSalt: string;
 
   @Field(() => String)
@@ -17,6 +17,9 @@ export class CreateBoardInput {
 
   @Field(() => BOARD_SUB_CATEGORY_NAME_ENUM)
   subCategoryName: string;
+
+  @Field(() => [String])
+  tags: string[];
 
   @Field(() => PlaceInput)
   place: { PlaceInput: string };
