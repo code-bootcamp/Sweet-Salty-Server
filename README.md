@@ -17,7 +17,7 @@
 
 ## 실행 방법
 
-목차 7번의 env 파일 구성요소를 전부 추가한 후 <br>
+목차 8번의 env 파일 구성요소를 전부 추가한 후 <br>
 docker-compose build -> docker-compose up <br>
 http://localhost:3000/graphql 에서 확인
 
