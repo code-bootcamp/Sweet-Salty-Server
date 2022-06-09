@@ -99,7 +99,6 @@ export class UserService {
   }
 
   async find({ userEmail, userId, userNickname }) {
-    console.log(userEmail);
     if (!userEmail && !userId && !userNickname)
       throw new InternalServerErrorException('검색어를 입력해주세요.');
     if (userEmail) {

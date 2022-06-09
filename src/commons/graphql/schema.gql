@@ -191,13 +191,13 @@ type Query {
   fetchTags(refName: String!): [BoardTag!]!
   fetchBoardTitle(title: String!): JSONObject!
   fetchBoardContents(contents: String!): JSONObject!
+  searchBoards(title: String!, contents: String!): JSONObject!
   fetchBoardWithTags(tags: [String!]!): JSONObject!
   fetchBoard(boardId: String!): Board!
   fetchBoards: [Board!]!
   fetchBoardCategoryPick(category: BOARD_SUB_CATEGORY_NAME_ENUM!): [Board!]!
   fetchBoardBest(category: BOARD_SUB_CATEGORY_NAME_ENUM!): [Board!]!
-  fetchPickedBoards: [Board!]!
-  fetchLikedBoards(userNickname: String!): [Board!]!
+  fetchPickedBoards(userNickname: String!): [Board!]!
   fetchBoardsOfUser(userNickname: String!): [Board!]!
   fetchRecentBoards(category: BOARD_SUB_CATEGORY_NAME_ENUM!): [Board!]!
   fetchPreferBoards: [Board!]!
@@ -276,7 +276,7 @@ type Mutation {
   overlapPassword(password: String!): Boolean!
   signUpGetToken(phone: String!): String!
   signUpCheckToken(phone: String!, token: String!): Boolean!
-  createBoard(createBoardInput: CreateBoardInput!, boardTagsInput: BoardTagsInput!): Board!
+  createBoard(createBoardInput: CreateBoardInput!): Board!
   createBoardRes(reqBoardId: String!, createBoardInput: CreateBoardInput!, boardTagsInput: BoardTagsInput!): Board!
   createBoardReq(createBoardReqInput: CreateBoardReqInput!): Board!
   updateBoard(boardId: String!, updateBoardInput: UpdateBoardInput!): Board!
@@ -313,10 +313,11 @@ input CreateTagInput {
 
 input CreateBoardInput {
   boardTitle: String!
-  boardSugar: String
-  boardSalt: String
+  boardSugar: String!
+  boardSalt: String!
   boardContents: String!
   subCategoryName: BOARD_SUB_CATEGORY_NAME_ENUM!
+  tags: [String!]!
   place: PlaceInput!
 }
 
@@ -341,6 +342,7 @@ input UpdateBoardInput {
   boardSalt: String
   boardContents: String
   subCategoryName: BOARD_SUB_CATEGORY_NAME_ENUM
+  tags: [String!]
   place: PlaceInput
 }
 

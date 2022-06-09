@@ -65,11 +65,16 @@ import { FollowModule } from './apis/follow/follow.module';
           'Accept',
         ],
         origin: [
-          'http://localhost:3000',
-          'https://nextjs-m3jgp6bewq-an.a.run.app',
-          'http://34.64.45.98:3000',
-          'https://sweetsalty.shop',
+          process.env.CORS_ORIGIN_DEV,
+          process.env.CORS_ORIGIN_TEST,
+          process.env.CORS_ORIGIN_PROD,
         ],
+        // origin: [
+        //   'http://localhost:3000',
+        //   'https://nextjs-m3jgp6bewq-an.a.run.app',
+        //   'http://34.64.45.98:3000',
+        //   'https://sweetsalty.shop',
+        // ],
       },
     }),
     TypeOrmModule.forRoot({
@@ -87,7 +92,7 @@ import { FollowModule } from './apis/follow/follow.module';
     }),
     CacheModule.register<RedisClientOptions>({
       store: redisStore,
-      url: process.env.URL,
+      url: process.env.REDIS_URL,
       isGlobal: true,
     }),
   ],
