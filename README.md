@@ -1,6 +1,6 @@
 # 단짠맛집
 
-## 배포 주소 : 
+## 배포 주소 : https://sweetsalty.shop
 
 ### 기획 의도
 
@@ -36,4 +36,33 @@ Youtube에 의하여 정보매체가 주가 되어버린 현재, 최근들어
 
 ## env 환경변수
 
+|환경변수 이름|넣어야할 값| 설명|
+|------|---|--------|
+|ACCESS|액세스토큰 시크릿키|로그인|
+|REFRESH|리프레시토큰 시크릿키|-|
+|SMS_APP_KEY|NHN 클라우드 앱 키|인증번호 발송|
+|SMS_X_SECRET_KEY|NHN 클라우드 시크릿 키|-|
+|SMS_SENDER|NHN 클라우드 발송번호|-|
+|IMP_KEY|아임포트 키|결제|
+|IMP_SECRET|아임포트 시크릿 키|-|
+|STORAGE_BUCKET|GCP 버켓|이미지 업로드|
+|STORAGE_KEY_FILENAME|GCP 유저 json 파일|-|
+|STORAGE_PROJECT_ID|GCP 프로젝트 아이디|-|
+|REDIRECT_URL| 리다이렉트 URL | 소셜 로그인 |
+|GOOGLE_CLIENT_ID| OAuth 클라이언트 아이디| -|
+|GOOGLE_CLIENT_SECRET| OAuth 구글 시크릿 키| -|
+|KAKAO_CLIENT_ID| OAuth 카카오 클라이언트 아이디| -|
+|KAKAO_CLIENT_SECRET| OAuth 카카오 시크릿 키 |-|
+|NAVER_CLIENTID| OAuth 네이버 클라이언트 아이디|-|
+|NAVER_CLIENTSECRET| OAuth 네이버 시크릿 키|-|
+|ELK_URL| 엘라스틱서치 URL| 검색엔진 사용, Module.ts 단|
+|REDIS_URL| DB 접속 URL | Redis 사용,  app.module.ts 단|
+|HOST| DB 호스트 이름|  MySQL 사용, app.module.ts 단|
+|PORT|DB 포트|-|
+|USERNAME| DB 유저 아이디| -|
+|PASSWORD| DB 유저 비밀번호| -|
+|DATABASE| DB 이름 | - |
+|CORS_ORIGIN_DEV| CORS URL 개발용 | CORS, app.module.ts & main.ts|
+|CORS_ORIGIN_TEST| CORS URL 테스트용| - |
+|CORS_ORIGIN_PROD| CORS URL 배포용 | - |
 
