@@ -202,7 +202,7 @@ type Query {
   fetchRecentBoards(category: BOARD_SUB_CATEGORY_NAME_ENUM!): [Board!]!
   fetchPreferBoards: [Board!]!
   fetchBoardCount: String!
-  fetchBoardTypeORMWithTags(boardTagsInput: BoardTagsInput!, category: BOARD_SUB_CATEGORY_NAME_ENUM): [Board!]!
+  fetchBoardTypeORMWithTags(tags: [String!]!, category: BOARD_SUB_CATEGORY_NAME_ENUM): [Board!]!
   test(file: Upload!): String!
   getBarcode: String!
   followCount(followerNickname: String!): [String!]!
@@ -247,12 +247,6 @@ enum BOARD_SUB_CATEGORY_NAME_ENUM {
   TASTER
 }
 
-input BoardTagsInput {
-  boardTagMenu: [String!]
-  boardTagRegion: [String!]
-  boardTagMood: [String!]
-}
-
 """The `Upload` scalar type represents a file upload."""
 scalar Upload
 
@@ -277,7 +271,7 @@ type Mutation {
   signUpGetToken(phone: String!): String!
   signUpCheckToken(phone: String!, token: String!): Boolean!
   createBoard(createBoardInput: CreateBoardInput!): Board!
-  createBoardRes(reqBoardId: String!, createBoardInput: CreateBoardInput!, boardTagsInput: BoardTagsInput!): Board!
+  createBoardRes(reqBoardId: String!, createBoardInput: CreateBoardInput!): Board!
   createBoardReq(createBoardReqInput: CreateBoardReqInput!): Board!
   updateBoard(boardId: String!, updateBoardInput: UpdateBoardInput!): Board!
   deleteBoard(boardId: String!): Boolean!

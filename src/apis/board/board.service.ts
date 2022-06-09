@@ -4,6 +4,7 @@ import {
   Inject,
   ConflictException,
   UnauthorizedException,
+  Ip,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Brackets, getConnection, getRepository, Repository } from 'typeorm';
@@ -26,11 +27,15 @@ export class BoardService {
   constructor(
     @InjectRepository(Board)
     private readonly boardRepository: Repository<Board>,
-    private readonly elasticsearchService: ElasticsearchService,
     @InjectRepository(BoardTag)
     private readonly boardTagRepository: Repository<BoardTag>,
     @InjectRepository(BoardSide)
     private readonly boardSideRepository: Repository<BoardSide>,
+    @InjectRepository(Image)
+    private readonly imageRepository: Repository<Image>,
+    @InjectRepository(Place)
+    private readonly placeRepository: Repository<Place>,
+    private readonly elasticsearchService: ElasticsearchService,
     @Inject(CACHE_MANAGER)
     private readonly cacheManager: Cache,
   ) {}
@@ -495,30 +500,7 @@ export class BoardService {
       .where({ subCategoryName })
       .getOne();
 
-    const isPlace = await getConnection()
-      .createQueryBuilder()
-      .select('place')
-      .from(Place, 'place')
-      .where({ placeName: place.placeName })
-      .getOne();
-
-    if (!isPlace) {
-      await getConnection()
-        .createQueryBuilder()
-        .insert()
-        .into(Place)
-        .values({
-          ...place,
-        })
-        .execute();
-    }
-
-    const placeData = await getConnection()
-      .createQueryBuilder()
-      .select('place')
-      .from(Place, 'place')
-      .where({ placeName: place.placeName })
-      .getOne();
+    const placeData = await this.isPlace({ place });
 
     const userData = await getConnection()
       .createQueryBuilder()
@@ -577,14 +559,8 @@ export class BoardService {
     return board;
   }
 
-  async createRes({
-    createBoardInput,
-    boardTagsInput,
-    currentUser,
-    reqBoardId,
-  }) {
-    const { boardTagMenu, boardTagRegion, boardTagMood } = boardTagsInput;
-    const { subCategoryName, place, ...inputData } = createBoardInput;
+  async createRes({ createBoardInput, currentUser, reqBoardId }) {
+    const { subCategoryName, tags, place, ...inputData } = createBoardInput;
 
     const pattern = new RegExp(
       /(image__data)\/[a-zA-Z0-9\-\.]+\.[a-zA-Z]{2,4}(\/\S*)?/,
@@ -600,30 +576,7 @@ export class BoardService {
       .where({ subCategoryName })
       .getOne();
 
-    const isPlace = await getConnection()
-      .createQueryBuilder()
-      .select('place')
-      .from(Place, 'place')
-      .where({ placeName: place.placeName })
-      .getOne();
-
-    if (!isPlace) {
-      await getConnection()
-        .createQueryBuilder()
-        .insert()
-        .into(Place)
-        .values({
-          ...place,
-        })
-        .execute();
-    }
-
-    const placeData = await getConnection()
-      .createQueryBuilder()
-      .select('place')
-      .from(Place, 'place')
-      .where({ placeName: place.placeName })
-      .getOne();
+    const placeData = await this.isPlace({ place });
 
     const userData = await getConnection()
       .createQueryBuilder()
@@ -650,46 +603,19 @@ export class BoardService {
     });
 
     await Promise.all([
-      boardTagMenu.reduce(async (acc, cur) => {
-        const menuData = await this.boardTagRepository.findOne({
-          boardTagName: cur,
+      tags.reduce(async (acc, cur) => {
+        const tagData = await this.boardTagRepository.findOne({
+          where: {
+            boardTagName: cur,
+          },
         });
-        await getConnection()
-          .createQueryBuilder()
-          .insert()
-          .into(BoardSide)
-          .values({
-            boards: board.boardId,
-            boardTags: menuData,
-          })
-          .execute();
-      }, ''),
 
-      boardTagRegion.reduce(async (acc, cur) => {
-        const regionData = await this.boardTagRepository.findOne({
-          boardTagName: cur,
-        });
-        await getConnection()
+        await getRepository(BoardSide)
           .createQueryBuilder()
           .insert()
-          .into(BoardSide)
           .values({
             boards: board.boardId,
-            boardTags: regionData,
-          })
-          .execute();
-      }, ''),
-      boardTagMood.reduce(async (acc, cur) => {
-        const moodData = await this.boardTagRepository.findOne({
-          boardTagName: cur,
-        });
-        await getConnection()
-          .createQueryBuilder()
-          .insert()
-          .into(BoardSide)
-          .values({
-            boards: board.boardId,
-            boardTags: moodData,
+            boardTags: tagData,
           })
           .execute();
       }, ''),
@@ -760,30 +686,7 @@ export class BoardService {
       .where({ subCategoryName })
       .getOne();
 
-    const isPlace = await getConnection()
-      .createQueryBuilder()
-      .select('place')
-      .from(Place, 'place')
-      .where({ placeName: place.placeName })
-      .getOne();
-
-    if (!isPlace) {
-      await getConnection()
-        .createQueryBuilder()
-        .insert()
-        .into(Place)
-        .values({
-          ...place,
-        })
-        .execute();
-    }
-
-    const placeData = await getConnection()
-      .createQueryBuilder()
-      .select('place')
-      .from(Place, 'place')
-      .where({ placeName: place.placeName })
-      .getOne();
+    const placeData = await this.isPlace({ place });
 
     const userData = await getConnection()
       .createQueryBuilder()
@@ -836,52 +739,25 @@ export class BoardService {
     if (board.user.userId !== currentUser.userId)
       throw new UnauthorizedException('해당 글의 작성자가 아닙니다.');
 
-    // const pattern = new RegExp(
-    //   /(image__data)\/[a-zA-Z0-9\-\.]+\.[a-zA-Z]{2,4}(\/\S*)?/,
-    //   'gi',
-    // );
+    if (place) {
+      const newPlace = await this.isPlace({ place });
+      await this.boardRepository.update({ boardId }, { place: newPlace });
+    }
 
-    // const images = [...updateBoardInput.boardContents.matchAll(pattern)];
-    // const image = await getConnection()
-    //   .createQueryBuilder()
-    //   .select('image.url')
-    //   .from(Image, 'image')
-    //   .where({
-    //     board: board.boardId,
-    //   })
-    //   .getMany();
+    if (updateBoardInput.boardContents) {
+      this.imageUpdate({ updateBoardInput, board, boardId });
+    }
 
-    // const old_url = image.map((el) => {
-    //   return el.url;
-    // });
+    if (tags) {
+      this.tagUpdate({ board, tags, boardId });
+    }
 
-    // const add_url = images.filter((el) => !old_url.includes(el));
-    // const delete_url = old_url.filter((el) => !images.includes(el));
+    const newBoard = {
+      ...board,
+      ...inputData,
+    };
 
-    const tag = await getConnection()
-      .createQueryBuilder()
-      .select('boardTag.boardTagName')
-      .from(BoardTag, 'boardTag')
-      .leftJoin('boardTag.boardSide', 'boardSide')
-      .where('boardSide.boards = :data', {
-        data: board.boardId,
-      })
-      .getMany();
-
-    const old_tag = tag.map((el) => {
-      return el.boardTagName;
-    });
-
-    const add_tag = tags.filter((el) => !old_tag.includes(el));
-    const delete_tag = old_tag.filter((el) => !tags.includes(el));
-
-    // const newBoard = {
-    //   ...board,
-    //   ...updateBoardInput,
-    //   thumbnail: imageData[0][0],
-    // };
-
-    // return await this.boardRepository.save(newBoard);
+    return await this.boardRepository.save(newBoard);
   }
 
   async delete({ boardId, currentUser }) {
@@ -923,10 +799,7 @@ export class BoardService {
     }
   }
 
-  async searchTags({ boardTagsInput, category }) {
-    // 리팩토링 필요함 원하는데로 로직이 돌아가지 않음
-    const { boardTagMenu, boardTagRegion, boardTagMood } = boardTagsInput;
-
+  async searchTags({ tags, category }) {
     let Ids;
     Ids = getConnection()
       .createQueryBuilder()
@@ -939,40 +812,163 @@ export class BoardService {
       .where('1 = 1')
       .orderBy('board.createAt', 'DESC');
 
-    if (!boardTagRegion && !boardTagMood) {
-      await Ids.andWhere('boardTag.boardTagName = :menu', {
-        menu: boardTagMenu[0],
-      });
-    } else if (!boardTagRegion) {
-      await Ids.andWhere(
-        new Brackets((qb) => {
-          qb.where('boardTag.boardTagName = :menu', {
-            menu: boardTagMenu[0],
-          }).where('boardTag.boardTagName = :mood', {
-            mood: boardTagMood[0],
-          });
-        }),
-      );
-    } else if (!boardTagMood) {
-      await Ids.andWhere(
-        new Brackets((qb) => {
-          qb.where('boardTag.boardTagName = :menu', {
-            menu: boardTagMenu[0],
-          }).where('boardTag.boardTagName = :region', {
-            region: boardTagRegion[0],
-          });
-        }),
-      );
-    }
+    await Ids.andWhere(
+      new Brackets((qb) => {
+        tags.forEach((tag: string) => {
+          qb.orWhere(`boardTag.boardTagName = "${tag}"`);
+        });
+      }),
+    );
 
     if (category) {
-      await Ids.andWhere('board.boardSubject = : subject', {
+      Ids.andWhere('board.boardSubject = :subject', {
         subject: category,
       });
     }
 
     Ids = await Ids.getManyAndCount();
-    Ids;
-    return Ids[0];
+
+    const [data, count] = Ids;
+
+    const filter = data.filter((el) => {
+      return el.boardSides.length === tags.length ? el : false;
+    });
+
+    return filter;
+  }
+
+  async isPlace({ place }) {
+    const isPlace = await this.placeRepository.findOne({
+      where: {
+        placeName: place.placeName,
+      },
+    });
+
+    if (!isPlace) {
+      return await this.placeRepository.save({
+        ...place,
+      });
+    } else {
+      return isPlace;
+    }
+  }
+
+  async imageUpdate({ updateBoardInput, board, boardId }) {
+    const pattern = new RegExp(
+      /(image__data)\/[a-zA-Z0-9\-\.]+\.[a-zA-Z]{2,4}(\/\S*)?/,
+      'gi',
+    );
+
+    const images = [...updateBoardInput.boardContents.matchAll(pattern)];
+    const image = await getConnection()
+      .createQueryBuilder()
+      .select('image.url')
+      .from(Image, 'image')
+      .where({
+        board: board.boardId,
+      })
+      .getMany();
+
+    await this.boardRepository.update({ boardId }, { thumbnail: images[0][0] });
+
+    const old_url = image.map((el) => {
+      return el.url;
+    });
+
+    const add_url = images.filter((el) => !old_url.includes(el));
+    const delete_url = old_url.filter((el) => !images.includes(el));
+    Promise.all([
+      add_url.map(async (el) => {
+        await this.imageRepository.save({
+          url: el,
+          board: boardId,
+        });
+      }),
+      delete_url.map(async (el) => {
+        const urlData = await this.imageRepository.findOne({
+          where: {
+            url: el,
+            board: boardId,
+          },
+        });
+        await this.imageRepository.softRemove({
+          imageId: urlData.imageId,
+        });
+      }),
+    ]);
+  }
+
+  async tagUpdate({ board, tags, boardId }) {
+    const tag = await getConnection()
+      .createQueryBuilder()
+      .select('boardTag.boardTagName')
+      .from(BoardTag, 'boardTag')
+      .leftJoin('boardTag.boardSide', 'boardSide')
+      .where('boardSide.boards = :data', {
+        data: board.boardId,
+      })
+      .getMany();
+
+    const old_tag = tag.map((el) => {
+      return el.boardTagName;
+    });
+
+    const add_tag = tags.filter((el) => !old_tag.includes(el));
+    const delete_tag = old_tag.filter((el) => !tags.includes(el));
+
+    Promise.all([
+      add_tag.map(async (el) => {
+        const tag = await this.boardTagRepository.findOne({
+          where: { boardTagName: el },
+        });
+
+        await this.boardSideRepository.save({
+          boards: boardId,
+          boardTags: tag,
+        });
+      }),
+      delete_tag.map(async (el) => {
+        const tag = await this.boardTagRepository.findOne({
+          where: {
+            boardTagName: el,
+          },
+        });
+        const tagSide = await this.boardSideRepository.findOne({
+          where: {
+            boards: boardId,
+            boardTags: tag,
+          },
+        });
+        await this.boardSideRepository.delete({
+          boardSideId: tagSide.boardSideId,
+        });
+      }),
+    ]);
   }
 }
+
+// if (!boardTagRegion && !boardTagMood) {
+//   await Ids.andWhere('boardTag.boardTagName = :menu', {
+//     menu: boardTagMenu[0],
+//   });
+// } else if (!boardTagRegion) {
+//   await Ids.andWhere(
+//     new Brackets((qb) => {
+//       qb.where('boardTag.boardTagName = :menu', {
+//         menu: boardTagMenu[0],
+//       }).where('boardTag.boardTagName = :mood', {
+//         mood: boardTagMood[0],
+//       });
+//     }),
+//   );
+// } else if (!boardTagMood) {
+//   await Ids.andWhere(
+//     new Brackets((qb) => {
+//       qb.where('boardTag.boardTagName = :menu', {
+//         menu: boardTagMenu[0],
+//       }).where('boardTag.boardTagName = :region', {
+//         region: boardTagRegion[0],
+//       });
+//     }),
+//   );
+// }
