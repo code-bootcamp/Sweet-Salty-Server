@@ -95,8 +95,6 @@ export class ImageService {
     const publicUrl = `https://storage.googleapis.com/${this.config.get(
       'STORAGE_BUCKET',
     )}/${file.filename}`;
-
-    console.log(url, publicUrl);
   }
 
   async getBarcode() {

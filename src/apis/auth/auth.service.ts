@@ -91,7 +91,7 @@ export class AuthService {
       { userEmail: user.userEmail },
       {
         secret: this.config.get('ACCESS'),
-        expiresIn: '2w',
+        expiresIn: '1w',
       },
     );
 
@@ -121,7 +121,7 @@ export class AuthService {
 
   async social_login({ user, res }) {
     await this.setRefreshToken({ user, res });
-    res.redirect('http://localhost:3000');
+    res.redirect(process.env.REDIRECT_URL);
   }
 
   async isEmail({ email }) {
