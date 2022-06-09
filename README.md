@@ -1,73 +1,39 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo_text.svg" width="320" alt="Nest Logo" /></a>
-</p>
+# 단짠맛집
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+## 배포 주소 : 
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://coveralls.io/github/nestjs/nest?branch=master" target="_blank"><img src="https://coveralls.io/repos/github/nestjs/nest/badge.svg?branch=master#9" alt="Coverage" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+### 기획 의도
 
-## Description
+Youtube에 의하여 정보매체가 주가 되어버린 현재, 최근들어 
+네이버블로그 등의 텍스트 매체를 다시 사용하길 원하는 니즈가 있는 것을 확인했습니다.
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+또한 가짜 정보 혹은 원치 않는 정보가 많은 인터넷 세상 속에서 원하는 정보만을 골라서 찾을 수 있기를 원했고
+그래서 생각한 것이 제가 좋아하는 음식을 기준으로 리뷰를 적는 사이트를 만들어보자! 였습니다.
 
-## Installation
+기존에 있던 망고 플레이트, 다이닝 코드, 식신과 같은 사이트는
+매장이 주가 되거나 크롤링에 의한 사이트였다면
+제가 생각한 사이트는 직접적으로 사용자들이 식당을 평가하고 자유롭게 커뮤니티같은 사이트를 구성하길 원했고
+최근 코로나로 인하여 소상공인분들께서 큰 피로감을 가지고 있는 것도 고려하여 
+상대적으로 홍보를 하기 힘든 소상공인의 부담을 줄일 수 있는 컨텐츠도 담아보았습니다.
 
-```bash
-$ npm install
-```
+## 팀원 소개
 
-## Running the app
+![](https://velog.velcdn.com/images/yukina1418/post/46fa979d-1ef1-4830-b331-bb7b6f8aff63/image.png)
 
-```bash
-# development
-$ npm run start
+![](https://velog.velcdn.com/images/yukina1418/post/7a983632-af4b-4e21-a24d-844ca2a7f16e/image.png)
 
-# watch mode
-$ npm run start:dev
+## 기술 스택
 
-# production mode
-$ npm run start:prod
-```
+![](https://velog.velcdn.com/images/yukina1418/post/f34d612c-4cf9-4f8d-8306-e775556943e5/image.png)
 
-## Test
+## ERD
 
-```bash
-# unit tests
-$ npm run test
+![](https://velog.velcdn.com/images/yukina1418/post/01b2e9d2-88b1-4a99-8c47-2246b7fc5a16/image.png)
 
-# e2e tests
-$ npm run test:e2e
+## Api Docs 
 
-# test coverage
-$ npm run test:cov
-```
+![](https://velog.velcdn.com/images/yukina1418/post/d7098b91-774d-4f87-9afc-d9132991e3af/image.png)
 
-## Support
+## env 환경변수
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
 
-## Stay in touch
-
-- Author - [Kamil Myśliwiec](https://kamilmysliwiec.com)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
-
-## License
-
-Nest is [MIT licensed](LICENSE).
