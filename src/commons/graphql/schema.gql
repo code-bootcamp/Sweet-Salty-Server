@@ -103,6 +103,11 @@ type Board {
   boardSides: [BoardSide!]!
 }
 
+type fewUser {
+  userEmail: String!
+  userCreateAt: DateTime!
+}
+
 type User {
   userId: String!
   userState: Boolean!
@@ -204,6 +209,7 @@ type Query {
   getBarcode: String!
   followCount(followerNickname: String!): [String!]!
   fetchUser(userEmail: String, userId: String, userNickname: String): User!
+  findUserId(phone: String!): fewUser!
   fetchUserNickname(userNickname: String!): User!
   fetchUserId(userId: String!): User!
   fetchUserLoggedIn: User!
