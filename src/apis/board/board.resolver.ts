@@ -1,10 +1,9 @@
 import { UseGuards } from '@nestjs/common';
-import { Args, Context, Int, Mutation, Query, Resolver } from '@nestjs/graphql';
+import { Args, Context, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { GraphQLJSONObject } from 'graphql-type-json';
 import { GqlAuthAccessGuard } from 'src/commons/auth/gql-auth.guard';
 import { CurrentUser, ICurrentUser } from 'src/commons/auth/gql-user-param';
 import { BoardService } from './board.service';
-import { BoardTagsInput } from './dto/boardTags.input';
 import { CreateBoardInput, CreateBoardReqInput } from './dto/createBoard.input';
 import { UpdateBoardInput } from './dto/updateBoard.input';
 import { Board, BOARD_SUB_CATEGORY_NAME_ENUM } from './entities/board.entity';
@@ -121,7 +120,6 @@ export class BoardResolver {
   ) {
     return this.boardService.create({
       createBoardInput,
-
       currentUser,
     });
   }
@@ -132,12 +130,10 @@ export class BoardResolver {
     @Args('reqBoardId') reqBoardId: string,
     @CurrentUser() currentUser: ICurrentUser,
     @Args('createBoardInput') createBoardInput: CreateBoardInput,
-    @Args('boardTagsInput') boardTagsInput: BoardTagsInput,
   ) {
     return this.boardService.createRes({
       reqBoardId,
       createBoardInput,
-      boardTagsInput,
       currentUser,
     });
   }
@@ -180,7 +176,7 @@ export class BoardResolver {
 
   @Query(() => [Board])
   fetchBoardTypeORMWithTags(
-    @Args('boardTagsInput') boardTagsInput: BoardTagsInput,
+    @Args({ name: 'tags', type: () => [String] }) tags: string[],
     @Args({
       name: 'category',
       nullable: true,
@@ -188,6 +184,6 @@ export class BoardResolver {
     })
     category: BOARD_SUB_CATEGORY_NAME_ENUM,
   ) {
-    return this.boardService.searchTags({ boardTagsInput, category });
+    return this.boardService.searchTags({ tags, category });
   }
 }
