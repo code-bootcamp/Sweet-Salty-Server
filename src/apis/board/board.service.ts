@@ -4,7 +4,6 @@ import {
   Inject,
   ConflictException,
   UnauthorizedException,
-  Ip,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Brackets, getConnection, getRepository, Repository } from 'typeorm';
@@ -18,7 +17,6 @@ import { Board } from './entities/board.entity';
 
 import { Place } from '../place/entities/place.entity';
 import { Image } from '../image/entities/image.entity';
-import { PreferMenu } from '../preferMenu/entities/preferMenu.entity';
 import { MessageInfo } from '../messageInfo/entities/messageInfo.entity';
 import { Message } from '../message/entitis/message.entity';
 
@@ -39,26 +37,6 @@ export class BoardService {
     @Inject(CACHE_MANAGER)
     private readonly cacheManager: Cache,
   ) {}
-
-  qb = getConnection()
-    .createQueryBuilder()
-    .select('board')
-    .from(Board, 'board')
-    .leftJoinAndSelect('board.subCategory', 'subCategory')
-    .leftJoinAndSelect('subCategory.topCategory', 'topCategory')
-    .leftJoinAndSelect('board.place', 'place')
-    .leftJoinAndSelect('board.user', 'user');
-
-  async test({ title }) {
-    return await getConnection()
-      .createQueryBuilder()
-      .select('board')
-      .from(Board, 'board')
-      .where(`board.boardTitle like (:data)`, {
-        data: `%${title}%`,
-      })
-      .getMany();
-  }
 
   async countBoard({ currentUser }) {
     return await getConnection()
@@ -82,18 +60,6 @@ export class BoardService {
         index: 'board',
         size: 10000,
         sort: 'createat:desc',
-        _source: [
-          'placename',
-          'placeaddress',
-          'boardtitle',
-          'boardwriter',
-          'boardlikecount',
-          'boardhit',
-          'createat',
-          'boardid',
-          'thumbnail',
-          'boardsubject',
-        ],
         query: {
           multi_match: {
             query: tagsData,
@@ -104,7 +70,7 @@ export class BoardService {
         },
       });
 
-      await this.cacheManager.set(tagsData, data, { ttl: 10 });
+      await this.cacheManager.set(tagsData, data, { ttl: 20 });
       return data;
     }
   }
@@ -118,25 +84,13 @@ export class BoardService {
         index: 'board',
         size: 10000,
         sort: 'createat:desc',
-        _source: [
-          'placename',
-          'placeaddress',
-          'boardtitle',
-          'boardwriter',
-          'boardlikecount',
-          'boardhit',
-          'createat',
-          'boardid',
-          'thumbnail',
-          'boardsubject',
-        ],
         query: {
           match: {
             boardtitle: title,
           },
         },
       });
-      await this.cacheManager.set(title, data, { ttl: 10 });
+      await this.cacheManager.set(title, data, { ttl: 20 });
       return data;
     }
   }
@@ -150,45 +104,13 @@ export class BoardService {
         index: 'board',
         size: 10000,
         sort: 'createat:desc',
-        _source: [
-          'placename',
-          'placeaddress',
-          'boardtitle',
-          'boardwriter',
-          'boardlikecount',
-          'boardhit',
-          'createat',
-          'boardid',
-          'thumbnail',
-          'boardsubject',
-        ],
         query: {
           match: {
             boardcontents: contents,
           },
         },
       });
-      await this.cacheManager.set(contents, data, { ttl: 10 });
-      return data;
-    }
-  }
-
-  async elasticsearch({ title, contents }) {
-    const redisInData = await this.cacheManager.get(title);
-    if (redisInData) {
-      return redisInData;
-    } else {
-      const data = await this.elasticsearchService.search({
-        index: 'board',
-        size: 10000,
-        sort: 'createat:desc',
-        query: {
-          match: {
-            boardtitle: title,
-          },
-        },
-      });
-      await this.cacheManager.set(title, data, { ttl: 10 });
+      await this.cacheManager.set(contents, data, { ttl: 20 });
       return data;
     }
   }
@@ -244,7 +166,7 @@ export class BoardService {
   }
 
   async findOne({ boardId, ip }) {
-    const isIp = await this.cacheManager.get(boardId);
+    const isIp = await this.cacheManager.get(ip);
 
     const qb = getConnection()
       .createQueryBuilder()
@@ -259,8 +181,8 @@ export class BoardService {
       .orderBy('boardTag.boardTagRefName', 'ASC')
       .where({ boardId });
 
-    if (isIp === null) {
-      await this.cacheManager.set(boardId, ip, { ttl: 30 });
+    if (isIp !== boardId) {
+      await this.cacheManager.set(ip, boardId, { ttl: 30 });
 
       await getConnection()
         .createQueryBuilder()
@@ -278,58 +200,36 @@ export class BoardService {
   async findPreferList({ currentUser }) {
     const data = await getConnection()
       .createQueryBuilder()
-      .select('preferMenu')
-      .from(PreferMenu, 'preferMenu')
+      .select(['user.gender', 'user.ageGroup'])
+      .from(User, 'user')
+      .leftJoinAndSelect('user.preferMenus', 'preferMenu')
       .leftJoinAndSelect('preferMenu.boardTag', 'boardTag')
-      .where({ user: currentUser.userId })
-      .getMany();
+      .where({ userId: currentUser.userId })
+      .getOne();
 
-    const tag = data.reduce((acc, cur) => {
-      return [...acc, cur.boardTag.boardTagName];
-    }, []);
-
-    const qb = getConnection()
+    const Ids = getConnection()
       .createQueryBuilder()
       .select('board')
       .from(Board, 'board')
-      .leftJoin('board.boardSides', 'boardSide')
-      .leftJoin('boardSide.boardTags', 'boardTag')
+      .leftJoinAndSelect('board.boardSides', 'boardSide')
+      .leftJoinAndSelect('boardSide.boardTags', 'boardTag')
       .leftJoinAndSelect('board.place', 'place')
       .leftJoinAndSelect('board.user', 'user')
-      .take(10)
+      .where('1 = 1')
       .orderBy('board.boardLikeCount', 'DESC')
       .addOrderBy('board.createAt', 'DESC');
 
-    if (tag.length === 1) {
-      return await qb
-        .where('boardTag.boardTagName = :data', {
-          data: tag[0],
-        })
-        .getMany();
-    }
+    Ids.andWhere(
+      new Brackets((qb) => {
+        qb.orWhere(`board.ageGroup = "${data.ageGroup}"`);
+        qb.orWhere(`board.gender = "${data.gender}"`);
+        qb.orWhere(
+          `boardTag.boardTagName = "${data.preferMenus[0].boardTag.boardTagName}"`,
+        );
+      }),
+    );
 
-    if (tag.length === 2) {
-      return await qb
-        .where('boardTag.boardTagName = :data', {
-          data: tag[0],
-        })
-        .orWhere('boardTag.boardTagName = :data1', {
-          data1: tag[1],
-        })
-        .getMany();
-    }
-
-    return await qb
-      .where('boardTag.boardTagName = :data', {
-        data: tag[0],
-      })
-      .orWhere('boardTag.boardTagName = :data1', {
-        data1: tag[1],
-      })
-      .orWhere('boardTag.boardTagName = :data2', {
-        data2: tag[2],
-      })
-      .getMany();
+    return await Ids.take(10).getMany();
   }
 
   async findPickList({ category }) {
@@ -390,42 +290,6 @@ export class BoardService {
       return await qb.where({ boardSubject: 'TASTER' }).getMany();
     }
   }
-  // async findRecent({ category }) {
-  //   const qb = await this.qb
-  //     .where({ boardSubject: category })
-  //     .take(10)
-  //     .orderBy('board.createAt', 'DESC')
-  //     .getMany();
-  //   if (category === 'REVIEW') {
-  //     return qb;
-  //   }
-
-  //   if (category === 'VISITED') {
-  //     return qb;
-  //   }
-
-  //   if (category === 'REQUEST') {
-  //     return qb;
-  //   }
-
-  //   if (category === 'TASTER') {
-  //     return qb;
-  //   }
-  // }
-
-  // async findLikeBoard({ currentUser }) {
-  //   return await getConnection()
-  //     .createQueryBuilder()
-  //     .select('board')
-  //     .from(Board, 'board')
-  //     .leftJoinAndSelect('board.subCategory', 'subCategory')
-  //     .leftJoinAndSelect('subCategory.topCategory', 'topCategory')
-  //     .leftJoinAndSelect('board.place', 'place')
-  //     .leftJoinAndSelect('board.user', 'user')
-  //     .leftJoinAndSelect('board.boardLikes', 'boardLike')
-  //     .where('boardLike.user = :data', { data: currentUser.userId })
-  //     .getMany();
-  // }
 
   async findLikeBoard({ userNickname }) {
     const user = await getConnection()
@@ -461,27 +325,6 @@ export class BoardService {
       .orderBy('board.createAt', 'DESC')
       .getMany();
   }
-  // async findTest({ boardTagsInput }) {
-  //   const { boardTagMenu, boardTagRegion, boardTagTogether } = boardTagsInput;
-
-  //   const q = await getConnection()
-  //     .createQueryBuilder()
-  //     .select('board')
-  //     .from(Board, 'board')
-  //     .leftJoinAndSelect('board.this', 'boardSide')
-  //     .leftJoinAndSelect('boardSide.boardTags', 'boardTag')
-  //     .where('boardTag.boardTagName = :boardTagName1', {
-  //       boardTagName1: '닭고기',
-  //     })
-  //     .orWhere('boardTag.boardTagName = :boardTagName2', {
-  //       boardTagName2: '피자',
-  //     })
-  //     .getMany();
-
-  //   (q);
-
-  //   return;
-  // }
 
   async create({ createBoardInput, currentUser }) {
     const { subCategoryName, tags, place, ...inputData } = createBoardInput;
@@ -560,77 +403,7 @@ export class BoardService {
   }
 
   async createRes({ createBoardInput, currentUser, reqBoardId }) {
-    const { subCategoryName, tags, place, ...inputData } = createBoardInput;
-
-    const pattern = new RegExp(
-      /(image__data)\/[a-zA-Z0-9\-\.]+\.[a-zA-Z]{2,4}(\/\S*)?/,
-      'gi',
-    );
-
-    const imageData = [...inputData.boardContents.matchAll(pattern)];
-
-    const subCategory = await getConnection()
-      .createQueryBuilder()
-      .select('subCategory')
-      .from(SubCategory, 'subCategory')
-      .where({ subCategoryName })
-      .getOne();
-
-    const placeData = await this.isPlace({ place });
-
-    const userData = await getConnection()
-      .createQueryBuilder()
-      .select([
-        'user.userId',
-        'user.userNickname',
-        'user.ageGroup',
-        'user.gender',
-      ])
-      .from(User, 'user')
-      .where({ userId: currentUser.userId })
-      .getOne();
-
-    const board = await this.boardRepository.save({
-      ...inputData,
-      subCategory,
-      ageGroup: userData.ageGroup,
-      gender: userData.gender,
-      boardWriter: userData.userNickname,
-      user: { userId: userData.userId },
-      thumbnail: imageData[0][0],
-      place: placeData,
-      boardSubject: subCategory.subCategoryName,
-    });
-
-    await Promise.all([
-      tags.reduce(async (acc, cur) => {
-        const tagData = await this.boardTagRepository.findOne({
-          where: {
-            boardTagName: cur,
-          },
-        });
-
-        await getRepository(BoardSide)
-          .createQueryBuilder()
-          .insert()
-          .values({
-            boards: board.boardId,
-            boardTags: tagData,
-          })
-          .execute();
-      }, ''),
-      imageData.reduce(async (acc, cur) => {
-        await getConnection()
-          .createQueryBuilder()
-          .insert()
-          .into(Image)
-          .values({
-            board: board.boardId,
-            url: cur[0],
-          })
-          .execute();
-      }, ''),
-    ]);
+    const board = await this.create({ createBoardInput, currentUser });
 
     const reqBoard = await getConnection()
       .createQueryBuilder()
@@ -646,7 +419,7 @@ export class BoardService {
       .into(MessageInfo)
       .values([
         {
-          messageInfoContents: `${reqBoard.boardWriter}단짝님께서 가보시길 원하셨던 매장을 ${board.boardWriter}단짝님께서 방문해주셨습니다. 작성된 글은 > < 여기에서 보실 수 있습니다.`,
+          messageInfoContents: `${reqBoard.boardWriter}단짝님께서 가보시길 원하셨던 매장을 ${board.boardWriter}단짝님께서 방문해주셨습니다. 작성된 글은 https://sweetsalty.shop/reviews/commonReview/${board.boardId} 여기에서 확인하실 수 있습니다!`,
         },
       ])
       .execute();
@@ -812,7 +585,7 @@ export class BoardService {
       .where('1 = 1')
       .orderBy('board.createAt', 'DESC');
 
-    await Ids.andWhere(
+    Ids.andWhere(
       new Brackets((qb) => {
         tags.forEach((tag: string) => {
           qb.orWhere(`boardTag.boardTagName = "${tag}"`);
@@ -826,15 +599,13 @@ export class BoardService {
       });
     }
 
-    Ids = await Ids.getManyAndCount();
+    Ids = await Ids.getMany();
 
-    const [data, count] = Ids;
-
-    const filter = data.filter((el) => {
+    const filter = Ids.filter((el) => {
       return el.boardSides.length === tags.length ? el : false;
     });
 
-    return filter;
+    return [filter, filter.length];
   }
 
   async isPlace({ place }) {
@@ -946,29 +717,3 @@ export class BoardService {
     ]);
   }
 }
-
-// if (!boardTagRegion && !boardTagMood) {
-//   await Ids.andWhere('boardTag.boardTagName = :menu', {
-//     menu: boardTagMenu[0],
-//   });
-// } else if (!boardTagRegion) {
-//   await Ids.andWhere(
-//     new Brackets((qb) => {
-//       qb.where('boardTag.boardTagName = :menu', {
-//         menu: boardTagMenu[0],
-//       }).where('boardTag.boardTagName = :mood', {
-//         mood: boardTagMood[0],
-//       });
-//     }),
-//   );
-// } else if (!boardTagMood) {
-//   await Ids.andWhere(
-//     new Brackets((qb) => {
-//       qb.where('boardTag.boardTagName = :menu', {
-//         menu: boardTagMenu[0],
-//       }).where('boardTag.boardTagName = :region', {
-//         region: boardTagRegion[0],
-//       });
-//     }),
-//   );
-// }

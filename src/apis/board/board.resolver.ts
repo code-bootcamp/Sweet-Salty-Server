@@ -23,15 +23,6 @@ export class BoardResolver {
   }
 
   @Query(() => GraphQLJSONObject)
-  async searchBoards(
-    //
-    @Args('title') title: string,
-    @Args('contents') contents: string,
-  ) {
-    return this.boardService.elasticsearch({ title, contents });
-  }
-
-  @Query(() => GraphQLJSONObject)
   async fetchBoardWithTags(
     //
     @Args({ name: 'tags', type: () => [String] }) tags: string[],
@@ -70,11 +61,6 @@ export class BoardResolver {
   ) {
     return this.boardService.categoryBest({ category });
   }
-
-  // @Query(() => [Board])
-  // fetchBoardsBest() {
-  //   return this.boardService.best();
-  // }
 
   @Query(() => [Board])
   fetchPickedBoards(@Args('userNickname') userNickname: string) {
@@ -174,8 +160,8 @@ export class BoardResolver {
     return this.boardService.delete({ boardId, currentUser });
   }
 
-  @Query(() => [Board])
-  fetchBoardTypeORMWithTags(
+  @Query(() => [String])
+  searchBoard(
     @Args({ name: 'tags', type: () => [String] }) tags: string[],
     @Args({
       name: 'category',

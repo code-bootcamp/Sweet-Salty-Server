@@ -102,3 +102,14 @@
 //       })
 //       .execute();
 //   }, ''),
+
+// async test({ title }) {
+//     return await getConnection()
+//       .createQueryBuilder()
+//       .select('board')
+//       .from(Board, 'board')
+//       .where(`board.boardTitle like (:data)`, {
+//         data: `%${title}%`,
+//       })
+//       .getMany();
+//   }
