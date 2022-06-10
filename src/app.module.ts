@@ -79,11 +79,11 @@ import { FollowModule } from './apis/follow/follow.module';
     }),
     TypeOrmModule.forRoot({
       type: 'mysql',
-      host: '10.88.241.3',
+      host: process.env.HOST,
       port: 3306,
       username: process.env.USERNAME,
       password: process.env.PASSWORD,
-      database: 'sns_data',
+      database: process.env.DATABASE,
       entities: [__dirname + '/apis/**/*.entity.*'],
       synchronize: true,
       logging: true,

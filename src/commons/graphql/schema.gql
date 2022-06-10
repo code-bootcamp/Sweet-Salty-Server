@@ -202,7 +202,7 @@ type Query {
   fetchRecentBoards(category: BOARD_SUB_CATEGORY_NAME_ENUM!): [Board!]!
   fetchPreferBoards: [Board!]!
   fetchBoardCount: String!
-  fetchBoardTypeORMWithTags(tags: [String!]!, category: BOARD_SUB_CATEGORY_NAME_ENUM): [Board!]!
+  searchBoard(tags: [String!]!, category: BOARD_SUB_CATEGORY_NAME_ENUM): [Board!]!
   test(file: Upload!): String!
   getBarcode: String!
   followCount(followerNickname: String!): [String!]!

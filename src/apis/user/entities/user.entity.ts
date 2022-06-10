@@ -1,9 +1,5 @@
 import { ObjectType, Field, Int } from '@nestjs/graphql';
-import {
-  AGE_GROUP_ENUM,
-  Board,
-  GENDER_ENUM,
-} from 'src/apis/board/entities/board.entity';
+import { Board } from 'src/apis/board/entities/board.entity';
 import { PreferMenu } from 'src/apis/preferMenu/entities/preferMenu.entity';
 import {
   BaseEntity,
@@ -11,7 +7,6 @@ import {
   CreateDateColumn,
   DeleteDateColumn,
   Entity,
-  JoinColumn,
   OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
