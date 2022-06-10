@@ -3,3 +3,4 @@ dist
 .env*
 .DS_Store
 gcp.image.json
+docker-compose.prod.yaml
