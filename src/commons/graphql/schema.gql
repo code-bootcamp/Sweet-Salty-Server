@@ -191,7 +191,6 @@ type Query {
   fetchTags(refName: String!): [BoardTag!]!
   fetchBoardTitle(title: String!): JSONObject!
   fetchBoardContents(contents: String!): JSONObject!
-  searchBoards(title: String!, contents: String!): JSONObject!
   fetchBoardWithTags(tags: [String!]!): JSONObject!
   fetchBoard(boardId: String!): Board!
   fetchBoards: [Board!]!
@@ -202,7 +201,7 @@ type Query {
   fetchRecentBoards(category: BOARD_SUB_CATEGORY_NAME_ENUM!): [Board!]!
   fetchPreferBoards: [Board!]!
   fetchBoardCount: String!
-  searchBoard(tags: [String!]!, category: BOARD_SUB_CATEGORY_NAME_ENUM): [Board!]!
+  searchBoard(tags: [String!]!, category: BOARD_SUB_CATEGORY_NAME_ENUM): [String!]!
   test(file: Upload!): String!
   getBarcode: String!
   followCount(followerNickname: String!): [String!]!

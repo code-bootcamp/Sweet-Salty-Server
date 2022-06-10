@@ -14,7 +14,6 @@ import { BoardTag } from '../boardTag/entities/boardTag.entity';
 import { SubCategory } from '../subCategory/entities/subCategory.entity';
 import { User } from '../user/entities/user.entity';
 import { Board } from './entities/board.entity';
-
 import { Place } from '../place/entities/place.entity';
 import { Image } from '../image/entities/image.entity';
 import { MessageInfo } from '../messageInfo/entities/messageInfo.entity';
@@ -48,7 +47,6 @@ export class BoardService {
 
   async elasticsearchFindTags({ tags }) {
     const sortingData = tags.sort();
-
     const tagsData = sortingData.reduce((acc, cur) => {
       return acc === '' ? acc + cur : acc + ' ' + cur;
     }, '');
@@ -69,7 +67,6 @@ export class BoardService {
           },
         },
       });
-
       await this.cacheManager.set(tagsData, data, { ttl: 20 });
       return data;
     }
@@ -330,7 +327,7 @@ export class BoardService {
     const { subCategoryName, tags, place, ...inputData } = createBoardInput;
 
     const pattern = new RegExp(
-      /(image__data)\/[a-zA-Z0-9\-\.]+\.[a-zA-Z]{2,4}(\/\S*)?/,
+      /[a-z]{3,5}\_{1,2}[a-z]{3,5}\/[a-zA-Z0-9\-\.]+\.[a-zA-Z]{2,4}(\/\S*)?/,
       'gi',
     );
 
@@ -445,7 +442,7 @@ export class BoardService {
 
   async createReq({ createBoardReqInput, currentUser }) {
     const pattern = new RegExp(
-      /(image__data)\/[a-zA-Z0-9\-\.]+\.[a-zA-Z]{2,4}(\/\S*)?/,
+      /[a-z]{3,5}\_{1,2}[a-z]{3,5}\/[a-zA-Z0-9\-\.]+\.[a-zA-Z]{2,4}(\/\S*)?/,
       'gi',
     );
     const { subCategoryName, place, ...inputData } = createBoardReqInput;
@@ -626,7 +623,7 @@ export class BoardService {
 
   async imageUpdate({ updateBoardInput, board, boardId }) {
     const pattern = new RegExp(
-      /(image__data)\/[a-zA-Z0-9\-\.]+\.[a-zA-Z]{2,4}(\/\S*)?/,
+      /[a-z]{3,5}\_{1,2}[a-z]{3,5}\/[a-zA-Z0-9\-\.]+\.[a-zA-Z]{2,4}(\/\S*)?/,
       'gi',
     );
 

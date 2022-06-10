@@ -109,6 +109,7 @@ export class ImageService {
     );
     const textNumber = random.toString().replace(/\B(?=(\d{4})+(?!\d))/g, ' ');
 
+    console.log('여긴 나와?');
     const barcodeImg = await this.httpService
       .get('https://bwipjs-api.metafloor.com/', {
         params: {
@@ -122,6 +123,8 @@ export class ImageService {
       })
       .toPromise();
 
+    console.log('여긴 나와?22');
+
     const url = barcodeImg.request.res.responseUrl;
 
     const data = await new Promise((resolve) => {
@@ -134,6 +137,7 @@ export class ImageService {
           resolve(`${process.env.STORAGE_BUCKET}/${uuid}.jpg`),
         );
     });
+    console.log('여긴 나와?3');
 
     return data;
   }
