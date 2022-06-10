@@ -114,11 +114,8 @@ export class PointTransactionService {
     const queryRunner = await this.connection.createQueryRunner();
     await queryRunner.connect();
 
-    //
-    // transaction 시작!
     await queryRunner.startTransaction('SERIALIZABLE');
-    //
-    //
+
     const token = await this.iamportService.getToken();
 
     const Payment_history = await this.iamportService.get_data_with_impUid({
@@ -158,7 +155,6 @@ export class PointTransactionService {
       let point;
 
       if (amount === 0) {
-        // 전액 환불
         await this.iamportService.CancelPayment({
           token,
           imp_uid: impUid,

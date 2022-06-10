@@ -11,6 +11,7 @@ import { SubCategory } from '../subCategory/entities/subCategory.entity';
 import { Notice } from './entities/notice.entity';
 import { ElasticsearchService } from '@nestjs/elasticsearch';
 import { Cache } from 'cache-manager';
+import { User } from '../User/entities/user.entity';
 
 @Injectable()
 export class NoticeService {
@@ -24,15 +25,15 @@ export class NoticeService {
   async create({ createNoticeInput, currentUser }) {
     const { noticeCategory, url, ...data } = createNoticeInput;
 
-    // const isAdmin = await getConnection()
-    //   .createQueryBuilder()
-    //   .select('user')
-    //   .from(User, 'user')
-    //   .where({ userId: currentUser.userId })
-    //   .getOne();
+    const isAdmin = await getConnection()
+      .createQueryBuilder()
+      .select('user')
+      .from(User, 'user')
+      .where({ userId: currentUser.userId })
+      .getOne();
 
-    // if (isAdmin.userState === false)
-    //   throw new ConflictException('관리자만 글을 작성할 수 있습니다.');
+    if (isAdmin.userState === false)
+      throw new ConflictException('관리자만 글을 작성할 수 있습니다.');
 
     const subCategory = await getConnection()
       .createQueryBuilder()
