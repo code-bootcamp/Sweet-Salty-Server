@@ -20,7 +20,7 @@ export class BoardSubscriber implements EntitySubscriberInterface<Board> {
 
   async afterInsert(event: InsertEvent<Board>) {
     const data = event.entity.boardContents.match(
-      /(image__data)\/[a-zA-Z0-9\-\.]+\.[a-zA-Z]{2,4}(\/\S*)?/,
+      /[a-z]{3,5}\_{1,2}[a-z]{3,5}\/[a-zA-Z0-9\-\.]+\.[a-zA-Z]{2,4}(\/\S*)?/,
     );
     const thumbnail111 = data[0];
     event.entity.boardId;

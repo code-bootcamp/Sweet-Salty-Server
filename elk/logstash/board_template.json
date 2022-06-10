@@ -43,10 +43,7 @@
       },
       "boardcontents": {
         "type": "text",
-        "analyzer": "custom_analyzer",
-        "fields": {
-          "keyword": { "type": "keyword" }
-        }
+        "analyzer": "custom_analyzer"
       },
       "boardwriter": {
         "type": "text",

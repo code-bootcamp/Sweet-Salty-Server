@@ -24,7 +24,6 @@ export class BoardResolver {
 
   @Query(() => GraphQLJSONObject)
   async fetchBoardWithTags(
-    //
     @Args({ name: 'tags', type: () => [String] }) tags: string[],
   ) {
     return this.boardService.elasticsearchFindTags({ tags });
