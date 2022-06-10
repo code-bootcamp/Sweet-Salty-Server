@@ -5,11 +5,8 @@ import { AppService } from './app.service';
 export class AppController {
   constructor(private readonly appService: AppService) {}
 
-  @Get('/')
+  @Get()
   getHello(): string {
     return this.appService.getHello();
   }
 }
-// localhost:3000/
-// @ 는 데코레이터
-// : 는타입 스크립트
