@@ -50,7 +50,7 @@ Youtube에 의하여 정보매체가 주가 되어버린 현재, 최근 들어 <
 
 ## Api Docs
 
-![](https://velog.velcdn.com/images/yukina1418/post/d7098b91-774d-4f87-9afc-d9132991e3af/image.png)
+![image](https://user-images.githubusercontent.com/82861572/173022710-a3aec7e3-91ce-46cd-b33f-203f99663d96.png)
 
 ## 페이지 구성
 
