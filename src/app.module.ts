@@ -25,8 +25,6 @@ import { AdminModule } from './apis/admin/admin.module';
 import { NoticeModule } from './apis/notice/notice.module';
 import { graphqlUploadExpress } from 'graphql-upload';
 import { ImageModule } from './apis/image/image.module';
-import { ChatBackEndModule } from './chatBackEnd/chatBackEnd.module';
-import { ChatFrontEndModule } from './chatFrontEnd/chatFrontEnd.module';
 import { AppController } from './app.controller';
 import { FollowModule } from './apis/follow/follow.module';
 
@@ -37,8 +35,6 @@ import { FollowModule } from './apis/follow/follow.module';
     BoardModule,
     BoardLikeModule,
     ImageModule,
-    ChatBackEndModule,
-    ChatFrontEndModule,
     FollowModule,
     UserModule,
     NoticeModule,
@@ -69,12 +65,6 @@ import { FollowModule } from './apis/follow/follow.module';
           process.env.CORS_ORIGIN_TEST,
           process.env.CORS_ORIGIN_PROD,
         ],
-        // origin: [
-        //   'http://localhost:3000',
-        //   'https://nextjs-m3jgp6bewq-an.a.run.app',
-        //   'http://34.64.45.98:3000',
-        //   'https://sweetsalty.shop',
-        // ],
       },
     }),
     TypeOrmModule.forRoot({
@@ -106,42 +96,3 @@ export class AppModule implements NestModule {
   }
 }
 
-// 이거 배포할때 설정하는것
-// TypeOrmModule.forRoot({
-//   type: 'mysql',
-//   host: '10.16.96.3',
-//   port: 3306,
-//   username: 'root',
-//   password: 'root',
-//   database: 'team_data',
-//   entities: [__dirname + '/apis/**/*.entity.*'],
-//   synchronize: true,
-//   logging: true,
-//   retryAttempts: 30,
-//   retryDelay: 5000,
-// }),
-// CacheModule.register<RedisClientOptions>({
-//   store: redisStore,
-//   url: 'redis://XkjocNA3@10.140.0.4:6379',
-//   isGlobal: true,
-// }),
-
-// 이건 로컬 테스트용
-// TypeOrmModule.forRoot({
-//   type: 'mysql',
-//   host: 'my-database',
-//   port: 3306,
-//   username: 'root',
-//   password: 'root',
-//   database: 'team_project',
-//   entities: [__dirname + '/apis/**/*.entity.*'],
-//   synchronize: true,
-//   logging: true,
-//   retryAttempts: 30,
-//   retryDelay: 5000,
-// }),
-// CacheModule.register<RedisClientOptions>({
-//   store: redisStore,
-//   url: 'redis://my-redis:6379',
-//   isGlobal: true,
-// }),

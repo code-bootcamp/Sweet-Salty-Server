@@ -3,7 +3,6 @@ import { AuthGuard } from '@nestjs/passport';
 
 import { Request, Response } from 'express';
 import { User } from '../user/entities/user.entity';
-import { RealIP } from 'nestjs-real-ip';
 import { UserService } from '../user/user.service';
 import { AuthService } from './auth.service';
 
@@ -28,17 +27,6 @@ export class AuthController {
     @Res() res: Response,
   ) {
     this.socialLogin({ req, res });
-    // const user = await this.userService.findCheck({
-    //   userEmail: req.user.userEmail,
-    //   userSignUpSite: req.user.userSignUpSite,
-    // });
-
-    // if (user) {
-    //   this.authService.social_login({ user, res });
-    // } else {
-    //   const newUser = await this.userService.socialCreate({ user: req.user });
-    //   this.authService.social_login({ user: newUser, res });
-    // }
   }
 
   @Get('/login/kakao')
@@ -48,22 +36,6 @@ export class AuthController {
     @Res() res: Response,
   ) {
     this.socialLogin({ req, res });
-    // const user = await this.userService.findCheck({
-    //   userEmail: req.user.userEmail,
-    //   userSignUpSite: req.user.userSignUpSite,
-    // });
-
-    // if (user) {
-    //   this.authService.social_login({ user, res });
-    // } else {
-    //   const newUser = await this.userService.socialCreate({ user: req.user });
-    //   this.authService.social_login({ user: newUser, res });
-    // }
-  }
-
-  @Get('my-ip')
-  get(@RealIP() ip: string): string {
-    return ip;
   }
 
   @Get('/login/naver')
@@ -73,18 +45,6 @@ export class AuthController {
     @Res() res: Response,
   ) {
     this.socialLogin({ req, res });
-
-    // const user = await this.userService.findCheck({
-    //   userEmail: req.user.userEmail,
-    //   userSignUpSite: req.user.userSignUpSite,
-    // });
-
-    // if (user) {
-    //   this.authService.social_login({ user, res });
-    // } else {
-    //   const newUser = await this.userService.socialCreate({ user: req.user });
-    //   this.authService.social_login({ user: newUser, res });
-    // }
   }
 
   async socialLogin({ req, res }) {

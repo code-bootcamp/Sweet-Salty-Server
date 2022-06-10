@@ -14,13 +14,13 @@ import { NoticeService } from './notice.service';
 export class NoticeResolver {
   constructor(private readonly noticeService: NoticeService) {}
 
-  //@UseGuards(GqlAuthAccessGuard)
+  @UseGuards(GqlAuthAccessGuard)
   @Mutation(() => Notice)
   createNotice(
-    //  @CurrentUser() currentUser: ICurrentUser,
+    @CurrentUser() currentUser: ICurrentUser,
     @Args('createNoticeInput') createNoticeInput: CreateNoticeInput,
   ) {
-    return this.noticeService.create({ createNoticeInput });
+    return this.noticeService.create({ createNoticeInput, currentUser });
   }
 
   @Query(() => Notice)

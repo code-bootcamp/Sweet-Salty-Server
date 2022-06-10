@@ -21,7 +21,7 @@ export class NoticeService {
     @Inject(CACHE_MANAGER)
     private readonly cacheManager: Cache,
   ) {}
-  async create({ createNoticeInput }) {
+  async create({ createNoticeInput, currentUser }) {
     const { noticeCategory, url, ...data } = createNoticeInput;
 
     // const isAdmin = await getConnection()

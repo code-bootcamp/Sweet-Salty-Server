@@ -11,8 +11,8 @@ export class IamPortService {
   async getToken() {
     const token = await this.httpService
       .post('https://api.iamport.kr/users/getToken', {
-        imp_key: process.env.IMP_KEY, // REST API키
-        imp_secret: process.env.IMP_SECRET, // REST API Secret
+        imp_key: process.env.IMP_KEY, 
+        imp_secret: process.env.IMP_SECRET, 
       })
       .toPromise();
 

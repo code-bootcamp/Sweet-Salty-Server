@@ -1,5 +1,4 @@
-import { UseGuards } from '@nestjs/common';
-import { Args, Context, Mutation, Query, Resolver } from '@nestjs/graphql';
+import { Args, Context, Mutation, Resolver } from '@nestjs/graphql';
 import { AuthService } from './auth.service';
 import {
   GqlAuthAccessGuard,
@@ -7,6 +6,7 @@ import {
 } from 'src/commons/auth/gql-auth.guard';
 import { CurrentUser, ICurrentUser } from 'src/commons/auth/gql-user-param';
 import { Token } from './entities/auth.entity';
+import { UseGuards } from '@nestjs/common';
 
 @Resolver()
 export class AuthResolver {
